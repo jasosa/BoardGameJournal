@@ -6,8 +6,9 @@ Tick items when verified (see Definition of done in `CLAUDE.md`). Each item is m
 
 - [x] F0.1 Claude harness: CLAUDE.md, agents, skills, hooks, MCP config
 - [x] F0.2 Docs: PRODUCT_SPEC, ARCHITECTURE, ROADMAP, STATUS, ADR template
-- [ ] F0.3 Catalogue provider research (BGG XML API2 and alternatives): access, registration, rate limits, caching, image rights, attribution. Output: ADR.
+- [x] F0.3 Catalogue provider research (BGG XML API2 and alternatives): access, registration, rate limits, caching, image rights, attribution. Output: ADR.
   - AC: ADR lists sources with links; clear yes/no on caching metadata and images.
+  - Done 2026-10-30: ADR-0003 Accepted. BGG pages read. BGG deferred; manual provider only for now.
 - [ ] F0.4 Resolve open questions in STATUS.md that affect the schema (rating model, provider). Output: ADRs.
 - [ ] F0.5 Low-fidelity wireframes: Home, Library, Game Detail, Quick Capture (desktop + mobile).
   - AC: user approved the wireframes.
