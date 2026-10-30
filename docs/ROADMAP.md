@@ -10,7 +10,7 @@ Tick items when verified (see Definition of done in `CLAUDE.md`). Each item is m
   - AC: ADR lists sources with links; clear yes/no on caching metadata and images.
   - Done 2026-10-30: ADR-0003 Accepted. BGG pages read. BGG deferred; manual provider only for now.
 - [x] F0.4 Resolve open questions in STATUS.md that affect the schema (rating model, provider). Output: ADRs.
-- [ ] F0.5 Low-fidelity wireframes: Home, Library, Game Detail, Quick Capture (desktop + mobile).
+- [x] F0.5 Low-fidelity wireframes: Home, Library, Game Detail, Quick Capture (desktop + mobile).
   - AC: user approved the wireframes.
 - [ ] F0.6 Scaffold: Next.js + TS strict + Tailwind + ESLint + Prettier + Vitest + Playwright + Supabase CLI. Update CLAUDE.md commands.
   - AC: `npm run lint`, `typecheck`, `test`, `test:e2e` all run green on an empty app.

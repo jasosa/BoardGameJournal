@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wireframe: Home</title><link rel="icon" href="data:,"><link rel="stylesheet" href="wireframes.css"></head>
+<body>
+<header class="top"><span class="brand">Meeple Journal</span>
+<nav aria-label="Main"><a href="home.html" aria-current="page">Home</a><a href="library.html">Library</a><a href="journal.html">Journal</a><a href="settings.html">Settings</a></nav>
+<a class="btn primary" href="quick-capture.html#add">+ Quick Capture</a></header>
+<main>
+<h1>Good evening</h1>
+
+<h2 style="margin-top:24px">Recent activity</h2>
+<div class="list">
+<a href="game-detail.html" style="text-decoration:none"><div class="cover" style="width:56px">Cover</div><div><strong>Played Wingspan</strong><p class="muted">2 days ago · 60 min</p><p>Won by 4 points. Needs a bigger table.</p></div></a>
+<a href="game-detail.html" style="text-decoration:none"><div class="cover" style="width:56px">Cover</div><div><strong>Thought on Spirit Island</strong><p class="muted">5 days ago · observation</p><p>Second spirit feels much easier to teach.</p></div></a>
+<a href="game-detail.html" style="text-decoration:none"><div class="cover" style="width:56px">Cover</div><div><strong>Assessed Ark Nova</strong><p class="muted">1 week ago · 8.5</p></div></a>
+</div>
+<p><a href="journal.html">Open the journal</a></p>
+
+<div class="state"><strong>Empty state (new account)</strong><p class="muted">Nothing here yet. Add your first game or log a play.</p><a class="btn primary" href="quick-capture.html#add">Add a game</a></div>
+<div class="state"><strong>Loading</strong><p class="muted">Three grey rows with a cover-shaped block, no spinner.</p></div>
+<div class="state"><strong>Error</strong><p class="muted">We could not load your activity. <a href="#">Try again</a></p></div>
+
+<div class="note">One way to start a capture: the header button on desktop, the central button on mobile. No quick-action row, no stats, no charts. Campaigns come in P1. Each row is a link to its game and shows at most 2 metadata items.</div>
+</main>
+<nav class="bottom" aria-label="Main"><a href="home.html" aria-current="page">Home</a><a href="library.html">Library</a><a class="capture" href="quick-capture.html#add" aria-label="Quick Capture">+</a><a href="journal.html">Journal</a><a href="settings.html">Settings</a></nav>
+</body></html>

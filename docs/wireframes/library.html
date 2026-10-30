@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wireframe: Library</title><link rel="icon" href="data:,"><link rel="stylesheet" href="wireframes.css"></head>
+<body>
+<header class="top"><span class="brand">Meeple Journal</span>
+<nav aria-label="Main"><a href="home.html">Home</a><a href="library.html" aria-current="page">Library</a><a href="journal.html">Journal</a><a href="settings.html">Settings</a></nav>
+<a class="btn primary" href="quick-capture.html#add">+ Quick Capture</a></header>
+<main>
+<div class="titlebar">
+<h1 style="margin:0">Library <span class="muted">214 games</span></h1>
+<div class="row" role="group" aria-label="View" style="gap:8px">
+<button type="button" class="chip" aria-pressed="true">Gallery</button><button type="button" class="chip" aria-pressed="false">Shelf</button><button type="button" class="chip" aria-pressed="false">Table</button>
+</div>
+</div>
+
+<div class="toolbar">
+<div class="grow"><label for="q" class="muted">Search</label><input id="q" class="field" style="margin:0" placeholder="Search your games"></div>
+<div class="desk-only"><label for="s" class="muted">Sort</label><select id="s" class="field auto"><option>Recently played</option><option>Title</option><option>Rating</option></select></div>
+<button type="button" class="btn mob-only">Filters (1)</button>
+</div>
+<div class="row desk-only" style="margin-bottom:24px" role="group" aria-label="Status filter">
+<button type="button" class="chip" aria-pressed="true">Owned</button><button type="button" class="chip" aria-pressed="false">Wishlist</button><button type="button" class="chip" aria-pressed="false">Interested</button><button type="button" class="chip" aria-pressed="false">Previously owned</button>
+</div>
+
+<h2>Gallery (default)</h2>
+<div class="grid">
+<a class="card" href="game-detail.html"><div class="cover">Cover</div><div class="t">Wingspan</div><div class="muted">8.0</div></a>
+<a class="card" href="game-detail.html"><div class="cover">Cover</div><div class="t">Spirit Island</div><div class="muted">9.0</div></a>
+<a class="card" href="game-detail.html"><div class="cover">Cover</div><div class="t">Ark Nova</div><div class="muted">8.5</div></a>
+<a class="card" href="game-detail.html"><div class="cover fallback">Heroes of Some Long Title</div><div class="t">Heroes of Some Long Title</div><div class="muted">Not rated</div></a>
+<a class="card" href="game-detail.html"><div class="cover">Cover</div><div class="t">Gloomhaven</div><div class="muted">7.5</div></a>
+<a class="card" href="game-detail.html"><div class="cover">Cover</div><div class="t">Cascadia</div><div class="muted">7.0</div></a>
+</div>
+<p class="muted" style="margin-top:16px">Cards show the rating only, because the Owned filter already says the status. With several statuses selected, a card also shows its status. 4th card: cover fallback tile with the title. Server pagination, not infinite load.</p>
+
+<h2 style="margin-top:32px">Shelf</h2>
+<div class="shelf"><a class="spine" href="game-detail.html" style="height:150px" aria-label="Wingspan">Wingspan</a><a class="spine" href="game-detail.html" style="height:170px" aria-label="Spirit Island">Spirit Island</a><a class="spine" href="game-detail.html" style="height:130px" aria-label="Ark Nova">Ark Nova</a><a class="spine" href="game-detail.html" style="height:160px" aria-label="Gloomhaven">Gloomhaven</a><a class="spine" href="game-detail.html" style="height:120px" aria-label="Cascadia">Cascadia</a></div>
+<p class="muted">Each spine is a link named with the game title.</p>
+
+<h2>Table</h2>
+<table><thead><tr><th>Title</th><th>Status</th><th>Rating</th><th>Plays</th><th>Last played</th></tr></thead>
+<tbody><tr><td><a href="game-detail.html">Wingspan</a></td><td>Owned</td><td>8.0</td><td>14</td><td>2 days ago</td></tr>
+<tr><td><a href="game-detail.html">Spirit Island</a></td><td>Owned</td><td>9.0</td><td>22</td><td>5 days ago</td></tr></tbody></table>
+<p class="muted">The title cell is the row link. On mobile the table hides Plays and Last played.</p>
+
+<h2 style="margin-top:32px">Mobile: Filters sheet</h2>
+<p class="muted">Opens from the Filters button. Drawn here inline.</p>
+<div class="sheet">
+<h3>Filters</h3>
+<label for="ms">Sort</label><select id="ms" class="field"><option>Recently played</option><option>Title</option><option>Rating</option></select>
+<div class="muted" style="margin-bottom:4px">Status</div>
+<div class="row" role="group" aria-label="Status filter" style="margin-bottom:12px"><button type="button" class="chip" aria-pressed="true">Owned</button><button type="button" class="chip" aria-pressed="false">Wishlist</button><button type="button" class="chip" aria-pressed="false">Interested</button><button type="button" class="chip" aria-pressed="false">Previously owned</button></div>
+<div class="row"><button type="button" class="btn">Clear</button><button type="button" class="btn primary" style="flex:1">Show 214 games</button></div>
+</div>
+
+<div class="state"><strong>Empty state</strong><p class="muted">Your library is empty. Add your first game.</p><a class="btn primary" href="quick-capture.html#add">Add a game</a></div>
+<div class="state"><strong>No results</strong><p class="muted">Nothing matches "xyz". <a href="quick-capture.html#add">Create "xyz" manually</a></p></div>
+<div class="state"><strong>Loading</strong><p class="muted">Cover-shaped grey tiles, no spinner.</p></div>
+<div class="state"><strong>Error</strong><p class="muted">We could not load your library. <a href="#">Try again</a></p></div>
+
+<div class="note">On mobile, the first row of covers sits under one search row. Sort and status live in the Filters sheet. The view switch sits in the title row.</div>
+</main>
+<nav class="bottom" aria-label="Main"><a href="home.html">Home</a><a href="library.html" aria-current="page">Library</a><a class="capture" href="quick-capture.html#add" aria-label="Quick Capture">+</a><a href="journal.html">Journal</a><a href="settings.html">Settings</a></nav>
+</body></html>

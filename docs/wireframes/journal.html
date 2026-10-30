@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wireframe: Journal</title><link rel="icon" href="data:,"><link rel="stylesheet" href="wireframes.css"></head>
+<body>
+<header class="top"><span class="brand">Meeple Journal</span>
+<nav aria-label="Main"><a href="home.html">Home</a><a href="library.html">Library</a><a href="journal.html" aria-current="page">Journal</a><a href="settings.html">Settings</a></nav>
+<a class="btn primary" href="quick-capture.html#thought">+ Quick Capture</a></header>
+<main style="max-width:760px">
+<h1>Journal</h1>
+<div class="toolbar">
+<div class="grow"><label for="q" class="muted">Search</label><input id="q" class="field" style="margin:0" placeholder="Search thoughts and plays"></div>
+</div>
+<div class="row" role="group" aria-label="Type" style="margin-bottom:24px">
+<button type="button" class="chip" aria-pressed="true">All</button><button type="button" class="chip" aria-pressed="false">Plays</button><button type="button" class="chip" aria-pressed="false">Thoughts</button><button type="button" class="chip" aria-pressed="false">Assessments</button>
+</div>
+
+<h2>October 2026</h2>
+<div class="list">
+<a href="game-detail.html" style="text-decoration:none"><div class="cover" style="width:56px">Cover</div><div><strong>Wingspan</strong> <span class="muted">· play</span><p class="muted">28 Oct · 60 min</p><p>Won by 4 points. Needs a bigger table.</p></div></a>
+<a href="game-detail.html" style="text-decoration:none"><div class="cover" style="width:56px">Cover</div><div><strong>Spirit Island</strong> <span class="muted">· thought</span><p class="muted">25 Oct · observation</p><p>Second spirit feels much easier to teach.</p></div></a>
+</div>
+<h2 style="margin-top:24px">September 2026</h2>
+<div class="list">
+<a href="game-detail.html" style="text-decoration:none"><div class="cover" style="width:56px">Cover</div><div><strong>Ark Nova</strong> <span class="muted">· assessment</span><p class="muted">23 Sep · 8.5</p><p>Heavy, but the card combos keep paying off.</p></div></a>
+</div>
+<p><a href="#">Load older entries</a></p>
+
+<div class="state"><strong>Empty state</strong><p class="muted">Your journal is empty. Capture your first thought.</p><a class="btn primary" href="quick-capture.html#thought">Capture a thought</a></div>
+<div class="state"><strong>No results</strong><p class="muted">Nothing matches "xyz".</p></div>
+<div class="state"><strong>Loading / Error</strong><p class="muted">Three grey rows while loading. Error: "We could not load your journal. Try again".</p></div>
+
+<div class="note">Chronological, newest first, grouped by month. Plays, thoughts and assessments in one list. Each row links to its game, with at most 2 metadata items. Search covers note text and game titles. Tapping a thought opens it to edit.</div>
+</main>
+<nav class="bottom" aria-label="Main"><a href="home.html">Home</a><a href="library.html">Library</a><a class="capture" href="quick-capture.html#thought" aria-label="Quick Capture">+</a><a href="journal.html" aria-current="page">Journal</a><a href="settings.html">Settings</a></nav>
+</body></html>

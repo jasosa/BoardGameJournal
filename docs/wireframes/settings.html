@@ -1,0 +1,29 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wireframe: Settings</title><link rel="icon" href="data:,"><link rel="stylesheet" href="wireframes.css"></head>
+<body>
+<header class="top"><span class="brand">Meeple Journal</span>
+<nav aria-label="Main"><a href="home.html">Home</a><a href="library.html">Library</a><a href="journal.html">Journal</a><a href="settings.html" aria-current="page">Settings</a></nav>
+<a class="btn primary" href="quick-capture.html#add">+ Quick Capture</a></header>
+<main style="max-width:640px">
+<h1>Settings</h1>
+
+<h2 style="margin-top:24px">Account</h2>
+<p class="muted">Signed in as you@example.com</p>
+<button type="button" class="btn">Sign out</button>
+
+<h2 style="margin-top:32px">Your data</h2>
+<p class="muted">Export everything as JSON, or your collection and plays as CSV.</p>
+<div class="row"><button type="button" class="btn">Export JSON</button><button type="button" class="btn">Export CSV</button><button type="button" class="btn">Import JSON</button></div>
+
+<h2 style="margin-top:32px">Appearance</h2>
+<div class="row" role="group" aria-label="Theme"><button type="button" class="chip" aria-pressed="true">Light</button><button type="button" class="chip" aria-pressed="false">Dark</button><button type="button" class="chip" aria-pressed="false">Match device</button></div>
+
+<h2 style="margin-top:32px">Ratings</h2>
+<p class="muted">Choose which dimensions show when you assess a game.</p>
+<div class="row"><label class="chip"><input type="checkbox" checked> Mechanics</label><label class="chip"><input type="checkbox" checked> Artwork</label><label class="chip"><input type="checkbox"> Solo mode</label></div>
+
+<div class="note">Stub. Account deletion is added before any multi-user beta. Allowlist sign-up is covered by ADR-0006.</div>
+</main>
+<nav class="bottom" aria-label="Main"><a href="home.html">Home</a><a href="library.html">Library</a><a class="capture" href="quick-capture.html#add" aria-label="Quick Capture">+</a><a href="journal.html">Journal</a><a href="settings.html" aria-current="page">Settings</a></nav>
+</body></html>

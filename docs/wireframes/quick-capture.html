@@ -1,0 +1,76 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wireframe: Quick Capture</title><link rel="icon" href="data:,"><link rel="stylesheet" href="wireframes.css"></head>
+<body>
+<header class="top"><span class="brand">Meeple Journal</span>
+<nav aria-label="Main"><a href="home.html">Home</a><a href="library.html">Library</a><a href="journal.html">Journal</a><a href="settings.html">Settings</a></nav></header>
+<main>
+<h1>Quick Capture</h1>
+<p class="muted">Desktop: a dialog. Mobile: a sheet from the bottom. Three states are shown inline here. The last-used tab is remembered. Opened from a game page, it inherits the game and opens the tab for the button pressed.</p>
+
+<section id="add" aria-labelledby="h-add">
+<h2 id="h-add">1. Add a game <span class="muted">(type + 2 taps; type + 1 tap if it already exists)</span></h2>
+<div class="sheet">
+<div class="tabs" role="tablist" aria-label="Capture type">
+<button type="button" role="tab" class="chip" aria-selected="true">Add game</button><button type="button" role="tab" class="chip" aria-selected="false">Log play</button><button type="button" role="tab" class="chip" aria-selected="false">Thought</button></div>
+<label for="t">Title</label><input id="t" class="field" value="Wingsp" autofocus>
+<div class="list"><div><div class="cover" style="width:40px">Cover</div><div style="flex:1"><strong>Wingspan</strong><p class="muted">Already in your library</p></div><a class="btn primary" href="game-detail.html">Open</a></div></div>
+<p style="margin-top:8px"><a href="#add2">Not it? Create "Wingsp" manually</a></p>
+<p class="muted">With a match, the match is the main action and manual create is a link. No online catalogue yet (ADR-0003): only your own games are searched.</p>
+</div>
+
+<div class="sheet" id="add2">
+<p class="muted">Step 2, after "Create manually" (or when nothing matches, where this is the main action):</p>
+<label for="t2">Title</label><input id="t2" class="field" value="Wingsp">
+<div class="muted" style="margin-bottom:4px">Status</div>
+<div class="row" role="group" aria-label="Status" style="margin-bottom:12px"><button type="button" class="chip" aria-pressed="true">Owned</button><button type="button" class="chip" aria-pressed="false">Wishlist</button><button type="button" class="chip" aria-pressed="false">Interested</button><button type="button" class="chip" aria-pressed="false">Previously owned</button></div>
+<button type="button" class="btn primary block">Save game</button>
+<p class="muted" style="margin-top:8px">Year, players and cover upload come later, from the game page.</p>
+</div>
+</section>
+
+<section id="play" aria-labelledby="h-play">
+<h2 id="h-play" style="margin-top:32px">2. Log a play <span class="muted">(1 tap from a game page; 2 taps otherwise)</span></h2>
+<div class="sheet">
+<div class="tabs" role="tablist" aria-label="Capture type">
+<button type="button" role="tab" class="chip" aria-selected="false">Add game</button><button type="button" role="tab" class="chip" aria-selected="true">Log play</button><button type="button" role="tab" class="chip" aria-selected="false">Thought</button></div>
+<div class="muted">Game</div>
+<div class="row" style="margin-bottom:12px"><span class="chip" aria-label="Game: Wingspan">Wingspan</span><a href="#play-other">Change</a></div>
+<div class="muted">Date</div>
+<div class="row" role="group" aria-label="Date" style="margin-bottom:12px"><button type="button" class="chip" aria-pressed="true">Today</button><button type="button" class="chip" aria-pressed="false">Yesterday</button><button type="button" class="chip" aria-pressed="false">Pick a date</button></div>
+<details><summary>More detail (optional)</summary>
+<label for="du">Duration</label><input id="du" class="field"><label for="pl">Players</label><input id="pl" class="field"><label for="r">Result</label><input id="r" class="field"></details>
+<button type="button" class="btn primary block" style="margin-top:12px">Save play</button>
+</div>
+
+<div class="sheet" id="play-other">
+<p class="muted">Opened from anywhere else: no game yet, so recent games are tappable chips.</p>
+<label for="g">Game</label><input id="g" class="field" placeholder="Search your games">
+<div class="row" style="margin-bottom:12px"><button type="button" class="chip">Wingspan</button><button type="button" class="chip">Spirit Island</button><button type="button" class="chip">Ark Nova</button><button type="button" class="chip">Cascadia</button></div>
+</div>
+<div class="toast" role="status">Play logged. <a href="#">Add more detail</a></div>
+</section>
+
+<section id="thought" aria-labelledby="h-th">
+<h2 id="h-th" style="margin-top:32px">3. Capture a thought <span class="muted">(type + 1 tap)</span></h2>
+<div class="sheet">
+<div class="tabs" role="tablist" aria-label="Capture type">
+<button type="button" role="tab" class="chip" aria-selected="false">Add game</button><button type="button" role="tab" class="chip" aria-selected="false">Log play</button><button type="button" role="tab" class="chip" aria-selected="true">Thought</button></div>
+<p class="inline-banner muted">Draft recovered from this device. <a href="#">Discard</a></p>
+<label for="b">Thought</label><textarea id="b" class="field" rows="4">Second spirit feels much easier to teach.</textarea>
+<div class="row" role="group" aria-label="Tone" style="margin-bottom:12px"><button type="button" class="chip" aria-pressed="false">Positive</button><button type="button" class="chip" aria-pressed="false">Negative</button><button type="button" class="chip" aria-pressed="true">Observation</button></div>
+<div class="muted">Game (optional, defaults to the last one you viewed)</div>
+<div class="row" style="margin-bottom:12px"><span class="chip">Spirit Island</span><a href="#">Change</a></div>
+<button type="button" class="btn primary block">Save thought</button>
+<p class="muted" style="margin-top:8px">The text field is focused first. Draft is kept on this device while typing (ADR-0005). A failed save keeps the text and offers a retry.</p>
+</div>
+</section>
+
+<h2 style="margin-top:32px">States</h2>
+<div class="state"><strong>Error</strong><p class="muted">We could not save that. Your text is kept. <a href="#">Try again</a></p></div>
+<div class="state"><strong>Saving</strong><p class="muted">Button shows "Saving" and is disabled. The sheet stays open until saved.</p></div>
+
+<div class="note">On mobile the sheet is pinned to the bottom, and Save sits above the keyboard. This static page does not demonstrate that, so check it in the built UI. The central button turns into a close button while the sheet is open. Tap counts are my estimates from the sketches, not measured.</div>
+</main>
+<nav class="bottom" aria-label="Main"><a href="home.html">Home</a><a href="library.html">Library</a><a class="capture" href="home.html" aria-label="Close Quick Capture">&times;</a><a href="journal.html">Journal</a><a href="settings.html">Settings</a></nav>
+</body></html>

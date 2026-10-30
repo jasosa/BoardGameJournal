@@ -1,0 +1,80 @@
+/* Low-fidelity wireframe styles. Greyscale on purpose. Real tokens come in F0.7. */
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 system-ui, sans-serif; color: #222; background: #fff; }
+a { color: inherit; }
+h1, h2, h3 { font-family: Georgia, serif; line-height: 1.15; margin: 0 0 8px; }
+h1 { font-size: 28px; } h2 { font-size: 22px; } h3 { font-size: 18px; }
+p { margin: 0 0 8px; }
+.muted { color: #666; font-size: 14px; }
+.note { background: #fffbe0; border: 1px dashed #8a7d00; padding: 8px 12px; font-size: 13px; margin: 16px 0; }
+:focus-visible { outline: 2px solid #222; outline-offset: 2px; }
+
+/* Layout */
+.top { display: flex; align-items: center; gap: 24px; padding: 12px 32px; border-bottom: 1px solid #ccc; }
+.top .brand { font-family: Georgia, serif; font-size: 22px; }
+.top nav { display: flex; gap: 16px; flex: 1; }
+.top nav a { padding: 10px 4px; text-decoration: none; min-height: 44px; }
+.top nav a[aria-current="page"] { border-bottom: 2px solid #222; }
+main { max-width: 1200px; margin: 0 auto; padding: 32px; }
+.bottom { display: none; }
+
+/* Pieces */
+.btn { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 0 16px; border: 1px solid #222; border-radius: 8px; background: #fff; color: #222; font: inherit; text-decoration: none; cursor: pointer; }
+.btn.primary { background: #222; color: #fff; }
+.btn.block { width: 100%; }
+.field { display: block; width: 100%; min-height: 44px; padding: 8px 12px; border: 1px solid #999; border-radius: 4px; font: inherit; margin-bottom: 12px; background: #fff; }
+.field.auto { width: auto; margin: 0; }
+label { display: block; font-size: 14px; margin-bottom: 4px; }
+.row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+.chip { min-height: 44px; display: inline-flex; align-items: center; padding: 0 14px; border: 1px solid #999; border-radius: 22px; font: inherit; font-size: 14px; background: #fff; color: #222; cursor: pointer; text-decoration: none; }
+.chip[aria-pressed="true"], .chip[aria-selected="true"] { border-color: #222; background: #eee; }
+.cover { aspect-ratio: 3 / 4; background: #ddd; border: 1px solid #bbb; border-radius: 2px; display: flex; align-items: center; justify-content: center; text-align: center; padding: 8px; font-family: Georgia, serif; color: #555; }
+.cover.fallback { background: #eee; }
+.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 24px; }
+.card { text-decoration: none; display: block; }
+.card .t { font-family: Georgia, serif; margin-top: 8px; }
+.shelf { display: flex; gap: 4px; align-items: flex-end; height: 180px; border-bottom: 6px solid #bbb; margin-bottom: 24px; overflow: hidden; }
+.shelf .spine { background: #ddd; border: 1px solid #bbb; width: 44px; writing-mode: vertical-rl; padding: 8px 0; font-size: 13px; text-align: center; text-decoration: none; }
+table { border-collapse: collapse; width: 100%; }
+th, td { text-align: left; padding: 12px 8px; border-bottom: 1px solid #ddd; }
+td a { display: block; min-height: 44px; line-height: 44px; margin: -12px -8px; padding: 0 8px; text-decoration: none; }
+.list > * { display: flex; gap: 16px; padding: 16px 0; border-bottom: 1px solid #ddd; }
+.state { border: 1px dashed #999; padding: 24px; text-align: center; border-radius: 8px; margin: 16px 0; }
+.bar { display: inline-block; width: 120px; height: 6px; background: #ddd; vertical-align: middle; }
+.bar i { display: block; height: 100%; background: #555; }
+.sheet { border: 1px solid #999; border-radius: 16px 16px 0 0; padding: 16px; background: #fff; max-width: 480px; margin: 24px auto 0; }
+.tabs { display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap; }
+.inline-banner { font-size: 14px; margin-bottom: 8px; }
+.toast { background: #222; color: #fff; padding: 12px 16px; border-radius: 8px; max-width: 480px; margin: 16px auto; font-size: 14px; }
+.toast a { color: #fff; }
+
+/* Game detail layout */
+.detail { display: grid; grid-template-columns: 320px 1fr; grid-template-areas: "cover head" "cover actions" "cover body"; column-gap: 48px; }
+.d-cover { grid-area: cover; align-self: start; }
+.d-head { grid-area: head; }
+.d-actions { grid-area: actions; margin: 16px 0 24px; }
+.d-body { grid-area: body; }
+
+/* Library toolbar */
+.titlebar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 16px; }
+.toolbar { display: flex; gap: 12px; flex-wrap: wrap; align-items: flex-end; margin-bottom: 24px; }
+.toolbar .grow { flex: 1; min-width: 200px; }
+.mob-only { display: none; }
+
+/* Mobile */
+@media (max-width: 767px) {
+  .top { padding: 12px 16px; } .top nav, .top .btn { display: none; }
+  main { padding: 16px 16px 112px; }
+  .grid { grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .detail { grid-template-columns: 112px minmax(0, 1fr); grid-template-areas: "cover head" "actions actions" "body body"; column-gap: 16px; }
+  .d-actions { flex-wrap: nowrap; gap: 8px; }
+  .d-actions .btn { flex: 1; padding: 0 8px; white-space: nowrap; }
+  .bottom { display: flex; position: fixed; left: 0; right: 0; bottom: 0; background: #fff; border-top: 1px solid #ccc; justify-content: space-around; align-items: center; padding: 8px 0 12px; }
+  .bottom a { min-width: 56px; min-height: 44px; display: flex; align-items: center; justify-content: center; text-decoration: none; font-size: 13px; }
+  .bottom a[aria-current="page"] { border-bottom: 2px solid #222; }
+  .bottom a.capture { width: 64px; height: 64px; margin-top: -28px; border-radius: 50%; background: #222; color: #fff; font-size: 28px; border-bottom: 0; }
+  th:nth-child(n+4), td:nth-child(n+4) { display: none; }
+  .sheet { max-width: none; }
+  .desk-only { display: none; }
+  .mob-only { display: flex; }
+}

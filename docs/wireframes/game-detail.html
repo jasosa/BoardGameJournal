@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Wireframe: Game detail</title><link rel="icon" href="data:,"><link rel="stylesheet" href="wireframes.css"></head>
+<body>
+<header class="top"><span class="brand">Meeple Journal</span>
+<nav aria-label="Main"><a href="home.html">Home</a><a href="library.html" aria-current="page">Library</a><a href="journal.html">Journal</a><a href="settings.html">Settings</a></nav>
+<a class="btn primary" href="quick-capture.html#play">+ Quick Capture</a></header>
+<main>
+<p class="muted"><a href="library.html">&larr; Library</a></p>
+<div class="detail">
+<div class="d-cover"><div class="cover">Cover</div></div>
+
+<div class="d-head">
+<h1>Wingspan</h1>
+<p class="muted">1-5 players · 40-70 min · 2019</p>
+<label for="st" class="muted">Status</label>
+<select id="st" class="field auto"><option>Owned</option><option>Wishlist</option><option>Interested</option><option>Previously owned</option></select>
+</div>
+
+<div class="row d-actions">
+<a class="btn primary" href="quick-capture.html#play">Log a play</a>
+<a class="btn" href="quick-capture.html#thought">Add a thought</a>
+<a class="btn" href="#">Assess</a>
+</div>
+
+<div class="d-body">
+<section aria-labelledby="r"><h2 id="r">Rating</h2>
+<p style="font-size:36px;font-family:Georgia,serif;margin:0">8.0 <span class="muted">current</span></p>
+<p class="muted">Mechanics <span class="bar"><i style="width:80%"></i></span> 8</p>
+<p class="muted">Artwork <span class="bar"><i style="width:95%"></i></span> 9.5</p>
+<details><summary>History (3 assessments)</summary>
+<p class="muted">2026-09-02 · after play · 8.0<br>2026-03-11 · after play · 7.5<br>2025-12-20 · expectation · 7.0</p></details>
+</section>
+
+<section aria-labelledby="pc" style="margin-top:32px"><h2 id="pc">Pros and cons</h2>
+<div class="row" style="align-items:flex-start"><div style="flex:1;min-width:200px"><h3>Pros</h3><p>Relaxing engine building. Gorgeous cards.</p></div><div style="flex:1;min-width:200px"><h3>Cons</h3><p>Low interaction. Long setup.</p></div></div>
+</section>
+
+<section aria-labelledby="pl" style="margin-top:32px"><h2 id="pl">Plays <span class="muted">14</span></h2>
+<div class="list"><div><div><strong>2 days ago</strong><p class="muted">3 players · 60 min · won</p></div></div>
+<div><div><strong>3 weeks ago</strong><p class="muted">Solo · 45 min</p></div></div></div>
+<a href="#">Show all plays</a>
+</section>
+
+<section aria-labelledby="jn" style="margin-top:32px"><h2 id="jn">Journal</h2>
+<div class="list"><div><div><p class="muted">5 days ago · observation</p><p>Second spirit feels much easier to teach.</p></div></div></div>
+</section>
+
+<details style="margin-top:32px"><summary>Details</summary>
+<p class="muted">Publisher: Stonemaier. Data source: manual entry. Added 2025-11-02.</p></details>
+
+<h2 style="margin-top:32px">States</h2>
+<div class="state"><strong>Plays: empty</strong><p class="muted">No plays yet.</p><a class="btn" href="quick-capture.html#play">Log the first play</a></div>
+<div class="state"><strong>Loading</strong><p class="muted">Cover block and three grey lines, no spinner.</p></div>
+<div class="state"><strong>Error</strong><p class="muted">We could not load this game. <a href="#">Try again</a></p></div>
+</div>
+</div>
+<div class="note">Mobile order: small cover with title, 3 facts and status; then actions; then rating, pros and cons, plays, journal, details. Title and "Log a play" are on the first screen. Opening Quick Capture from this page inherits Wingspan. The central button on this page opens Log a play. Tabs are not used. Changing status never removes plays or journal entries. No campaigns or photos (P1).</div>
+</main>
+<nav class="bottom" aria-label="Main"><a href="home.html">Home</a><a href="library.html" aria-current="page">Library</a><a class="capture" href="quick-capture.html#play" aria-label="Quick Capture: log a play">+</a><a href="journal.html">Journal</a><a href="settings.html">Settings</a></nav>
+</body></html>
