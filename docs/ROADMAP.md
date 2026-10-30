@@ -9,7 +9,7 @@ Tick items when verified (see Definition of done in `CLAUDE.md`). Each item is m
 - [x] F0.3 Catalogue provider research (BGG XML API2 and alternatives): access, registration, rate limits, caching, image rights, attribution. Output: ADR.
   - AC: ADR lists sources with links; clear yes/no on caching metadata and images.
   - Done 2026-10-30: ADR-0003 Accepted. BGG pages read. BGG deferred; manual provider only for now.
-- [ ] F0.4 Resolve open questions in STATUS.md that affect the schema (rating model, provider). Output: ADRs.
+- [x] F0.4 Resolve open questions in STATUS.md that affect the schema (rating model, provider). Output: ADRs.
 - [ ] F0.5 Low-fidelity wireframes: Home, Library, Game Detail, Quick Capture (desktop + mobile).
   - AC: user approved the wireframes.
 - [ ] F0.6 Scaffold: Next.js + TS strict + Tailwind + ESLint + Prettier + Vitest + Playwright + Supabase CLI. Update CLAUDE.md commands.
