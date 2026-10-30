@@ -5,7 +5,7 @@ How to work on Meeple Journal with Claude Code (main coding tool) and Cowork (pl
 ## 1. One-time install on Windows
 
 1. **Git for Windows** (Claude Code uses Git Bash for shell commands): https://git-scm.com/download/win
-2. **Node.js 22 LTS**: https://nodejs.org (check: `node -v`).
+2. **Node.js 24 LTS** (22 also works): https://nodejs.org (check: `node -v`).
 3. **Claude Code** (PowerShell): `irm https://claude.ai/install.ps1 | iex`
    Then `claude` in a terminal and sign in with your Claude account. Check: `claude doctor`.
    Docs: https://code.claude.com/docs/en/setup
