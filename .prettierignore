@@ -1,0 +1,16 @@
+node_modules
+.next
+out
+build
+coverage
+test-results
+playwright-report
+package-lock.json
+next-env.d.ts
+public
+supabase
+docs
+.claude
+.playwright-mcp
+CLAUDE.md
+README.md

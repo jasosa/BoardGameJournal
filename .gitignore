@@ -28,6 +28,9 @@ CLAUDE.local.md
 .claude/settings.local.json
 .playwright-mcp/
 
+# vercel
+.vercel/
+
 # os / editor
 .DS_Store
 Thumbs.db
