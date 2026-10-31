@@ -14,7 +14,9 @@ Last updated: 2026-10-31
 
 ## Open questions
 
-None.
+| # | Question | Default if not decided | Affects |
+|---|---|---|---|
+| Q7 | The user wants no login screen for now. How do we keep owner-only RLS without one? | Keep Supabase Auth with one pre-created user and no sign-up form; sign in automatically in dev | F0.9, F0.10, ADR-0006 |
 
 ## Decisions
 
@@ -28,9 +30,9 @@ None.
 
 ## Tech debt
 
-- `supabase/config.toml` still has the init defaults: `[auth] enable_signup = true` and `[auth.email] enable_signup = true`. ADR-0006 wants public sign-up off. Decide the allowlist mechanism in the identity slice (F0.10), then change this and the hosted project settings.
+- Local `supabase/config.toml` now has public sign-up off (`[auth]` and `[auth.email]`). The hosted project must be set the same way when it exists. The user said login is not needed for now: how personal data is owned without login is an open question (see below).
 - `npm install` reports 17 moderate audit findings in dev dependencies. Not reviewed yet. Check before F0.8 CI.
-- `next dev` writes `AGENTS.md` (Next.js agent notes). Committed because it is regenerated on every dev run. Remove it if it conflicts with CLAUDE.md.
+- `next dev` writes `AGENTS.md` on every run. It is removed from git and git-ignored. Ignore the file.
 - Template defaults left out on purpose: `cacheComponents` and `partialPrefetching` in `next.config.ts`. Revisit when data fetching starts.
 
 ## Migration notes

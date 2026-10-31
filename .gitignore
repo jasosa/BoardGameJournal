@@ -23,6 +23,9 @@ playwright-report/
 blob-report/
 playwright/.cache/
 
+# written by `next dev`, not wanted (CLAUDE.md is the rulebook)
+AGENTS.md
+
 # claude personal files
 CLAUDE.local.md
 .claude/settings.local.json
