@@ -19,12 +19,14 @@ Next.js (App Router) + React + TypeScript (strict) · Tailwind CSS + selected sh
 
 ## Commands
 
-Not scaffolded yet. When the app is scaffolded, replace this list with the real scripts and keep it current.
+Node 24 (see `.nvmrc`). Keep this list current.
 
-- `npm run dev` - dev server
+- `npm run dev` - dev server (also writes `AGENTS.md`, a Next.js block we keep committed)
+- `npm run build` - production build
 - `npm run lint` / `npm run typecheck`
+- `npm run format` / `npm run format:check` - Prettier (docs, `.claude`, `supabase` are ignored)
 - `npm test` - Vitest (domain + integration)
-- `npm run test:e2e` - Playwright
+- `npm run test:e2e` - Playwright, `desktop` (1280x800) and `mobile` (390x844) projects; starts the dev server itself. First run: `npx playwright install chromium`
 - `npx supabase start` / `npx supabase db reset` - local database (needs Docker Desktop)
 - `npx supabase migration new <name>` - new migration
 

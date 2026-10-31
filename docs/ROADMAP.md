@@ -12,7 +12,7 @@ Tick items when verified (see Definition of done in `CLAUDE.md`). Each item is m
 - [x] F0.4 Resolve open questions in STATUS.md that affect the schema (rating model, provider). Output: ADRs.
 - [x] F0.5 Low-fidelity wireframes: Home, Library, Game Detail, Quick Capture (desktop + mobile).
   - AC: user approved the wireframes.
-- [ ] F0.6 Scaffold: Next.js + TS strict + Tailwind + ESLint + Prettier + Vitest + Playwright + Supabase CLI. Update CLAUDE.md commands.
+- [x] F0.6 Scaffold: Next.js + TS strict + Tailwind + ESLint + Prettier + Vitest + Playwright + Supabase CLI. Update CLAUDE.md commands.
   - AC: `npm run lint`, `typecheck`, `test`, `test:e2e` all run green on an empty app.
 - [ ] F0.7 Design tokens + fonts + base layout (nav, Quick Capture button, light/dark).
   - AC: design-reviewer has no blocking findings.
