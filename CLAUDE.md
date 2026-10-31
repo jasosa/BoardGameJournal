@@ -21,7 +21,7 @@ Next.js (App Router) + React + TypeScript (strict) · Tailwind CSS + selected sh
 
 Node 24 (see `.nvmrc`). Keep this list current.
 
-- `npm run dev` - dev server (it writes `AGENTS.md`; git-ignored, ignore it)
+- `npm run dev` - dev server
 - `npm run build` - production build
 - `npm run lint` / `npm run typecheck`
 - `npm run format` / `npm run format:check` - Prettier (docs, `.claude`, `supabase` are ignored)
