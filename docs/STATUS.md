@@ -9,7 +9,8 @@ Last updated: 2026-11-02
 
 ## Next
 
-1. F0.8 CI: create the GitHub repo, add the remote, push, and check the first run is green. Then set branch protection on `main` (require the three jobs).
+1. Set branch protection on `main` in GitHub (require the three CI jobs). Manual, done by the user.
+2. F0.9 first migrations (needs Docker Desktop running).
 2. F0.9 first migrations.
 3. F0.10 first slice.
 
@@ -37,7 +38,7 @@ None.
 - Dark token values are duplicated in `tokens.css` (explicit `data-theme` block and the media query block). Keep both in sync.
 - shadcn/ui not set up yet. Add it when Quick Capture needs a sheet or dialog.
 
-- CI integration job exports Supabase values with `supabase status -o env` using the CLI default names (`API_URL`, `ANON_KEY`, `SERVICE_ROLE_KEY`, `DB_URL`). Not tested yet (Docker was off). Confirm on the first run, and again when F0.9 adds real integration tests.
+- CI integration job exports Supabase values with `supabase status -o env` using the CLI default names (`API_URL`, `ANON_KEY`, `SERVICE_ROLE_KEY`, `DB_URL`). The step ran without error in CI, but no test reads the values yet. Confirm the names when F0.9 adds the first real integration tests.
 
 ## Migration notes
 
@@ -53,3 +54,4 @@ None.
 - 2026-10-31 F0.6 App scaffolded: Next.js 16.4.3 (App Router, `src/`), React 19.3.1, TypeScript strict + `noUncheckedIndexedAccess`, Tailwind 4, ESLint 9 + Prettier, Vitest 5, Playwright 1.64 (desktop 1280x800 and mobile 390x844), Supabase CLI 2.122 with `supabase/config.toml` (not started, not linked). Placeholder home page, `Result<T>` helper with 3 unit tests. Ran and green: `lint`, `typecheck`, `format:check`, `test` (3 passed), `build`, `test:e2e` (4 passed: 2 tests x 2 projects). Not run: `supabase start` (not needed yet), `dod-verifier` (scaffold, not a feature slice). See Tech debt for open points.
 - 2026-11-02 F0.7 App shell: tokens (`src/lib/design-system/tokens.css`, mapped in `globals.css`), Fraunces + Inter via `next/font`, light/dark/system theme with a toggle on `/settings` (stored in `localStorage`, init script avoids flash), top nav (desktop) and bottom nav with central Quick Capture button (mobile), skip link, stub pages for Library, Journal, Settings, Capture. Light bronze darkened to `#94653a` for 4.7:1 with its button text. Ran and green: `lint`, `typecheck`, `format:check`, `test` (9 passed), `test:e2e` (21 passed, 1 skipped by design: 11 tests x 2 projects). `design-reviewer` run twice. First run had 3 blocking findings (multiple bronze accents, focus ring invisible on bronze, weak bottom-nav active state), all fixed. The second run found the bottom-nav marker still not rendering (CSS order); fixed and covered by an e2e check on the computed border colour. The reviewer was not re-run after that last fix. Not tested: mobile light theme screenshots, reduced motion in a browser, production build visual check, full keyboard sweep.
 - 2026-11-02 F0.8 CI workflow written, not yet run on GitHub (no remote). `.github/workflows/ci.yml` has three jobs: `checks` (format, lint, typecheck, unit, build, `npm audit --omit=dev`), `integration` (local Supabase via `npx supabase start`), `e2e` (Playwright desktop + mobile, report uploaded on failure). Unit and integration tests are split: `npm test` is unit only, `npm run test:integration` uses `vitest.integration.config.mts` and passes with no tests until F0.9. Ran locally and green: format:check, lint, typecheck, `npm test` (9 passed), `npm run test:integration` (no files, exit 0), `build`, `npm audit --omit=dev` (0), `test:e2e` (21 passed, 1 skipped by design). Workflow YAML syntax checked with yaml-lint. Not tested: the workflow on GitHub, `actionlint`, `supabase start` and the env export step (Docker Desktop was not running).
+- 2026-11-02 F0.8 verified on GitHub: first run (push of `60dd467`) green for all three jobs (`checks`, `integration`, `e2e`). Remote `origin` is github.com/jasosa/BoardGameJournal; the remote's Initial commit was merged in and the local README kept. Not verified: branch protection (not set), the Supabase env variable names against a real test.
