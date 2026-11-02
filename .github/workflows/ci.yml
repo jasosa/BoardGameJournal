@@ -63,6 +63,11 @@ jobs:
           cache: npm
       - run: npm ci
       - run: npx playwright install --with-deps chromium
+      - name: Start local Supabase
+        run: npx supabase start -x studio,imgproxy,mailpit,postgres-meta,edge-runtime,logflare,vector,supavisor,realtime
+      - name: Export local connection values
+        # Same as the integration job. Local-only values, regenerated on every run.
+        run: npx supabase status -o env | sed -E 's/^([A-Z_]+)="(.*)"$/\1=\2/' >> "$GITHUB_ENV"
       - run: npm run test:e2e
       - uses: actions/upload-artifact@v7
         if: failure()

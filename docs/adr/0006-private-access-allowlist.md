@@ -20,7 +20,7 @@ Option 2.
 - Supabase Auth with public sign-up off. Only allowlisted emails can create an account.
 - Every personal table still has `user_id`, RLS and owner-only policies, so the data model is multi-user from the first migration.
 - Nothing personal is public in P0.
-- The allowlist storage mechanism (Supabase invite flow or a server-checked table) is chosen in the identity slice.
+- The allowlist storage mechanism (Supabase invite flow or a server-checked table) is chosen in the identity slice. Resolved in [ADR-0008](0008-sign-in-and-account-creation.md): accounts are created by script, no allowlist table.
 
 ## Consequences
 

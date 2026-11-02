@@ -1,42 +1,15 @@
-import { execSync } from "node:child_process";
 import { randomUUID } from "node:crypto";
 import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { adminClient } from "../support/accounts";
+import { readLocalSupabase } from "../support/supabase-env";
 
-type LocalConfig = { url: string; anonKey: string; serviceRoleKey: string };
-
-function readConfig(): LocalConfig {
-  let vars: Record<string, string | undefined> = process.env;
-  if (!vars.API_URL || !vars.ANON_KEY || !vars.SERVICE_ROLE_KEY) {
-    // Not exported (local run): ask the running local stack.
-    const out = execSync("npx supabase status -o env", { encoding: "utf8" });
-    vars = { ...process.env };
-    for (const line of out.split(/\r?\n/)) {
-      const m = /^([A-Z_]+)="?(.*?)"?$/.exec(line.trim());
-      if (m?.[1]) vars[m[1]] = m[2];
-    }
-  }
-  const url = vars.API_URL;
-  const anonKey = vars.ANON_KEY ?? vars.PUBLISHABLE_KEY;
-  const serviceRoleKey = vars.SERVICE_ROLE_KEY ?? vars.SECRET_KEY;
-  if (!url || !anonKey || !serviceRoleKey) {
-    throw new Error(
-      "Local Supabase values not found. Run `npx supabase start` first.",
-    );
-  }
-  return { url, anonKey, serviceRoleKey };
-}
-
-const config = readConfig();
+const config = readLocalSupabase();
 const clientOptions = {
   auth: { persistSession: false, autoRefreshToken: false },
 };
 
 /** Service role client. Tests only. Bypasses RLS. */
-export const admin: SupabaseClient = createClient(
-  config.url,
-  config.serviceRoleKey,
-  clientOptions,
-);
+export const admin: SupabaseClient = adminClient();
 
 /** Client with no session (anonymous visitor). */
 export function anonymousClient(): SupabaseClient {

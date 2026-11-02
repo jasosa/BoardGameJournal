@@ -20,7 +20,9 @@ test("Quick Capture is reachable and opens its page", async ({ page }) => {
     .filter({ visible: true })
     .click();
   await expect(page).toHaveURL(/\/capture$/);
-  await expect(page.getByRole("heading", { name: "Capture" })).toBeVisible();
+  await expect(
+    page.getByRole("heading", { level: 1, name: "Add a game" }),
+  ).toBeVisible();
 });
 
 test("marks the current page in the navigation", async ({ page }) => {

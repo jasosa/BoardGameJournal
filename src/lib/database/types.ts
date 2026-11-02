@@ -301,7 +301,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
-      [_ in never]: never;
+      add_manual_game: {
+        Args: { p_status: string; p_title: string };
+        Returns: string;
+      };
     };
     Enums: {
       [_ in never]: never;

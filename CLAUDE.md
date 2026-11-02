@@ -30,6 +30,7 @@ Node 24 (see `.nvmrc`). Keep this list current.
 - `npm run test:e2e` - Playwright, `desktop` (1280x800) and `mobile` (390x844) projects; starts the dev server itself. First run: `npx playwright install chromium`
 - `npx supabase start` / `npx supabase db reset` - local database (needs Docker Desktop)
 - `npx supabase migration new <name>` - new migration
+- `npm run user:create -- <email>` - create an account (public sign-up is off). Needs the Supabase URL and `SUPABASE_SERVICE_ROLE_KEY` in the local env file
 
 ## Code layout
 

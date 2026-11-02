@@ -37,3 +37,6 @@ Thumbs.db
 .vscode/*
 !.vscode/extensions.json
 *.log
+
+# e2e sign-in state (created by global setup)
+tests/e2e/.auth/
