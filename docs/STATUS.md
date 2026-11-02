@@ -1,16 +1,17 @@
 # Project Status
 
-Last updated: 2026-10-31
+Last updated: 2026-11-02
 
 ## Now
 
 - Phase 0: Foundation.
-- Harness, docs, wireframes and the app scaffold are in place. The app is a placeholder home page.
+- Harness, docs, wireframes, scaffold and the app shell (tokens, fonts, nav, light/dark) are in place. Pages are stubs with empty states.
 
 ## Next
 
-1. F0.7 Design tokens, fonts, base layout (nav, Quick Capture button, light/dark).
-2. F0.8 CI. F0.9 first migrations. F0.10 first slice.
+1. F0.8 CI. Review the npm audit findings first.
+2. F0.9 first migrations.
+3. F0.10 first slice.
 
 ## Open questions
 
@@ -32,6 +33,10 @@ None.
 - `npm install` reports 17 moderate audit findings in dev dependencies. Not reviewed yet. Check before F0.8 CI.
 - Template defaults left out on purpose: `cacheComponents` and `partialPrefetching` in `next.config.ts`. Revisit when data fetching starts.
 
+- UI gaps left from the F0.7 design review: no favicon (404 in console), no `loading.tsx`, `error.tsx` or `not-found.tsx`, no icons in the bottom nav. `--color-ink-faint` is 3.3:1 on paper in light, so use it only for non-text or large text.
+- Dark token values are duplicated in `tokens.css` (explicit `data-theme` block and the media query block). Keep both in sync.
+- shadcn/ui not set up yet. Add it when Quick Capture needs a sheet or dialog.
+
 ## Migration notes
 
 - None yet.
@@ -44,3 +49,4 @@ None.
 - 2026-10-30 F0.4 Open questions Q2 to Q6 resolved with the documented defaults (user accepted all). ADR-0004 to ADR-0007. Docs only, nothing run. Note: Supabase free projects can pause when idle; check before storing real data.
 - 2026-10-30 F0.5 Wireframes approved by the user. Seven static greyscale pages in `docs/wireframes/` (Home, Library, Game detail, Quick Capture, Journal, Settings stub, index). Choices: top nav on desktop, bottom nav with central capture button on mobile, gallery default, stacked game detail on mobile, one Quick Capture sheet with three tabs, no quick-action row on Home. Tested: no horizontal overflow and 44px tap targets at 390px and 1280px (scripted). `design-reviewer` findings fixed but the agent was not re-run. Not tested: keyboard order, contrast, Save above the on-screen keyboard. Tap counts are estimates.
 - 2026-10-31 F0.6 App scaffolded: Next.js 16.4.3 (App Router, `src/`), React 19.3.1, TypeScript strict + `noUncheckedIndexedAccess`, Tailwind 4, ESLint 9 + Prettier, Vitest 5, Playwright 1.64 (desktop 1280x800 and mobile 390x844), Supabase CLI 2.122 with `supabase/config.toml` (not started, not linked). Placeholder home page, `Result<T>` helper with 3 unit tests. Ran and green: `lint`, `typecheck`, `format:check`, `test` (3 passed), `build`, `test:e2e` (4 passed: 2 tests x 2 projects). Not run: `supabase start` (not needed yet), `dod-verifier` (scaffold, not a feature slice). See Tech debt for open points.
+- 2026-11-02 F0.7 App shell: tokens (`src/lib/design-system/tokens.css`, mapped in `globals.css`), Fraunces + Inter via `next/font`, light/dark/system theme with a toggle on `/settings` (stored in `localStorage`, init script avoids flash), top nav (desktop) and bottom nav with central Quick Capture button (mobile), skip link, stub pages for Library, Journal, Settings, Capture. Light bronze darkened to `#94653a` for 4.7:1 with its button text. Ran and green: `lint`, `typecheck`, `format:check`, `test` (9 passed), `test:e2e` (21 passed, 1 skipped by design: 11 tests x 2 projects). `design-reviewer` run twice. First run had 3 blocking findings (multiple bronze accents, focus ring invisible on bronze, weak bottom-nav active state), all fixed. The second run found the bottom-nav marker still not rendering (CSS order); fixed and covered by an e2e check on the computed border colour. The reviewer was not re-run after that last fix. Not tested: mobile light theme screenshots, reduced motion in a browser, production build visual check, full keyboard sweep.

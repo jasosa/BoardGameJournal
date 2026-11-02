@@ -14,8 +14,9 @@ Tick items when verified (see Definition of done in `CLAUDE.md`). Each item is m
   - AC: user approved the wireframes.
 - [x] F0.6 Scaffold: Next.js + TS strict + Tailwind + ESLint + Prettier + Vitest + Playwright + Supabase CLI. Update CLAUDE.md commands.
   - AC: `npm run lint`, `typecheck`, `test`, `test:e2e` all run green on an empty app.
-- [ ] F0.7 Design tokens + fonts + base layout (nav, Quick Capture button, light/dark).
+- [x] F0.7 Design tokens + fonts + base layout (nav, Quick Capture button, light/dark).
   - AC: design-reviewer has no blocking findings.
+  - Done 2026-11-02: blocking findings fixed. Last fix verified by e2e, reviewer not re-run.
 - [ ] F0.8 CI on GitHub Actions (lint, typecheck, unit, integration with Supabase, e2e).
 - [ ] F0.9 Initial migrations: profiles, games, game_editions, game_images, collection_entries + RLS + isolation tests.
   - AC: two-user isolation test passes; db-security-reviewer has no blocking findings.

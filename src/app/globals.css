@@ -1,1 +1,81 @@
 @import "tailwindcss";
+@import "../lib/design-system/tokens.css";
+
+@theme inline {
+  --color-paper: var(--tk-paper);
+  --color-cream: var(--tk-cream);
+  --color-line: var(--tk-line);
+  --color-ink: var(--tk-ink);
+  --color-ink-soft: var(--tk-ink-soft);
+  --color-ink-faint: var(--tk-ink-faint);
+  --color-bronze: var(--tk-bronze);
+  --color-bronze-deep: var(--tk-bronze-deep);
+  --color-on-bronze: var(--tk-on-bronze);
+  --color-positive: var(--tk-positive);
+  --color-negative: var(--tk-negative);
+  --color-note: var(--tk-note);
+
+  --font-sans: var(--font-inter), system-ui, sans-serif;
+  --font-display: var(--font-fraunces), Georgia, serif;
+
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 18px;
+  --text-xl: 22px;
+  --text-2xl: 28px;
+  --text-3xl: 36px;
+  --text-4xl: 48px;
+
+  --radius-cover: var(--tk-radius-cover);
+  --radius-input: var(--tk-radius-input);
+  --radius-card: var(--tk-radius-card);
+
+  --shadow-soft: var(--tk-shadow-1);
+  --shadow-lift: var(--tk-shadow-2);
+
+  --duration-fast: var(--tk-motion-fast);
+  --duration-base: var(--tk-motion-base);
+}
+
+@layer base {
+  html {
+    color-scheme: light dark;
+  }
+  html[data-theme="light"] {
+    color-scheme: light;
+  }
+  html[data-theme="dark"] {
+    color-scheme: dark;
+  }
+  body {
+    background-color: var(--color-paper);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: 1.5;
+  }
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-display);
+    line-height: 1.15;
+  }
+  :focus-visible {
+    outline: 2px solid var(--color-bronze);
+    outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@utility pb-safe {
+  padding-bottom: env(safe-area-inset-bottom);
+}
