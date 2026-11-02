@@ -27,11 +27,17 @@ export function AddGameForm({
   });
   const selected = state.status ?? "owned";
 
+  // The first history row gets the person's own "today", not the server's.
+  function submit(formData: FormData) {
+    formData.set("addedOn", new Date().toLocaleDateString("en-CA"));
+    formAction(formData);
+  }
+
   return (
     // Keyed so a failed save puts the typed values back.
     <form
       key={`${state.title ?? ""}|${state.status ?? ""}|${state.error ?? ""}`}
-      action={formAction}
+      action={submit}
       className="flex max-w-md flex-col gap-6"
       noValidate
     >

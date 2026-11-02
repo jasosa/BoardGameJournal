@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState } from "react";
+import { TextField } from "@/components/ui/TextField";
 import type { FormState } from "@/components/ui/form-state";
 import {
   COLLECTION_STATUSES,
@@ -21,8 +22,17 @@ export function StatusPicker({
   action: (previous: FormState, formData: FormData) => Promise<FormState>;
 }) {
   const [state, formAction, pending] = useActionState(action, { error: null });
+
+  // With no date chosen, use the person's own "today", not the server's.
+  function submit(formData: FormData) {
+    if (!String(formData.get("changedOn") ?? "").trim()) {
+      formData.set("changedOn", new Date().toLocaleDateString("en-CA"));
+    }
+    formAction(formData);
+  }
+
   return (
-    <form action={formAction}>
+    <form action={submit}>
       <input type="hidden" name="entryId" value={entryId} />
       <div role="group" aria-label={label} className="flex flex-wrap gap-2">
         {COLLECTION_STATUSES.map((status) => (
@@ -39,6 +49,19 @@ export function StatusPicker({
           </button>
         ))}
       </div>
+      <details className="mt-2">
+        <summary className="text-ink-soft hover:text-ink inline-flex min-h-11 cursor-pointer items-center text-sm underline underline-offset-4">
+          Different date
+        </summary>
+        <div className="mt-1 max-w-xs">
+          <TextField
+            label="Date of change"
+            name="changedOn"
+            type="date"
+            hint="Optional. Pick a status above to save it."
+          />
+        </div>
+      </details>
       {state.error ? (
         <p role="alert" className="text-negative mt-2 text-sm">
           {state.error}

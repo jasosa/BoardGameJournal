@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { CoverControls } from "@/components/game/CoverControls";
 import { CoverTile } from "@/components/game/CoverTile";
+import { StatusHistory } from "@/components/game/StatusHistory";
 import { StatusPicker } from "@/components/game/StatusPicker";
 import { BackLink } from "@/components/ui/BackLink";
 import { formatFacts } from "@/features/catalogue/facts";
@@ -42,7 +43,7 @@ export default async function GamePage({
     );
   }
 
-  const { game, entries } = result.data;
+  const { game, entries, history } = result.data;
   const facts = formatFacts({
     year: game.year,
     minPlayers: game.minPlayers,
@@ -114,6 +115,18 @@ export default async function GamePage({
           </div>
         )}
       </section>
+
+      {history.length > 0 ? (
+        <section aria-labelledby="history-heading" className="mt-10">
+          <h2 id="history-heading" className="mb-3 text-xl">
+            History
+          </h2>
+          <StatusHistory
+            entryIds={entries.map((entry) => entry.entryId)}
+            history={history}
+          />
+        </section>
+      ) : null}
 
       <section aria-labelledby="details-heading" className="mt-10">
         <h2 id="details-heading" className="mb-3 text-xl">

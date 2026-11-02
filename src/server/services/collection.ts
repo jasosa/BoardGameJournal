@@ -32,6 +32,7 @@ export async function addManualGame(
   const { data, error } = await supabase.rpc("add_manual_game", {
     p_title: parsed.data.title,
     p_status: parsed.data.status,
+    ...(parsed.data.addedOn ? { p_added_on: parsed.data.addedOn } : {}),
   });
   if (error || !data) {
     return err("save_failed", "We could not save the game. Try again.");
@@ -77,8 +78,9 @@ export async function listLibrary(
 }
 
 /**
- * Moves one collection entry to another status. Only the current status is stored for now;
- * a dated status history comes with L3. RLS limits the update to the caller's own entries.
+ * Moves one copy of a game to another status and records the change in its history, with the
+ * date the person gave (today when blank). Both happen in one database function, which also
+ * checks that the copy belongs to the caller. Setting the status it already has changes nothing.
  */
 export async function changeEntryStatus(
   supabase: Client,
@@ -92,17 +94,18 @@ export async function changeEntryStatus(
     );
   }
 
-  const { data, error } = await supabase
-    .from("collection_entries")
-    .update({ status: parsed.data.status })
-    .eq("id", parsed.data.entryId)
-    .select("id, status");
+  const { data, error } = await supabase.rpc("change_entry_status", {
+    p_entry_id: parsed.data.entryId,
+    p_status: parsed.data.status,
+    ...(parsed.data.changedOn ? { p_changed_on: parsed.data.changedOn } : {}),
+  });
   if (error) {
-    return err("save_failed", "We could not change the status. Try again.");
+    return error.message.includes("invalid_date")
+      ? err("validation", "Choose a date that is not in the future.")
+      : err("save_failed", "We could not change the status. Try again.");
   }
-  const row = data[0];
-  if (!row || !isStatus(row.status)) {
+  if (!data || !isStatus(data)) {
     return err("not_found", "We could not find that game.");
   }
-  return ok({ entryId: row.id, status: row.status });
+  return ok({ entryId: parsed.data.entryId, status: data });
 }

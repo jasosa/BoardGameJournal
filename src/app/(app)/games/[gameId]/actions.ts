@@ -13,6 +13,7 @@ export async function changeStatus(
   const result = await changeEntryStatus(supabase, {
     entryId: String(formData.get("entryId") ?? ""),
     status: String(formData.get("status") ?? ""),
+    changedOn: String(formData.get("changedOn") ?? ""),
   });
   if (!result.ok) return { error: result.error.message };
 

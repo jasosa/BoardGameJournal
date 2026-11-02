@@ -53,18 +53,25 @@ describe("collection_entries RLS", () => {
   });
 
   it("does not let B update A's entry", async () => {
-    const { data } = await b.client
+    // Status can only change through change_entry_status, so a direct update is refused outright.
+    const status = await b.client
       .from("collection_entries")
       .update({ status: "wishlist" })
+      .eq("id", entryId);
+    expect(status.error).not.toBeNull();
+    // Other fields are allowed, but row-level security hides A's entry from B.
+    const notes = await b.client
+      .from("collection_entries")
+      .update({ notes: "Hacked" })
       .eq("id", entryId)
       .select();
-    expect(data).toEqual([]);
+    expect(notes.data).toEqual([]);
     const row = await admin
       .from("collection_entries")
-      .select("status")
+      .select("status, notes")
       .eq("id", entryId)
       .single();
-    expect(row.data?.status).toBe("owned");
+    expect(row.data).toEqual({ status: "owned", notes: null });
   });
 
   it("does not let B delete A's entry", async () => {

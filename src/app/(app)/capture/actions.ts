@@ -13,8 +13,9 @@ export async function addGame(
 
   const title = String(formData.get("title") ?? "");
   const status = String(formData.get("status") ?? "");
+  const addedOn = String(formData.get("addedOn") ?? "");
 
-  const result = await addManualGame(supabase, { title, status });
+  const result = await addManualGame(supabase, { title, status, addedOn });
   if (!result.ok) {
     // Keep what the person typed so nothing is lost on an error.
     // The only input a person can get wrong is the title: a status is always selected.

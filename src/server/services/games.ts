@@ -8,6 +8,7 @@ import {
 import {
   COLLECTION_STATUSES,
   type CollectionStatus,
+  type StatusChange,
 } from "@/features/collection/schemas";
 import type { Database } from "@/lib/database/types";
 import { err, ok, type Result } from "@/lib/result";
@@ -18,6 +19,8 @@ export type GameDossier = {
   game: GameDetails;
   /** The caller's own copies of this game, oldest first. */
   entries: { entryId: string; status: CollectionStatus }[];
+  /** Every status change of those copies, latest logged first. */
+  history: StatusChange[];
 };
 
 function isStatus(value: string): value is CollectionStatus {
@@ -54,6 +57,23 @@ export async function getGameDossier(
     .order("created_at", { ascending: true });
   if (entriesError) return err("load_failed", "We could not load this game.");
 
+  const entryIds = rows.map((row) => row.id);
+  const { data: changeRows, error: historyError } =
+    entryIds.length === 0
+      ? { data: [], error: null }
+      : await supabase
+          .from("collection_status_changes")
+          .select(
+            "id, entry_id, from_status, to_status, changed_on, recorded_at",
+          )
+          .in("entry_id", entryIds)
+          // In the order they were logged, so the top row always matches the current status.
+          // The date the person gave is shown as the label, and may be earlier.
+          .order("recorded_at", { ascending: false })
+          .order("id", { ascending: false })
+          .limit(500);
+  if (historyError) return err("load_failed", "We could not load this game.");
+
   const { data: coverRow, error: coverError } = await supabase
     .from("game_images")
     .select("id, storage_path")
@@ -85,6 +105,21 @@ export async function getGameDossier(
     },
     entries: rows.flatMap((row) =>
       isStatus(row.status) ? [{ entryId: row.id, status: row.status }] : [],
+    ),
+    history: changeRows.flatMap((row) =>
+      isStatus(row.to_status) &&
+      (row.from_status === null || isStatus(row.from_status))
+        ? [
+            {
+              id: row.id,
+              entryId: row.entry_id,
+              from: row.from_status,
+              to: row.to_status,
+              changedOn: row.changed_on,
+              recordedAt: row.recorded_at,
+            },
+          ]
+        : [],
     ),
   });
 }

@@ -161,8 +161,8 @@ test("several copies each get their own status control", async ({
   expect(error).toBeNull();
 
   await page.reload();
-  await expect(page.getByText("Copy 1")).toBeVisible();
-  await expect(page.getByText("Copy 2")).toBeVisible();
+  await expect(page.locator("p", { hasText: /^Copy 1$/ })).toBeVisible();
+  await expect(page.locator("p", { hasText: /^Copy 2$/ })).toBeVisible();
   const copy2 = page.getByRole("group", { name: "Status of copy 2" });
   await expect(
     copy2.getByRole("button", { name: "Wishlist", pressed: true }),
@@ -217,4 +217,98 @@ test("games that are not mine, or do not exist, show the same not-found page", a
   } finally {
     await deleteAccount(other.id);
   }
+});
+
+test("every status change is kept in the History, with its date", async ({
+  page,
+}) => {
+  await openGame(page, "Wingspan");
+  const history = page.getByRole("region", { name: "History" });
+  await expect(history.getByText("Added as Owned")).toBeVisible();
+
+  await page.getByRole("button", { name: "Wishlist" }).click();
+  await expect(history.getByText("Owned → Wishlist")).toBeVisible();
+
+  // A change that happened in the past, with its own date.
+  await page.getByText("Different date").click();
+  await page.getByLabel("Date of change").fill("2019-06-01");
+  await page.getByRole("button", { name: "Previously owned" }).click();
+  await expect(history.getByText("Wishlist → Previously owned")).toBeVisible();
+  await expect(history.getByText("1 June 2019")).toBeVisible();
+
+  // Listed in the order recorded: the latest change is on top and matches the current status,
+  // even though its date (2019) is the oldest.
+  const rows = history.getByRole("listitem");
+  await expect(rows).toHaveCount(3);
+  await expect(rows.nth(0)).toContainText("1 June 2019");
+  await expect(rows.nth(0)).toContainText("Wishlist → Previously owned");
+  await expect(rows.nth(2)).toContainText("Added as Owned");
+  await expect(
+    page.getByRole("button", { name: "Previously owned", pressed: true }),
+  ).toBeVisible();
+
+  // It survives a reload, and the page still fits.
+  await page.reload();
+  await expect(rows).toHaveCount(3);
+  const overflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollWidth -
+      document.documentElement.clientWidth,
+  );
+  expect(overflow).toBe(0);
+});
+
+test("a date in the future is refused and nothing changes", async ({
+  page,
+}) => {
+  await openGame(page, "Cascadia");
+  await page.getByText("Different date").click();
+  await page.getByLabel("Date of change").fill("2999-01-01");
+  await page.getByRole("button", { name: "Wishlist" }).click();
+  await expect(
+    page.getByText("Choose a date that is not in the future."),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Owned", pressed: true, exact: true }),
+  ).toBeVisible();
+  const history = page.getByRole("region", { name: "History" });
+  await expect(history.getByRole("listitem")).toHaveCount(1);
+});
+
+test("the date field can be opened and used from the keyboard", async ({
+  page,
+}) => {
+  await openGame(page, "Heat");
+  const summary = page.getByText("Different date");
+  await summary.focus();
+  await page.keyboard.press("Enter");
+  const field = page.getByLabel("Date of change");
+  await expect(field).toBeVisible();
+  await field.focus();
+  await expect(field).toBeFocused();
+});
+
+test("each copy has its own history", async ({ page }, testInfo) => {
+  const gameId = await openGame(page, "Heat");
+  const account = accountFor(testInfo.project.name, "game");
+  const { error } = await adminClient()
+    .from("collection_entries")
+    .insert({ user_id: account.id, game_id: gameId, status: "wishlist" });
+  expect(error).toBeNull();
+  await page.reload();
+
+  const copy2 = page.getByRole("group", { name: "Status of copy 2" });
+  await copy2.getByRole("button", { name: "Interested" }).click();
+  await expect(
+    copy2.getByRole("button", { name: "Interested", pressed: true }),
+  ).toBeVisible();
+
+  const history = page.getByRole("region", { name: "History" });
+  await expect(history.getByRole("heading", { name: "Copy 1" })).toBeVisible();
+  await expect(history.getByRole("heading", { name: "Copy 2" })).toBeVisible();
+  await expect(history.getByText("Added as Owned")).toBeVisible();
+  await expect(history.getByText("Added as Wishlist")).toBeVisible();
+  await expect(history.getByText("Wishlist → Interested")).toBeVisible();
+  // Copy 1 never changed, so it has only its first row.
+  await expect(history.getByText("Owned → ")).toHaveCount(0);
 });

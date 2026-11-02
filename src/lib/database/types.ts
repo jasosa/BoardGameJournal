@@ -98,6 +98,45 @@ export type Database = {
           },
         ];
       };
+      collection_status_changes: {
+        Row: {
+          changed_on: string;
+          entry_id: string;
+          from_status: string | null;
+          id: string;
+          recorded_at: string;
+          to_status: string;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          changed_on: string;
+          entry_id: string;
+          from_status?: string | null;
+          id?: string;
+          recorded_at?: string;
+          to_status: string;
+          user_id: string;
+        };
+        Update: {
+          changed_on?: string;
+          entry_id?: string;
+          from_status?: string | null;
+          id?: string;
+          recorded_at?: string;
+          to_status?: string;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "collection_status_changes_entry_id_fkey";
+            columns: ["entry_id"];
+            isOneToOne: false;
+            referencedRelation: "collection_entries";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       game_editions: {
         Row: {
           created_at: string;
@@ -302,7 +341,11 @@ export type Database = {
     };
     Functions: {
       add_manual_game: {
-        Args: { p_status: string; p_title: string };
+        Args: { p_added_on?: string; p_status: string; p_title: string };
+        Returns: string;
+      };
+      change_entry_status: {
+        Args: { p_changed_on?: string; p_entry_id: string; p_status: string };
         Returns: string;
       };
     };

@@ -74,10 +74,7 @@ describe("game page services", () => {
         "owned",
         "wishlist",
       ]);
-      await a.client
-        .from("collection_entries")
-        .delete()
-        .eq("id", second.data!.id);
+      await admin.from("collection_entries").delete().eq("id", second.data!.id);
     });
 
     it("says not_found to B for A's private game", async () => {
