@@ -19,8 +19,9 @@ Tick items when verified (see Definition of done in `CLAUDE.md`). Each item is m
   - Done 2026-11-02: blocking findings fixed. Last fix verified by e2e, reviewer not re-run.
 - [x] F0.8 CI on GitHub Actions (lint, typecheck, unit, integration with Supabase, e2e).
   - Done 2026-11-02: first GitHub Actions run green (checks, integration, e2e). Run 41419710580.
-- [ ] F0.9 Initial migrations: profiles, games, game_editions, game_images, collection_entries + RLS + isolation tests.
+- [x] F0.9 Initial migrations: profiles, games, game_editions, game_images, collection_entries + RLS + isolation tests.
   - AC: two-user isolation test passes; db-security-reviewer has no blocking findings.
+  - Done 2026-11-02: verified locally. CI run on GitHub pending the push.
 - [ ] F0.10 **First slice**: sign in → add a game manually → it is stored in my collection → it shows in the gallery.
   - AC: e2e passes on desktop and mobile projects; screenshot reviewed.
 

@@ -9,9 +9,9 @@ Last updated: 2026-11-02
 
 ## Next
 
-1. Set branch protection on `main` in GitHub (require the three CI jobs). Manual, done by the user.
-2. F0.9 first migrations (needs Docker Desktop running).
-3. F0.10 first slice.
+1. Push and check the CI run is green with the new migration and integration tests.
+2. Set branch protection on `main` in GitHub (require the three CI jobs). Manual, done by the user.
+3. F0.10 first slice: sign in, add a game manually, see it in the gallery. Choose the allowlist mechanism (ADR-0006) there.
 
 ## Open questions
 
@@ -29,7 +29,7 @@ None.
 
 ## Tech debt
 
-- Local `supabase/config.toml` has public sign-up off (`[auth]` and `[auth.email]`). The hosted project must be set the same way when it exists. The user confirmed we need real users and a login page (ADR-0006 stands). The allowlist mechanism is still to be chosen in F0.10.
+- Auth config (`supabase/config.toml`): `[auth] enable_signup = false` blocks public sign-up; `[auth.email] enable_signup = true` is needed so password login works (false disables the whole email provider). The hosted Supabase project must match: "Allow new users to sign up" off, email provider on. Check before the first deploy. The allowlist mechanism is still to be chosen in F0.10.
 - Accepted risk (2026-11-02): `npm audit` reports 17 moderate findings in dev dependencies. All come from one advisory, a `minimatch` denial of service (GHSA-g3hv-75wg-m249), pulled in by the ESLint toolchain. Dev only, not shipped. `npm audit --omit=dev` finds 0. Do not run `npm audit fix --force` (it downgrades eslint to 4.0.0). CI (F0.8) gates on `npm audit --omit=dev`. Revisit when `eslint` or `eslint-config-next` updates `minimatch`.
 - Template defaults left out on purpose: `cacheComponents` and `partialPrefetching` in `next.config.ts`. Revisit when data fetching starts.
 
@@ -37,11 +37,12 @@ None.
 - Dark token values are duplicated in `tokens.css` (explicit `data-theme` block and the media query block). Keep both in sync.
 - shadcn/ui not set up yet. Add it when Quick Capture needs a sheet or dialog.
 
-- CI integration job exports Supabase values with `supabase status -o env` using the CLI default names (`API_URL`, `ANON_KEY`, `SERVICE_ROLE_KEY`, `DB_URL`). The step ran without error in CI, but no test reads the values yet. Confirm the names when F0.9 adds the first real integration tests.
+
+- Review leftovers (non-blocking): when storage lands, tie `game_images.storage_path` to a private bucket with a per-user prefix policy. If private games are ever shared, account deletion can fail on `collection_entries.game_id` (no action) when another user's collection references them; handle in the sharing ADR. The `supabase_admin` default privileges still grant `anon` on new objects created by that role; our migrations run as `postgres`, which is locked down.
 
 ## Migration notes
 
-- None yet.
+- `20261102103909_initial_schema.sql` (F0.9): creates `profiles`, `games`, `game_editions`, `game_images`, `collection_entries`, two functions and a trigger on `auth.users`. No data existed before. Rollback locally: delete the file and run `npx supabase db reset`. Once real data exists, write a new migration instead, never edit this one. No hosted project yet, so nothing to apply remotely.
 
 ## Done
 
@@ -54,3 +55,4 @@ None.
 - 2026-11-02 F0.7 App shell: tokens (`src/lib/design-system/tokens.css`, mapped in `globals.css`), Fraunces + Inter via `next/font`, light/dark/system theme with a toggle on `/settings` (stored in `localStorage`, init script avoids flash), top nav (desktop) and bottom nav with central Quick Capture button (mobile), skip link, stub pages for Library, Journal, Settings, Capture. Light bronze darkened to `#94653a` for 4.7:1 with its button text. Ran and green: `lint`, `typecheck`, `format:check`, `test` (9 passed), `test:e2e` (21 passed, 1 skipped by design: 11 tests x 2 projects). `design-reviewer` run twice. First run had 3 blocking findings (multiple bronze accents, focus ring invisible on bronze, weak bottom-nav active state), all fixed. The second run found the bottom-nav marker still not rendering (CSS order); fixed and covered by an e2e check on the computed border colour. The reviewer was not re-run after that last fix. Not tested: mobile light theme screenshots, reduced motion in a browser, production build visual check, full keyboard sweep.
 - 2026-11-02 F0.8 CI workflow written, not yet run on GitHub (no remote). `.github/workflows/ci.yml` has three jobs: `checks` (format, lint, typecheck, unit, build, `npm audit --omit=dev`), `integration` (local Supabase via `npx supabase start`), `e2e` (Playwright desktop + mobile, report uploaded on failure). Unit and integration tests are split: `npm test` is unit only, `npm run test:integration` uses `vitest.integration.config.mts` and passes with no tests until F0.9. Ran locally and green: format:check, lint, typecheck, `npm test` (9 passed), `npm run test:integration` (no files, exit 0), `build`, `npm audit --omit=dev` (0), `test:e2e` (21 passed, 1 skipped by design). Workflow YAML syntax checked with yaml-lint. Not tested: the workflow on GitHub, `actionlint`, `supabase start` and the env export step (Docker Desktop was not running).
 - 2026-11-02 F0.8 verified on GitHub: first run (push of `60dd467`) green for all three jobs (`checks`, `integration`, `e2e`). Remote `origin` is github.com/jasosa/BoardGameJournal; the remote's Initial commit was merged in and the local README kept. Not verified: branch protection (not set), the Supabase env variable names against a real test.
+- 2026-11-02 F0.9 Initial schema and RLS (see Migration notes). Ran and green against local Supabase: `db reset` applies cleanly, `supabase db lint` no schema errors, `npm run test:integration` 42 passed (two-user isolation for all five tables, anonymous access denied with 42501, public sign-up and OTP sign-up rejected, account deletion cascade, composite keys stop cross-game editions). Also green: lint, typecheck, format:check, `npm test` (9). Checked the tests can fail: with RLS off on `collection_entries`, 8 tests failed. `db-security-reviewer`: no blocking findings; its should-fix items (provider-id squatting on editions, cross-game edition links, extra table privileges, default privileges for `anon`) were fixed and tested. `dod-verifier` passed everything applicable; its only fail (this note) is now written. Changed `config.toml` `[auth.email] enable_signup` to true (see Tech debt). Generated types in `src/lib/database/types.ts` (regenerate after each migration). Not verified: the CI run with this migration (not pushed), the hosted project, e2e and build (no UI change).
