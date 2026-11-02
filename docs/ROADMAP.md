@@ -18,6 +18,7 @@ Tick items when verified (see Definition of done in `CLAUDE.md`). Each item is m
   - AC: design-reviewer has no blocking findings.
   - Done 2026-11-02: blocking findings fixed. Last fix verified by e2e, reviewer not re-run.
 - [ ] F0.8 CI on GitHub Actions (lint, typecheck, unit, integration with Supabase, e2e).
+  - Workflow written 2026-11-02 (`.github/workflows/ci.yml`). Tick when the first run on GitHub is green. Needs the repo remote and a push by the user.
 - [ ] F0.9 Initial migrations: profiles, games, game_editions, game_images, collection_entries + RLS + isolation tests.
   - AC: two-user isolation test passes; db-security-reviewer has no blocking findings.
 - [ ] F0.10 **First slice**: sign in → add a game manually → it is stored in my collection → it shows in the gallery.
