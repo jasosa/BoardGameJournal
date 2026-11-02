@@ -11,7 +11,6 @@ Last updated: 2026-11-02
 
 1. Set branch protection on `main` in GitHub (require the three CI jobs). Manual, done by the user.
 2. F0.9 first migrations (needs Docker Desktop running).
-2. F0.9 first migrations.
 3. F0.10 first slice.
 
 ## Open questions
