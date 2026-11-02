@@ -30,6 +30,25 @@ test("a new account sees the empty library with a way to add a game", async ({
   await expect(page).toHaveURL(/\/capture$/);
 });
 
+test("Back returns to the page I came from", async ({ page }) => {
+  await page.goto("/settings");
+  await page
+    .getByRole("link", { name: /Quick Capture/ })
+    .filter({ visible: true })
+    .click();
+  await expect(page).toHaveURL(/\/capture$/);
+  await page.getByRole("link", { name: "Back" }).click();
+  await expect(page).toHaveURL(/\/settings$/);
+});
+
+test("Back falls back to the Library when there is no history", async ({
+  page,
+}) => {
+  await page.goto("/capture");
+  await page.getByRole("link", { name: "Back" }).click();
+  await expect(page).toHaveURL(/\/library$/);
+});
+
 test("games added by hand show in the gallery with their status", async ({
   page,
 }) => {

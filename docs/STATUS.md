@@ -12,6 +12,10 @@ Last updated: 2026-11-02
 1. Set branch protection on `main` in GitHub (require the three CI jobs). Manual, done by the user.
 2. Phase 0 exit review with the user: data model, design direction and first slice validated. Then plan Phase 1 from `docs/ROADMAP.md`.
 
+## Later (planned, not started)
+
+- Use the `oil-ui` skill for a design pass once real screens exist: after the game detail page and the Library views (L5, L4) have real covers and data, and again before the Journal (Phase 2). Keep it inside the current visual direction (CLAUDE.md, `design-system` skill) unless the user decides to reopen it. Not before: with only placeholder tiles there is nothing real to polish.
+
 ## Open questions
 
 None.
