@@ -9,7 +9,7 @@ Last updated: 2026-11-02
 
 ## Next
 
-1. F0.8 CI. Review the npm audit findings first.
+1. F0.8 CI. Gate on `npm audit --omit=dev` (see Tech debt).
 2. F0.9 first migrations.
 3. F0.10 first slice.
 
@@ -30,7 +30,7 @@ None.
 ## Tech debt
 
 - Local `supabase/config.toml` has public sign-up off (`[auth]` and `[auth.email]`). The hosted project must be set the same way when it exists. The user confirmed we need real users and a login page (ADR-0006 stands). The allowlist mechanism is still to be chosen in F0.10.
-- `npm install` reports 17 moderate audit findings in dev dependencies. Not reviewed yet. Check before F0.8 CI.
+- Accepted risk (2026-11-02): `npm audit` reports 17 moderate findings in dev dependencies. All come from one advisory, a `minimatch` denial of service (GHSA-g3hv-75wg-m249), pulled in by the ESLint toolchain. Dev only, not shipped. `npm audit --omit=dev` finds 0. Do not run `npm audit fix --force` (it downgrades eslint to 4.0.0). CI (F0.8) gates on `npm audit --omit=dev`. Revisit when `eslint` or `eslint-config-next` updates `minimatch`.
 - Template defaults left out on purpose: `cacheComponents` and `partialPrefetching` in `next.config.ts`. Revisit when data fetching starts.
 
 - UI gaps left from the F0.7 design review: no favicon (404 in console), no `loading.tsx`, `error.tsx` or `not-found.tsx`, no icons in the bottom nav. `--color-ink-faint` is 3.3:1 on paper in light, so use it only for non-text or large text.
