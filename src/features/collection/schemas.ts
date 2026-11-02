@@ -30,6 +30,13 @@ export const addManualGameInput = z.object({
 
 export type AddManualGameInput = z.infer<typeof addManualGameInput>;
 
+export const changeEntryStatusInput = z.object({
+  entryId: z.uuid(),
+  status: z.enum(COLLECTION_STATUSES, { error: "Choose a status." }),
+});
+
+export type ChangeEntryStatusInput = z.infer<typeof changeEntryStatusInput>;
+
 export type LibraryItem = {
   entryId: string;
   gameId: string;

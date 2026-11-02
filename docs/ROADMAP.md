@@ -37,6 +37,7 @@ Exit: data model, design direction and first slice validated.
 - [ ] L4 Library views: gallery, shelf, table. Search, filters (status, players, time, mechanics), sort.
   - AC: works with seeded 250 games; filter state in URL.
 - [ ] L5 Game detail dossier (cover, metadata, status, acquisition, rating, notes).
+  - Started 2026-11-02: the game page, editing facts (year, players, play time, description) and changing the current status are built and verified. Still open for L5: cover art, acquisition details, rating (L6) and notes (L7).
 - [ ] L6 Overall rating + optional dimension scores as dated assessments; current = latest.
   - AC: new assessment never overwrites old; history visible.
 - [ ] L7 Free-form notes on a game (markdown-lite).

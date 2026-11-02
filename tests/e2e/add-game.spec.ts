@@ -1,10 +1,11 @@
-import { expect, test, type Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 import {
   createAccount,
   deleteAccount,
   resetLibrary,
 } from "../support/accounts";
 import { accountFor } from "./accounts";
+import { addGame } from "./helpers";
 
 // Tests in this file share one account per project, so they run one after another.
 test.describe.configure({ mode: "serial" });
@@ -12,14 +13,6 @@ test.describe.configure({ mode: "serial" });
 test.beforeEach(async ({}, testInfo) => {
   await resetLibrary(accountFor(testInfo.project.name).id);
 });
-
-async function addGame(page: Page, title: string, status?: string) {
-  await page.goto("/capture");
-  await page.getByLabel("Title").fill(title);
-  if (status) await page.getByLabel(status, { exact: true }).check();
-  await page.getByRole("button", { name: "Save game" }).click();
-  await expect(page).toHaveURL(/\/library$/);
-}
 
 test("a new account sees the empty library with a way to add a game", async ({
   page,

@@ -58,7 +58,8 @@ describe("collection service (add_manual_game + listLibrary)", () => {
   it("rejects invalid input before touching the database", async () => {
     const before = await admin
       .from("games")
-      .select("id", { count: "exact", head: true });
+      .select("id", { count: "exact", head: true })
+      .eq("created_by", a.id);
     for (const input of [
       { title: "   ", status: "owned" },
       { title: "X", status: "stolen" },
@@ -71,7 +72,8 @@ describe("collection service (add_manual_game + listLibrary)", () => {
     }
     const after = await admin
       .from("games")
-      .select("id", { count: "exact", head: true });
+      .select("id", { count: "exact", head: true })
+      .eq("created_by", a.id);
     expect(after.count).toBe(before.count);
   });
 
@@ -79,7 +81,8 @@ describe("collection service (add_manual_game + listLibrary)", () => {
     // Bypass the Zod layer: call the function directly with a bad status.
     const before = await admin
       .from("games")
-      .select("id", { count: "exact", head: true });
+      .select("id", { count: "exact", head: true })
+      .eq("created_by", a.id);
     const { error } = await a.client.rpc("add_manual_game", {
       p_title: "Orphan check",
       p_status: "stolen",
@@ -87,7 +90,8 @@ describe("collection service (add_manual_game + listLibrary)", () => {
     expect(error).not.toBeNull();
     const after = await admin
       .from("games")
-      .select("id", { count: "exact", head: true });
+      .select("id", { count: "exact", head: true })
+      .eq("created_by", a.id);
     expect(after.count).toBe(before.count);
   });
 

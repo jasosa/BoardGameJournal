@@ -2,6 +2,7 @@ import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   COLLECTION_STATUSES,
   addManualGameInput,
+  changeEntryStatusInput,
   type CollectionStatus,
   type LibraryItem,
 } from "@/features/collection/schemas";
@@ -64,4 +65,35 @@ export async function listLibrary(
     });
   }
   return ok(items);
+}
+
+/**
+ * Moves one collection entry to another status. Only the current status is stored for now;
+ * a dated status history comes with L3. RLS limits the update to the caller's own entries.
+ */
+export async function changeEntryStatus(
+  supabase: Client,
+  input: unknown,
+): Promise<Result<{ entryId: string; status: CollectionStatus }>> {
+  const parsed = changeEntryStatusInput.safeParse(input);
+  if (!parsed.success) {
+    return err(
+      "validation",
+      parsed.error.issues[0]?.message ?? "Check the form and try again.",
+    );
+  }
+
+  const { data, error } = await supabase
+    .from("collection_entries")
+    .update({ status: parsed.data.status })
+    .eq("id", parsed.data.entryId)
+    .select("id, status");
+  if (error) {
+    return err("save_failed", "We could not change the status. Try again.");
+  }
+  const row = data[0];
+  if (!row || !isStatus(row.status)) {
+    return err("not_found", "We could not find that game.");
+  }
+  return ok({ entryId: row.id, status: row.status });
 }
