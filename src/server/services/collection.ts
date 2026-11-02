@@ -6,6 +6,7 @@ import {
   type CollectionStatus,
   type LibraryItem,
 } from "@/features/collection/schemas";
+import { coverRef } from "@/features/catalogue/cover";
 import type { Database } from "@/lib/database/types";
 import { err, ok, type Result } from "@/lib/result";
 
@@ -48,7 +49,9 @@ export async function listLibrary(
 ): Promise<Result<LibraryItem[]>> {
   const { data, error } = await supabase
     .from("collection_entries")
-    .select("id, status, game_id, games(name)")
+    .select(
+      "id, status, game_id, games(name, game_images(id, storage_path, kind))",
+    )
     .order("created_at", { ascending: false });
   if (error) {
     return err("load_failed", "We could not load your library.");
@@ -57,11 +60,17 @@ export async function listLibrary(
   const items: LibraryItem[] = [];
   for (const row of data) {
     if (!row.games || !isStatus(row.status)) continue;
+    const coverRow = row.games.game_images.find(
+      (image) => image.kind === "cover" && image.storage_path,
+    );
     items.push({
       entryId: row.id,
       gameId: row.game_id,
       title: row.games.name,
       status: row.status,
+      cover: coverRow?.storage_path
+        ? coverRef(coverRow.id, coverRow.storage_path)
+        : null,
     });
   }
   return ok(items);

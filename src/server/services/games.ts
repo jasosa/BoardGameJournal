@@ -1,5 +1,6 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
+import { coverRef } from "@/features/catalogue/cover";
 import {
   updateGameFactsInput,
   type GameDetails,
@@ -53,6 +54,14 @@ export async function getGameDossier(
     .order("created_at", { ascending: true });
   if (entriesError) return err("load_failed", "We could not load this game.");
 
+  const { data: coverRow, error: coverError } = await supabase
+    .from("game_images")
+    .select("id, storage_path")
+    .eq("game_id", gameId)
+    .eq("kind", "cover")
+    .maybeSingle();
+  if (coverError) return err("load_failed", "We could not load this game.");
+
   return ok({
     game: {
       id: game.id,
@@ -69,6 +78,10 @@ export async function getGameDossier(
       minPlayers: game.min_players,
       maxPlayers: game.max_players,
       playTimeMin: game.play_time_min,
+      cover:
+        coverRow?.storage_path != null
+          ? coverRef(coverRow.id, coverRow.storage_path)
+          : null,
     },
     entries: rows.flatMap((row) =>
       isStatus(row.status) ? [{ entryId: row.id, status: row.status }] : [],

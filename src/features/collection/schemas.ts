@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { CoverRef } from "@/features/catalogue/cover";
 
 /** Values match the check constraint on collection_entries.status. */
 export const COLLECTION_STATUSES = [
@@ -42,4 +43,5 @@ export type LibraryItem = {
   gameId: string;
   title: string;
   status: CollectionStatus;
+  cover: CoverRef | null;
 };

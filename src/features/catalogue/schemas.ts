@@ -1,4 +1,5 @@
 import { z } from "zod";
+import type { CoverRef } from "./cover";
 
 export const YEAR_MAX = 2200;
 export const DESCRIPTION_MAX_LENGTH = 2000;
@@ -72,4 +73,5 @@ export type GameDetails = {
   minPlayers: number | null;
   maxPlayers: number | null;
   playTimeMin: number | null;
+  cover: CoverRef | null;
 };

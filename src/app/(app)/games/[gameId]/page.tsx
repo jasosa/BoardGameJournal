@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { CoverControls } from "@/components/game/CoverControls";
 import { CoverTile } from "@/components/game/CoverTile";
 import { StatusPicker } from "@/components/game/StatusPicker";
 import { BackLink } from "@/components/ui/BackLink";
@@ -7,6 +8,7 @@ import { formatFacts } from "@/features/catalogue/facts";
 import { requireUser } from "@/server/authorization/require-user";
 import { getGameDossier } from "@/server/services/games";
 import { changeStatus } from "./actions";
+import { removeCoverAction, uploadCoverAction } from "./cover-actions";
 
 export const metadata = { title: "Game | Meeple Journal" };
 
@@ -53,7 +55,7 @@ export default async function GamePage({
       <BackLink fallbackHref="/library">Library</BackLink>
 
       <header className="flex items-start gap-5 md:gap-8">
-        <CoverTile title={game.title} />
+        <CoverTile title={game.title} cover={game.cover} />
         <div className="min-w-0">
           <h1 className="text-2xl break-words hyphens-auto md:text-4xl">
             {game.title}
@@ -66,6 +68,14 @@ export default async function GamePage({
             >
               {facts || game.description ? "Edit facts" : "Add facts"}
             </Link>
+          ) : null}
+          {game.editable ? (
+            <CoverControls
+              gameId={game.id}
+              hasCover={game.cover !== null}
+              uploadAction={uploadCoverAction}
+              removeAction={removeCoverAction}
+            />
           ) : null}
         </div>
       </header>
