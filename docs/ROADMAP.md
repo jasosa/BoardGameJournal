@@ -21,10 +21,10 @@ Tick items when verified (see Definition of done in `CLAUDE.md`). Each item is m
   - Done 2026-11-02: first GitHub Actions run green (checks, integration, e2e). Run 41419710580.
 - [x] F0.9 Initial migrations: profiles, games, game_editions, game_images, collection_entries + RLS + isolation tests.
   - AC: two-user isolation test passes; db-security-reviewer has no blocking findings.
-  - Done 2026-11-02: verified locally. CI run on GitHub pending the push.
+  - Done 2026-11-02: verified locally and CI green on GitHub (all three jobs).
 - [x] F0.10 **First slice**: sign in → add a game manually → it is stored in my collection → it shows in the gallery.
   - AC: e2e passes on desktop and mobile projects; screenshot reviewed.
-  - Done 2026-11-02: verified locally. CI run on GitHub pending the push.
+  - Done 2026-11-02: verified locally and CI green on GitHub (all three jobs).
 
 Exit: data model, design direction and first slice validated.
 
