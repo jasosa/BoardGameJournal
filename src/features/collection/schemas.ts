@@ -98,6 +98,10 @@ export type LibraryItem = {
   title: string;
   status: CollectionStatus;
   cover: CoverRef | null;
+  year: number | null;
+  minPlayers: number | null;
+  maxPlayers: number | null;
+  playTimeMin: number | null;
 };
 
 /** One row of a copy's history. `from` is null for the first row. */

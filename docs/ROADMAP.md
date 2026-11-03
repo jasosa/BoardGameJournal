@@ -37,8 +37,10 @@ Exit: data model, design direction and first slice validated.
 - [x] L3 Collection status changes (any transition, history kept).
   - AC: every change is recorded with from and to status and a date (today by default, or a date the person sets, not in the future); history is visible on the game page and cannot be edited by the person; a status cannot change without a history row; two-user isolation tests pass. See ADR-0009.
   - Done 2026-11-02: verified locally. CI run on GitHub pending the push.
-- [ ] L4 Library views: gallery, shelf, table. Search, filters (status, players, time, mechanics), sort.
+- [x] L4 Library views: gallery, shelf, table. Search, filters (status, players, time, mechanics), sort.
   - AC: works with seeded 250 games; filter state in URL.
+  - Built 2026-11-03: gallery, shelf and table; title search; filters for status, players and play time; sort by recently added or title; 48 per page; state in the URL. Not built yet: the mechanics filter (no mechanics data until a provider or editing exists), sorting by rating or last played (L6, Phase 2). Add them when the data exists.
+- [ ] L4b Remove from library (archive, keep history). Design in the L4 plan, Part B: `archived_at` on `collection_entries`, archive and restore functions, an Archived filter, ADR-0010. Needs the user's decision (archive only, or also permanent delete when nothing is attached).
 - [ ] L5 Game detail dossier (cover, metadata, status, acquisition, rating, notes).
   - Started 2026-11-02: the game page, editing facts (year, players, play time, description) and changing the current status are built and verified. Cover art is now L5b (done). Still open for L5: acquisition details, rating (L6) and notes (L7).
 - [x] L5b Cover upload: add, replace and remove a cover image on the game page (your own photo).

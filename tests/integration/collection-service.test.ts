@@ -41,7 +41,7 @@ describe("collection service (add_manual_game + listLibrary)", () => {
 
   it("lists the caller's entries newest first, with status", async () => {
     await addManualGame(a.client, { title: "Cascadia", status: "wishlist" });
-    const result = await listLibrary(a.client);
+    const result = await listLibrary(a.client, a.id);
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.data.map((i) => [i.title, i.status])).toEqual([
@@ -51,7 +51,7 @@ describe("collection service (add_manual_game + listLibrary)", () => {
   });
 
   it("does not show A's games to B", async () => {
-    const result = await listLibrary(b.client);
+    const result = await listLibrary(b.client, b.id);
     expect(result).toEqual({ ok: true, data: [] });
   });
 

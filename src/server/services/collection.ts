@@ -43,6 +43,28 @@ export async function addManualGame(
   return ok({ entryId: data });
 }
 
+/** The API returns at most this many rows per request (`max_rows` in supabase/config.toml). */
+const API_ROW_LIMIT = 1000;
+
+/**
+ * Reads every row of a query, one API page at a time, so a big library is never cut off at the
+ * row limit. `page` must use a stable order (add a unique column last).
+ */
+async function readAll<T>(
+  page: (
+    from: number,
+    to: number,
+  ) => PromiseLike<{ data: T[] | null; error: unknown }>,
+): Promise<T[] | null> {
+  const rows: T[] = [];
+  for (let from = 0; ; from += API_ROW_LIMIT) {
+    const { data, error } = await page(from, from + API_ROW_LIMIT - 1);
+    if (error || !data) return null;
+    rows.push(...data);
+    if (data.length < API_ROW_LIMIT) return rows;
+  }
+}
+
 /**
  * Adds another copy of a game that already exists, for the signed-in user. RLS requires that
  * the game is visible to the caller, so someone else's private game is "not found".
@@ -89,13 +111,17 @@ export async function findTitleMatches(
   const wanted = normalizeTitle(title);
   if (wanted === "") return ok([]);
 
-  const { data, error } = await supabase
-    .from("collection_entries")
-    .select("status, game_id, games(name)")
-    // RLS already limits rows to the caller; the filter is a second guard.
-    .eq("user_id", userId)
-    .order("created_at", { ascending: false });
-  if (error) {
+  const data = await readAll((from, to) =>
+    supabase
+      .from("collection_entries")
+      .select("status, game_id, games(name)")
+      // RLS already limits rows to the caller; the filter is a second guard.
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .order("id")
+      .range(from, to),
+  );
+  if (!data) {
     return err("load_failed", "We could not check your library.");
   }
 
@@ -122,14 +148,21 @@ function isStatus(value: string): value is CollectionStatus {
 /** The signed-in user's collection, newest first. RLS limits rows to the caller. */
 export async function listLibrary(
   supabase: Client,
+  userId: string,
 ): Promise<Result<LibraryItem[]>> {
-  const { data, error } = await supabase
-    .from("collection_entries")
-    .select(
-      "id, status, game_id, games(name, game_images(id, storage_path, kind))",
-    )
-    .order("created_at", { ascending: false });
-  if (error) {
+  const data = await readAll((from, to) =>
+    supabase
+      .from("collection_entries")
+      .select(
+        "id, status, game_id, games(name, year, min_players, max_players, play_time_min, game_images(id, storage_path, kind))",
+      )
+      // RLS already limits rows to the caller; the filter is a second guard.
+      .eq("user_id", userId)
+      .order("created_at", { ascending: false })
+      .order("id")
+      .range(from, to),
+  );
+  if (!data) {
     return err("load_failed", "We could not load your library.");
   }
 
@@ -147,6 +180,10 @@ export async function listLibrary(
       cover: coverRow?.storage_path
         ? coverRef(coverRow.id, coverRow.storage_path)
         : null,
+      year: row.games.year,
+      minPlayers: row.games.min_players,
+      maxPlayers: row.games.max_players,
+      playTimeMin: row.games.play_time_min,
     });
   }
   return ok(items);

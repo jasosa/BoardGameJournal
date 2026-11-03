@@ -79,3 +79,8 @@
 @utility pb-safe {
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+/* Titles written down the spine of a book (Library shelf view). */
+@utility writing-vertical {
+  writing-mode: vertical-rl;
+}

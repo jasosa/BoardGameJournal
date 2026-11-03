@@ -23,7 +23,9 @@ export type AddGameState = FormState & {
 
 export function AddGameForm({
   action,
+  initialTitle = "",
 }: {
+  initialTitle?: string;
   action: (previous: AddGameState, formData: FormData) => Promise<AddGameState>;
 }) {
   const [state, formAction, pending] = useActionState(action, {
@@ -56,7 +58,7 @@ export function AddGameForm({
       <TextField
         label="Title"
         name="title"
-        defaultValue={state.title ?? ""}
+        defaultValue={state.title ?? initialTitle}
         maxLength={TITLE_MAX_LENGTH}
         autoComplete="off"
         required

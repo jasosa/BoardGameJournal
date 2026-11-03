@@ -5,7 +5,10 @@ export type GameFacts = {
   playTimeMin: number | null;
 };
 
-function players(min: number | null, max: number | null): string | null {
+export function formatPlayers(
+  min: number | null,
+  max: number | null,
+): string | null {
   const low = min ?? max;
   const high = max ?? min;
   if (low === null || high === null) return null;
@@ -19,7 +22,7 @@ function players(min: number | null, max: number | null): string | null {
  */
 export function formatFacts(facts: GameFacts): string | null {
   const parts = [
-    players(facts.minPlayers, facts.maxPlayers),
+    formatPlayers(facts.minPlayers, facts.maxPlayers),
     facts.playTimeMin === null ? null : `${facts.playTimeMin} min`,
     facts.year === null ? null : String(facts.year),
   ].filter((part): part is string => part !== null);

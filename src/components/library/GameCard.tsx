@@ -9,8 +9,15 @@ const tile =
  * A game in the Library. With a cover the picture fills the tile; the title stays as hidden
  * text so the link keeps its name. Without one it is a cream tile with the title in display type.
  */
-export function GameCard({ item }: { item: LibraryItem }) {
-  const showStatus = item.status !== "owned";
+export function GameCard({
+  item,
+  alwaysShowStatus = false,
+}: {
+  item: LibraryItem;
+  /** Show the status even for Owned, for example when several statuses are listed together. */
+  alwaysShowStatus?: boolean;
+}) {
+  const showStatus = alwaysShowStatus || item.status !== "owned";
   return (
     <li>
       <Link href={`/games/${item.gameId}`} className="rounded-cover block">

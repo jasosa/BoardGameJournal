@@ -112,7 +112,7 @@ describe("cover upload service and storage bucket", () => {
 
     const dossier = await getGameDossier(a.client, a.id, gameId);
     expect(dossier.ok && dossier.data.game.cover?.imageId).toBe(row.data!.id);
-    const library = await listLibrary(a.client);
+    const library = await listLibrary(a.client, a.id);
     expect(
       library.ok &&
         library.data.find((i) => i.gameId === gameId)?.cover?.imageId,
