@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept B: Night Wall, Library</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Schibsted+Grotesk:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root { --base:#121316; --raised:#1b1c20; --text:#ece8df; --muted:#a39e92; --line:rgba(236,232,223,.14);
+    --display:"Schibsted Grotesk",Inter,system-ui,sans-serif; --sans:Inter,system-ui,sans-serif; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--base); color: var(--text); font: 400 14px/1.4 var(--sans); }
+  a { color: inherit; text-decoration: none; }
+
+  .bar { position: fixed; inset: 0 0 auto 0; height: 60px; z-index: 5; display: flex; align-items: center; gap: 28px; padding: 0 24px;
+    background: rgba(18,19,22,.82); backdrop-filter: blur(14px); border-bottom: 1px solid var(--line); }
+  .mark { font: 700 15px/1 var(--display); letter-spacing: .14em; text-transform: uppercase; }
+  .nav { display: flex; gap: 6px; }
+  .nav a { font: 500 14px/1 var(--sans); color: var(--muted); padding: 0 12px; min-height: 44px; display: inline-flex; align-items: center; }
+  .nav a[aria-current] { color: var(--text); }
+  .search { margin-left: 12px; width: 340px; min-height: 44px; border: 1px solid var(--line); display: flex; align-items: center; padding: 0 14px; }
+  .search input { background: transparent; border: 0; outline: 0; color: var(--text); font: 400 15px var(--sans); width: 100%; }
+  .search input::placeholder { color: var(--muted); }
+  .right { margin-left: auto; display: flex; align-items: center; gap: 22px; }
+  .chips { display: flex; gap: 4px; font: 500 13px/1 var(--sans); }
+  .chips a { color: var(--muted); padding: 0 12px; min-height: 44px; display: inline-flex; align-items: center; border-bottom: 2px solid transparent; }
+  .chips a[aria-current] { color: var(--text); border-color: var(--text); }
+  .add { font: 600 13px/1 var(--display); letter-spacing: .08em; text-transform: uppercase; border: 1px solid var(--text); padding: 0 16px; min-height: 44px; display: inline-flex; align-items: center; }
+
+  main { padding: 84px 24px 40px; }
+  .meta { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 18px; color: var(--muted); font: 500 13px var(--sans); letter-spacing: .04em; text-transform: uppercase; }
+  .meta b { color: var(--text); font-weight: 600; }
+  .wall { column-count: 6; column-gap: 14px; }
+  .tile { break-inside: avoid; margin: 0 0 18px; display: block; }
+  .tile .art { display: block; width: 100%; box-shadow: 0 10px 28px rgba(0,0,0,.55); transition: transform .25s ease, box-shadow .25s ease; }
+  .tile .art img { display: block; width: 100%; height: auto; }
+  .tile .lbl { display: flex; justify-content: space-between; gap: 8px; padding: 9px 2px 0; font: 600 13px/1.25 var(--sans); color: #d7d2c6; }
+  .tile .lbl em { font: 500 13px var(--sans); font-style: normal; color: var(--muted); white-space: nowrap; }
+  .tile .st { font: 600 12px/1 var(--sans); letter-spacing: .1em; text-transform: uppercase; color: #cfc9bb; padding: 4px 2px 0; display: block; }
+  .tile .st::before { content: ""; display: inline-block; width: 8px; height: 8px; background: var(--mark); margin-right: 8px; }
+  .tile.hot .art { transform: translateY(-6px); box-shadow: 0 0 0 2px var(--mark), 0 18px 40px rgba(0,0,0,.6); }
+  .tile.hot .lbl { color: #fff; }
+</style>
+</head>
+<body>
+<header class="bar">
+  <a class="mark" href="#">Meeple Journal</a>
+  <nav class="nav" aria-label="Main"><a href="#" aria-current="page">Library</a><a href="#">Journal</a><a href="#">Settings</a></nav>
+  <label class="search"><input type="search" placeholder="Search 214 games" aria-label="Search your games"></label>
+  <div class="right">
+    <nav class="chips" aria-label="Status filter"><a href="#" aria-current="page">All</a><a href="#">Owned</a><a href="#">Wishlist</a><a href="#">Interested</a><a href="#">Previously</a></nav>
+    <a class="add" href="#">+ Add</a>
+  </div>
+</header>
+
+<main>
+  <div class="meta"><span><b>214</b> games</span><span>Recently added</span></div>
+  <div class="wall" id="wall"></div>
+</main>
+
+<script src="../shared/data.js"></script>
+<script src="../shared/art.js"></script>
+<script>
+  const extra = [
+    ["Patchwork", 1, ["#7a2f5a", "#e8b04a", "#f6e9d0"], "grid"],
+    ["Sky Team", 0.75, ["#1b3a6b", "#f2a65a", "#f4ead2"], "sun"],
+    ["Barrage", 1.33, ["#3a3a3a", "#d2a24c", "#efe6d2"], "waves"],
+    ["Nemesis", 0.67, ["#0f2a2e", "#c8402a", "#e5efe9"], "circles"],
+    ["Oath", 0.75, ["#4a2b20", "#c9a24a", "#f1e4c8"], "mountains"],
+    ["Jaipur", 1, ["#a43a5a", "#e6b34a", "#f8ecd2"], "stripes"],
+    ["Santorini", 0.75, ["#1e5aa8", "#f4f1ea", "#e0b04a"], "mountains"],
+    ["Clank!", 0.8, ["#5a2d2d", "#e7a64a", "#f3e6cc"], "circles"],
+    ["Splendor", 1, ["#2d3f6e", "#e0c36a", "#f2ead6"], "grid"],
+    ["Kingdomino", 1.33, ["#4d7a3a", "#d9a441", "#f2ecd2"], "grid"],
+    ["Concordia", 0.75, ["#7a5a2e", "#2a5d7a", "#f1e6c8"], "waves"],
+    ["Hanabi", 0.67, ["#a02a3a", "#2a2a5a", "#f4e2c2"], "stripes"],
+  ].map(([title, ratio, palette, motif], i) => ({
+    title, ratio, palette, motif, year: 2015 + (i % 8), status: i % 5 === 3 ? "wishlist" : "owned",
+  }));
+  const all = [...GAMES.slice(0, 7), extra[0], extra[1], ...GAMES.slice(7, 10), extra[2], extra[3], ...GAMES.slice(10), ...extra.slice(4)];
+  const wall = document.getElementById("wall");
+  all.forEach((g) => {
+    const off = g.status !== "owned";
+    const el = document.createElement("a");
+    el.href = "#";
+    el.className = "tile" + (g.title === "Cascadia" ? " hot" : "");
+    el.style.setProperty("--mark", g.palette[1]);
+    el.innerHTML = `<span class="art"><img alt="" src="${coverArt(g)}"></span>
+      <span class="lbl"><span>${g.title}</span><em>${g.year}</em></span>
+      ${off ? `<span class="st">${STATUS_LABEL[g.status]}</span>` : ""}`;
+    wall.appendChild(el);
+  });
+</script>
+</body>
+</html>

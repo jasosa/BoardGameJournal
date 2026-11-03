@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Concept C: Logbook, Home (the log)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;0,7..72,700;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+  :root { --paper:#f1f3ee; --ink:#1e2b26; --soft:#55645d; --rule:#c9d0c6; --mark:#f2d14b;
+    --serif:Literata,Georgia,serif; --mono:"JetBrains Mono",ui-monospace,Menlo,monospace; }
+  * { box-sizing: border-box; margin: 0; }
+  body { background: var(--paper); color: var(--ink); font: 400 17px/1.6 var(--serif); }
+  a { color: inherit; text-decoration: none; }
+  header.top { border-bottom: 1px solid var(--rule); }
+  header.top .in { max-width: 980px; margin: 0 auto; padding: 0 32px; height: 64px; display: flex; align-items: center; gap: 36px; }
+  .mark { font: italic 400 24px/1 var(--serif); }
+  nav { display: flex; gap: 6px; font: 400 13px/1 var(--mono); }
+  nav a { padding: 0 12px; min-height: 44px; display: inline-flex; align-items: center; color: var(--soft); border-bottom: 2px solid transparent; }
+  nav a[aria-current] { color: var(--ink); border-color: var(--ink); }
+  .log { margin-left: auto; font: 500 13px/1 var(--mono); background: var(--ink); color: var(--paper); padding: 0 18px; min-height: 44px; display: inline-flex; align-items: center; }
+
+  main { max-width: 980px; margin: 0 auto; padding: 8px 32px 60px; }
+  .month { font: 500 13px/1 var(--mono); letter-spacing: .06em; text-transform: uppercase; color: var(--soft); padding: 30px 0 14px 160px; }
+  .entry { display: grid; grid-template-columns: 160px 1fr; border-top: 1px solid var(--rule); padding: 20px 0 22px; }
+  .date { font: 500 14px/1.25 var(--mono); color: var(--soft); padding-top: 6px; }
+  .date b { display: block; font: 500 32px/1 var(--mono); color: var(--ink); letter-spacing: -.03em; margin-top: 4px; }
+  .body { display: grid; grid-template-columns: 52px 1fr; gap: 20px; }
+  .stamp { width: 52px; height: 70px; object-fit: cover; display: block; outline: 1px solid var(--rule); margin-top: 4px; }
+  h2 { font: 700 22px/1.2 var(--serif); letter-spacing: -.01em; }
+  .meta { font: 400 13px/1.4 var(--mono); color: var(--soft); margin: 4px 0 8px; }
+  .note { font: 400 18px/1.55 var(--serif); max-width: 560px; }
+  mark { background: linear-gradient(transparent 58%, var(--mark) 58%, var(--mark) 92%, transparent 92%); color: inherit; padding: 0 2px; }
+
+  .entry.hero { padding: 26px 0 30px; border-top: 2px solid var(--ink); }
+  .hero .date b { font-size: 46px; }
+  .hero .body { grid-template-columns: 96px 1fr; gap: 26px; }
+  .hero .stamp { width: 96px; height: 128px; }
+  .hero h2 { font-size: 36px; line-height: 1.1; }
+  .hero .meta { font-size: 14px; margin: 8px 0 14px; }
+  .hero .note { font: 400 24px/1.45 var(--serif); max-width: 600px; }
+  .small .body { grid-template-columns: 52px 1fr; }
+  .small .note { color: var(--soft); font-size: 16px; }
+  .event h2 { font: 500 18px/1.3 var(--serif); }
+  .event .stamp { opacity: .85; }
+  .more { margin: 26px 0 0 160px; font: 500 13px var(--mono); border-bottom: 1px solid var(--ink); display: inline-block; padding-bottom: 4px; min-height: 44px; }
+</style>
+</head>
+<body>
+<header class="top"><div class="in">
+  <a class="mark" href="#">Meeple Journal</a>
+  <nav aria-label="Main"><a href="#" aria-current="page">Log</a><a href="#">Library</a><a href="#">Settings</a></nav>
+  <a class="log" href="#">+ Log a play</a>
+</div></header>
+
+<main>
+  <div class="month">October 2026</div>
+  <div id="entries"></div>
+</main>
+
+<script src="../shared/data.js"></script>
+<script src="../shared/art.js"></script>
+<script>
+  const byId = Object.fromEntries(GAMES.map((g) => [g.id, g]));
+  const items = [
+    ["hero", "wingspan", "Tue", "14", "Played · 4 players · 2 h 05 · won by Mara"],
+    ["small", "heat", "Sat", "11", "Played · 5 players · 1 h 10"],
+    ["event", "cascadia", "Fri", "3", "Added to your wishlist"],
+    ["month", "September 2026"],
+    ["small", "spirit-island", "Sun", "28", "Played · 3 players · 3 h 20 · lost"],
+    ["small", "ark-nova", "Sat", "20", "Played solo · 2 h 40 · 74 points"],
+    ["small", "brass", "Sat", "13", "Played · 4 players · 2 h 30"],
+  ];
+  const root = document.getElementById("entries");
+  for (const it of items) {
+    if (it[0] === "month") {
+      const m = document.createElement("div");
+      m.className = "month"; m.textContent = it[1]; root.appendChild(m); continue;
+    }
+    const [kind, id, dow, day, meta] = it;
+    const g = byId[id];
+    const note = kind === "hero" ? g.note.replace(g.mark, `<mark>${g.mark}</mark>`) : kind === "event" ? "" : g.note;
+    const el = document.createElement("article");
+    el.className = "entry " + kind;
+    el.innerHTML = `<div class="date">${dow}<b>${day}</b></div>
+      <div class="body"><img class="stamp" alt="" src="${coverArt(g, { ratio: 0.75 })}">
+        <div><h2><a href="#">${g.title}</a></h2><p class="meta">${meta}</p>${note ? `<p class="note">${note}</p>` : ""}</div></div>`;
+    root.appendChild(el);
+  }
+</script>
+</body>
+</html>
