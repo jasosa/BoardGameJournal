@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
-  COVER_SIZES,
+  COVER_LONG_SIDE,
+  COVER_MAX_RATIO,
+  COVER_MIN_RATIO,
+  coverDimensions,
   coverPaths,
   coverRef,
   coverUrl,
@@ -37,9 +40,28 @@ describe("cover helpers", () => {
     expect(isCoverSize(null)).toBe(false);
   });
 
-  it("stores covers at a 3:4 ratio", () => {
-    for (const { width, height } of Object.values(COVER_SIZES)) {
-      expect(width / height).toBe(3 / 4);
-    }
+  it("keeps the shape of a cover, with the longer side at the target", () => {
+    expect(coverDimensions(600, 800, 1200)).toEqual({
+      width: 900,
+      height: 1200,
+    });
+    expect(coverDimensions(1000, 1500, 1200)).toEqual({
+      width: 800,
+      height: 1200,
+    });
+    expect(coverDimensions(1600, 1200, 1200)).toEqual({
+      width: 1200,
+      height: 900,
+    });
+    expect(coverDimensions(300, 300, 480)).toEqual({ width: 480, height: 480 });
+  });
+
+  it("limits very wide and very tall pictures to the allowed range", () => {
+    const wide = coverDimensions(4000, 1000, COVER_LONG_SIDE.cover);
+    expect(wide.width / wide.height).toBeCloseTo(COVER_MAX_RATIO, 1);
+    const tall = coverDimensions(500, 3000, COVER_LONG_SIDE.cover);
+    expect(tall.width / tall.height).toBeCloseTo(COVER_MIN_RATIO, 1);
+    expect(Math.max(wide.width, wide.height)).toBe(1200);
+    expect(Math.max(tall.width, tall.height)).toBe(1200);
   });
 });

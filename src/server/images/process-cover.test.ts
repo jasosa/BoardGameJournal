@@ -1,6 +1,10 @@
 import sharp from "sharp";
 import { describe, expect, it } from "vitest";
-import { COVER_MAX_BYTES, COVER_SIZES } from "@/features/catalogue/cover";
+import {
+  COVER_LONG_SIDE,
+  COVER_MAX_BYTES,
+  coverDimensions,
+} from "@/features/catalogue/cover";
 import { processCover } from "./process-cover";
 
 const solid = (width: number, height: number) =>
@@ -24,20 +28,60 @@ async function expectCover(bytes: Uint8Array) {
 
 describe("processCover", () => {
   it.each([
-    ["PNG", () => solid(2000, 1000).png().toBuffer()],
-    ["JPEG", () => solid(1000, 1500).jpeg().toBuffer()],
-    ["WebP", () => solid(300, 300).webp().toBuffer()],
-  ])("turns a %s into 3:4 WebP files at both sizes", async (_name, make) => {
-    const { cover, thumb } = await expectCover(await make());
-    expect(cover.format).toBe("webp");
-    expect([cover.width, cover.height]).toEqual([
-      COVER_SIZES.cover.width,
-      COVER_SIZES.cover.height,
-    ]);
-    expect([thumb.width, thumb.height]).toEqual([
-      COVER_SIZES.thumb.width,
-      COVER_SIZES.thumb.height,
-    ]);
+    ["PNG", 2000, 1000, () => solid(2000, 1000).png().toBuffer()],
+    ["JPEG", 1000, 1500, () => solid(1000, 1500).jpeg().toBuffer()],
+    ["WebP", 300, 300, () => solid(300, 300).webp().toBuffer()],
+    ["tall PNG", 500, 3000, () => solid(500, 3000).png().toBuffer()],
+  ])(
+    "turns a %s into WebP files that keep their shape",
+    async (_name, width, height, make) => {
+      const { cover, thumb, result } = await expectCover(await make());
+      const expectedCover = coverDimensions(
+        width,
+        height,
+        COVER_LONG_SIDE.cover,
+      );
+      const expectedThumb = coverDimensions(
+        expectedCover.width,
+        expectedCover.height,
+        COVER_LONG_SIDE.thumb,
+      );
+      expect(cover.format).toBe("webp");
+      expect([cover.width, cover.height]).toEqual([
+        expectedCover.width,
+        expectedCover.height,
+      ]);
+      expect([thumb.width, thumb.height]).toEqual([
+        expectedThumb.width,
+        expectedThumb.height,
+      ]);
+      // The stored size is reported with the files.
+      expect(result.ok && [result.data.width, result.data.height]).toEqual([
+        expectedCover.width,
+        expectedCover.height,
+      ]);
+    },
+  );
+
+  it("gives a landscape and a portrait picture different shapes", async () => {
+    const landscape = await expectCover(
+      await solid(1600, 1200).png().toBuffer(),
+    );
+    const portrait = await expectCover(
+      await solid(1200, 1600).png().toBuffer(),
+    );
+    expect(landscape.cover.width).toBeGreaterThan(landscape.cover.height ?? 0);
+    expect(portrait.cover.width).toBeLessThan(portrait.cover.height ?? 0);
+  });
+
+  it("applies the camera orientation before choosing the shape", async () => {
+    // Stored 1200x800 but marked "rotate 90 degrees": it is really a portrait picture.
+    const rotated = await solid(1200, 800)
+      .jpeg()
+      .withMetadata({ orientation: 6 })
+      .toBuffer();
+    const { cover } = await expectCover(rotated);
+    expect(cover.width).toBeLessThan(cover.height ?? 0);
   });
 
   it("removes camera and location metadata", async () => {

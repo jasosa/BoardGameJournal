@@ -6,13 +6,32 @@ export const COVER_MAX_BYTES = 10 * 1024 * 1024;
 /** What the file picker offers. iPhones convert HEIC photos to JPEG for these types. */
 export const COVER_ACCEPT = "image/jpeg,image/png,image/webp";
 
-/** Every cover is stored at a 3:4 ratio in two sizes. */
-export const COVER_SIZES = {
-  cover: { width: 900, height: 1200 },
-  thumb: { width: 360, height: 480 },
-} as const;
+/**
+ * Covers keep their own proportions. The longer side is scaled to this many pixels (small
+ * images are enlarged), in two sizes: the full cover and a thumbnail.
+ */
+export const COVER_LONG_SIDE = { cover: 1200, thumb: 480 } as const;
 
-export type CoverSize = keyof typeof COVER_SIZES;
+/** Widest and narrowest shape kept (width / height). Anything more extreme is cropped to it. */
+export const COVER_MIN_RATIO = 0.6;
+export const COVER_MAX_RATIO = 1.6;
+
+/** Size to store for a picture of `width` x `height`: its own shape, within the allowed range. */
+export function coverDimensions(
+  width: number,
+  height: number,
+  longSide: number,
+): { width: number; height: number } {
+  const ratio = Math.min(
+    COVER_MAX_RATIO,
+    Math.max(COVER_MIN_RATIO, width / height),
+  );
+  return ratio >= 1
+    ? { width: longSide, height: Math.round(longSide / ratio) }
+    : { width: Math.round(longSide * ratio), height: longSide };
+}
+
+export type CoverSize = keyof typeof COVER_LONG_SIDE;
 
 export function isCoverSize(value: unknown): value is CoverSize {
   return value === "cover" || value === "thumb";

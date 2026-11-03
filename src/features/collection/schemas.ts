@@ -98,6 +98,11 @@ export type LibraryItem = {
   title: string;
   status: CollectionStatus;
   cover: CoverRef | null;
+  /** Stored size of the cover file, for the wall; null without a cover. */
+  coverWidth: number | null;
+  coverHeight: number | null;
+  /** Light colour of the cover (hex) for small markers; null when not stored. */
+  accent: string | null;
   year: number | null;
   minPlayers: number | null;
   maxPlayers: number | null;

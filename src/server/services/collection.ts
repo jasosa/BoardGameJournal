@@ -10,6 +10,7 @@ import {
 } from "@/features/collection/schemas";
 import { normalizeTitle } from "@/features/catalogue/title";
 import { coverRef } from "@/features/catalogue/cover";
+import { isHexColour } from "@/features/catalogue/cover-colours";
 import type { Database } from "@/lib/database/types";
 import { err, ok, type Result } from "@/lib/result";
 
@@ -154,7 +155,7 @@ export async function listLibrary(
     supabase
       .from("collection_entries")
       .select(
-        "id, status, game_id, games(name, year, min_players, max_players, play_time_min, game_images(id, storage_path, kind))",
+        "id, status, game_id, games(name, year, min_players, max_players, play_time_min, game_images(id, storage_path, kind, width, height, accent_color))",
       )
       // RLS already limits rows to the caller; the filter is a second guard.
       .eq("user_id", userId)
@@ -179,6 +180,11 @@ export async function listLibrary(
       status: row.status,
       cover: coverRow?.storage_path
         ? coverRef(coverRow.id, coverRow.storage_path)
+        : null,
+      coverWidth: coverRow?.storage_path ? coverRow.width : null,
+      coverHeight: coverRow?.storage_path ? coverRow.height : null,
+      accent: isHexColour(coverRow?.accent_color)
+        ? coverRow.accent_color
         : null,
       year: row.games.year,
       minPlayers: row.games.min_players,

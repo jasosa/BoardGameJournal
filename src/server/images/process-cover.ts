@@ -1,6 +1,10 @@
 import "server-only";
 import sharp from "sharp";
-import { COVER_MAX_BYTES, COVER_SIZES } from "@/features/catalogue/cover";
+import {
+  COVER_LONG_SIDE,
+  COVER_MAX_BYTES,
+  coverDimensions,
+} from "@/features/catalogue/cover";
 import {
   deriveCoverColours,
   type CoverColours,
@@ -22,6 +26,9 @@ sharp.cache(false);
 export type ProcessedCover = {
   cover: Buffer;
   thumb: Buffer;
+  /** Size of the stored cover file (its own shape, within the allowed range). */
+  width: number;
+  height: number;
   /** Colours for the game page, taken from the finished thumbnail. */
   colours: CoverColours;
 };
@@ -61,7 +68,7 @@ function hasAllowedSignature(bytes: Uint8Array): boolean {
  * Turns an uploaded image into the two files we store. The format is read from the bytes, not
  * from the file name or the type the browser reported, and only JPEG, PNG and WebP are ever
  * handed to the image library (so SVG, GIF, TIFF and the like never get decoded). The result is
- * a 3:4 WebP with every piece of metadata removed (photos from phones carry GPS and camera
+ * a WebP that keeps its own shape (within a range) with every piece of metadata removed (photos from phones carry GPS and camera
  * details). The original is never kept.
  */
 export async function processCover(
@@ -79,27 +86,46 @@ export async function processCover(
 
   return withSlot(async () => {
     try {
-      // Decode once. The thumbnail is made from the finished cover, not from the original.
-      const cover = await sharp(bytes, {
+      // The shape comes from the header (after the camera orientation), so the image is decoded
+      // once. The thumbnail is made from the finished cover, not from the original.
+      const options = {
         limitInputPixels: MAX_INPUT_PIXELS,
         failOn: "error",
-      })
+      } as const;
+      const meta = await sharp(bytes, options).metadata();
+      const turned = (meta.orientation ?? 1) >= 5;
+      const [w, h] = turned
+        ? [meta.height ?? 0, meta.width ?? 0]
+        : [meta.width ?? 0, meta.height ?? 0];
+      if (w <= 0 || h <= 0) {
+        return err("invalid_image", "We could not read that image.");
+      }
+      const size = coverDimensions(w, h, COVER_LONG_SIDE.cover);
+
+      const cover = await sharp(bytes, options)
         .rotate() // apply the camera orientation, then drop the tag
-        .resize(COVER_SIZES.cover.width, COVER_SIZES.cover.height, {
-          fit: "cover",
-        })
+        .resize(size.width, size.height, { fit: "cover" })
         .webp({ quality: 82 })
         .toBuffer(); // metadata is not copied unless asked for
 
+      const thumbSize = coverDimensions(
+        size.width,
+        size.height,
+        COVER_LONG_SIDE.thumb,
+      );
       const thumb = await sharp(cover)
-        .resize(COVER_SIZES.thumb.width, COVER_SIZES.thumb.height, {
-          fit: "cover",
-        })
+        .resize(thumbSize.width, thumbSize.height, { fit: "cover" })
         .webp({ quality: 82 })
         .toBuffer();
 
       const { dominant } = await sharp(thumb).stats();
-      return ok({ cover, thumb, colours: deriveCoverColours(dominant) });
+      return ok({
+        cover,
+        thumb,
+        width: size.width,
+        height: size.height,
+        colours: deriveCoverColours(dominant),
+      });
     } catch {
       // A damaged image, or one over the pixel limit.
       return err("invalid_image", "We could not read that image.");

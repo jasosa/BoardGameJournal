@@ -1,3 +1,4 @@
+import sharp from "sharp";
 import { afterAll, beforeAll, describe, expect, it } from "vitest";
 import {
   DEFAULT_PARAMS,
@@ -9,8 +10,14 @@ import {
   findTitleMatches,
   listLibrary,
 } from "@/server/services/collection";
+import { uploadCover } from "@/server/services/covers";
 import { seedLibrary } from "../support/seed";
-import { createTestUser, deleteTestUsers, type TestUser } from "./helpers";
+import {
+  admin,
+  createTestUser,
+  deleteTestUsers,
+  type TestUser,
+} from "./helpers";
 
 describe("Library with 250 games", () => {
   let a: TestUser;
@@ -96,5 +103,44 @@ describe("Library with 250 games", () => {
 
     const byTitle = queryLibrary(all, { ...DEFAULT_PARAMS, sort: "title" });
     expect(byTitle.items[0]?.title).toBe("Arkham");
+  });
+
+  it("returns the stored cover shape and colour for the wall", async () => {
+    const shapes = await createTestUser("lib-shape");
+    const added = await addManualGame(shapes.client, {
+      title: "Wide box",
+      status: "owned",
+    });
+    if (!added.ok) throw new Error("setup failed");
+    const entry = await admin
+      .from("collection_entries")
+      .select("game_id")
+      .eq("id", added.data.entryId)
+      .single();
+    const wide = await sharp({
+      create: { width: 1600, height: 1000, channels: 3, background: "#c8402a" },
+    })
+      .png()
+      .toBuffer();
+    const upload = await uploadCover(shapes.client, shapes.id, {
+      gameId: entry.data!.game_id as string,
+      file: new File([new Uint8Array(wide)], "wide.png", { type: "image/png" }),
+    });
+    expect(upload.ok).toBe(true);
+    const library = await listLibrary(shapes.client, shapes.id);
+    const item = library.ok ? library.data[0] : undefined;
+    expect(item?.coverWidth).toBe(1200);
+    expect(item?.coverHeight).toBe(750);
+    expect(item?.accent).toMatch(/^#[0-9a-f]{6}$/);
+    // Clean up the stored files.
+    const row = await admin
+      .from("game_images")
+      .select("storage_path")
+      .eq("game_id", entry.data!.game_id as string)
+      .single();
+    const path = row.data!.storage_path as string;
+    await admin.storage
+      .from("covers")
+      .remove([path, path.replace("cover.webp", "thumb.webp")]);
   });
 });

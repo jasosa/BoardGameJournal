@@ -73,8 +73,8 @@ export async function uploadCover(
 
   const fields = {
     storage_path: paths.cover,
-    width: 900,
-    height: 1200,
+    width: processed.data.width,
+    height: processed.data.height,
     licence: "own-upload",
     attribution: null,
     dominant_color: processed.data.colours.tint,
