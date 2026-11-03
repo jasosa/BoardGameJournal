@@ -11,7 +11,7 @@ export function GameGallery({
   return (
     <ul
       aria-label="Your games"
-      className="grid grid-cols-2 gap-4 md:grid-cols-4 md:gap-6"
+      className="grid grid-cols-2 gap-x-4 gap-y-8 md:grid-cols-3 md:gap-x-6 lg:grid-cols-5"
     >
       {items.map((item) => (
         <GameCard

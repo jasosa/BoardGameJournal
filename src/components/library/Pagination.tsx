@@ -19,7 +19,11 @@ export function Pagination({
 }) {
   if (result.pageCount <= 1) return null;
   return (
-    <nav aria-label="Pages" className="mt-10 flex flex-wrap items-center gap-3">
+    <nav
+      id="library-pages"
+      aria-label="Pages"
+      className="mt-10 flex flex-wrap items-center gap-3"
+    >
       {result.page > 1 ? (
         <Link
           rel="prev"

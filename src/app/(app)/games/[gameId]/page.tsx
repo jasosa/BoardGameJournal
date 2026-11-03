@@ -55,21 +55,9 @@ export default async function GamePage({
     <>
       <BackLink fallbackHref="/library">Library</BackLink>
 
-      <header className="flex items-start gap-5 md:gap-8">
-        <CoverTile title={game.title} cover={game.cover} />
-        <div className="min-w-0">
-          <h1 className="text-2xl break-words hyphens-auto md:text-4xl">
-            {game.title}
-          </h1>
-          {facts ? <p className="text-ink-soft mt-2">{facts}</p> : null}
-          {game.editable ? (
-            <Link
-              href={`/games/${game.id}/edit`}
-              className="text-ink mt-2 inline-flex min-h-11 items-center text-sm underline underline-offset-4"
-            >
-              {facts || game.description ? "Edit facts" : "Add facts"}
-            </Link>
-          ) : null}
+      <div className="grid grid-cols-[9rem_1fr] gap-x-5 gap-y-8 md:grid-cols-[17.5rem_1fr] md:gap-x-12">
+        <div className="md:sticky md:top-8 md:row-span-2 md:self-start">
+          <CoverTile title={game.title} cover={game.cover} />
           {game.editable ? (
             <CoverControls
               gameId={game.id}
@@ -79,65 +67,86 @@ export default async function GamePage({
             />
           ) : null}
         </div>
-      </header>
 
-      {game.description ? (
-        <p className="mt-8 max-w-prose whitespace-pre-line">
-          {game.description}
-        </p>
-      ) : null}
+        <header className="min-w-0">
+          <h1 className="text-2xl break-words hyphens-auto md:text-4xl">
+            {game.title}
+          </h1>
+          {facts ? <p className="text-ink-soft mt-2">{facts}</p> : null}
+          {game.editable ? (
+            <Link
+              href={`/games/${game.id}/edit`}
+              className="text-ink mt-1 inline-flex min-h-11 items-center text-sm underline underline-offset-4"
+            >
+              {facts || game.description ? "Edit facts" : "Add facts"}
+            </Link>
+          ) : null}
+        </header>
 
-      <section aria-labelledby="status-heading" className="mt-10">
-        <h2 id="status-heading" className="mb-3 text-xl">
-          Status
-        </h2>
-        {entries.length === 0 ? (
-          <p className="text-ink-soft">This game is not in your collection.</p>
-        ) : (
-          <div className="flex flex-col gap-6">
-            {entries.map((entry, index) => (
-              <div key={entry.entryId}>
-                {entries.length > 1 ? (
-                  <p className="text-ink-soft mb-2 text-sm">Copy {index + 1}</p>
-                ) : null}
-                <StatusPicker
-                  entryId={entry.entryId}
-                  current={entry.status}
-                  label={
-                    entries.length > 1
-                      ? `Status of copy ${index + 1}`
-                      : "Status"
-                  }
-                  action={changeStatus}
-                />
+        <div className="col-span-2 flex flex-col gap-10 md:col-span-1 md:col-start-2">
+          {game.description ? (
+            <p className="max-w-prose whitespace-pre-line">
+              {game.description}
+            </p>
+          ) : null}
+
+          <section aria-labelledby="status-heading">
+            <h2 id="status-heading" className="mb-3 text-xl">
+              Status
+            </h2>
+            {entries.length === 0 ? (
+              <p className="text-ink-soft">
+                This game is not in your collection.
+              </p>
+            ) : (
+              <div className="flex flex-col gap-6">
+                {entries.map((entry, index) => (
+                  <div key={entry.entryId}>
+                    {entries.length > 1 ? (
+                      <p className="text-ink-soft mb-2 text-sm">
+                        Copy {index + 1}
+                      </p>
+                    ) : null}
+                    <StatusPicker
+                      entryId={entry.entryId}
+                      current={entry.status}
+                      label={
+                        entries.length > 1
+                          ? `Status of copy ${index + 1}`
+                          : "Status"
+                      }
+                      action={changeStatus}
+                    />
+                  </div>
+                ))}
               </div>
-            ))}
-          </div>
-        )}
-      </section>
+            )}
+          </section>
 
-      <section aria-labelledby="details-heading" className="mt-10">
-        <h2 id="details-heading" className="mb-3 text-xl">
-          Details
-        </h2>
-        <dl className="text-ink-soft grid max-w-md grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
-          <dt>Source</dt>
-          <dd className="text-ink">
-            {game.source === "manual" ? "Manual entry" : game.source}
-          </dd>
-          <dt>Added</dt>
-          <dd className="text-ink">
-            {addedFormat.format(new Date(game.createdAt))}
-          </dd>
-        </dl>
-      </section>
+          <section aria-labelledby="details-heading">
+            <h2 id="details-heading" className="mb-3 text-xl">
+              Details
+            </h2>
+            <dl className="text-ink-soft grid max-w-md grid-cols-[auto_1fr] gap-x-6 gap-y-1 text-sm">
+              <dt>Source</dt>
+              <dd className="text-ink">
+                {game.source === "manual" ? "Manual entry" : game.source}
+              </dd>
+              <dt>Added</dt>
+              <dd className="text-ink">
+                {addedFormat.format(new Date(game.createdAt))}
+              </dd>
+            </dl>
+          </section>
 
-      {history.length > 0 ? (
-        <StatusHistory
-          entryIds={entries.map((entry) => entry.entryId)}
-          history={history}
-        />
-      ) : null}
+          {history.length > 0 ? (
+            <StatusHistory
+              entryIds={entries.map((entry) => entry.entryId)}
+              history={history}
+            />
+          ) : null}
+        </div>
+      </div>
     </>
   );
 }

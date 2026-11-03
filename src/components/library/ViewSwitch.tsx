@@ -13,9 +13,15 @@ const LABELS: Record<LibraryView, string> = {
 };
 
 /** Links, not buttons: each view has its own URL. Changing view goes back to page 1. */
-export function ViewSwitch({ params }: { params: LibraryParams }) {
+export function ViewSwitch({
+  params,
+  className = "",
+}: {
+  params: LibraryParams;
+  className?: string;
+}) {
   return (
-    <nav aria-label="Library view" className="mb-6">
+    <nav aria-label="Library view" className={className}>
       <ul className="flex gap-1">
         {LIBRARY_VIEWS.map((view) => {
           const current = view === params.view;
@@ -24,7 +30,7 @@ export function ViewSwitch({ params }: { params: LibraryParams }) {
               <Link
                 href={buildLibraryHref(params, { view, page: 1 })}
                 aria-current={current ? "page" : undefined}
-                className={`rounded-input focus-visible:outline-bronze inline-flex min-h-11 items-center px-4 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 ${
+                className={`rounded-input focus-visible:outline-bronze inline-flex min-h-11 items-center px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 ${
                   current ? "bg-cream text-ink" : "text-ink-soft hover:text-ink"
                 }`}
               >

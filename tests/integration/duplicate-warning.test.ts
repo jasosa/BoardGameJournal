@@ -82,7 +82,8 @@ describe("duplicate warning: findTitleMatches + add_game_copy", () => {
     const games = await admin
       .from("games")
       .select("id")
-      .eq("name", "Carcassonne");
+      .eq("name", "Carcassonne")
+      .eq("created_by", a.id);
     expect(games.data).toHaveLength(1);
   });
 

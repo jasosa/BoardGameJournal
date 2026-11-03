@@ -80,7 +80,9 @@
   padding-bottom: env(safe-area-inset-bottom);
 }
 
-/* Titles written down the spine of a book (Library shelf view). */
-@utility writing-vertical {
-  writing-mode: vertical-rl;
+/* A title written down the spine of a book (Library shelf view). */
+@layer components {
+  .spine-title {
+    writing-mode: vertical-rl;
+  }
 }

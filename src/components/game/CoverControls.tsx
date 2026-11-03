@@ -33,7 +33,7 @@ export function CoverControls({
     removeState.error;
 
   return (
-    <div className="mt-4 flex flex-col gap-1">
+    <div className="mt-2 flex flex-col gap-1">
       <div className="flex flex-wrap items-center gap-x-4">
         <form action={upload}>
           <input type="hidden" name="gameId" value={gameId} />
@@ -72,7 +72,7 @@ export function CoverControls({
               type="submit"
               variant="quiet"
               disabled={uploading || removing}
-              className="text-ink-soft hover:text-ink border-transparent underline underline-offset-4"
+              className="text-ink-soft hover:text-ink border-transparent px-0 underline underline-offset-4"
             >
               {removing ? "Removing" : "Remove cover"}
             </Button>

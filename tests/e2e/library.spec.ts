@@ -33,7 +33,7 @@ const noOverflow = (page: Page) =>
   );
 
 async function openFilters(page: Page) {
-  await page.getByText("Filters and sort").click();
+  await page.getByRole("button", { name: /^Filters/ }).click();
 }
 
 test("250 games are shown 48 at a time, with page links", async ({ page }) => {
@@ -87,7 +87,6 @@ test("a status filter shows only that status, with several shown together", asyn
   await page.goto("/library");
   await openFilters(page);
   await page.getByLabel("Wishlist", { exact: true }).check();
-  await page.getByRole("button", { name: "Apply" }).click();
   await expect(page).toHaveURL(/status=wishlist/);
   await expect(games(page).getByRole("listitem")).toHaveCount(1);
   await expect(page.getByLabel("Wishlist", { exact: true })).toBeChecked();
@@ -104,7 +103,6 @@ test("players and play time filters combine", async ({ page }) => {
   await openFilters(page);
   await page.getByLabel("Players").selectOption("1");
   await page.getByLabel("Play time").selectOption("60");
-  await page.getByRole("button", { name: "Apply" }).click();
   await expect(page).toHaveURL(/players=1/);
   await expect(page).toHaveURL(/time=60/);
   await expect(games(page).getByRole("listitem")).toHaveCount(2);
@@ -120,7 +118,6 @@ test("sorting by title puts Arkham first", async ({ page }) => {
   await page.goto("/library");
   await openFilters(page);
   await page.getByLabel("Sort").selectOption("title");
-  await page.getByRole("button", { name: "Apply" }).click();
   await expect(page).toHaveURL(/sort=title/);
   await expect(
     games(page).getByRole("listitem").first().getByRole("heading"),
@@ -190,16 +187,18 @@ test("the controls fit the screen and work from the keyboard", async ({
   await page.goto("/library");
   expect(await noOverflow(page)).toBe(0);
 
-  const summary = page.getByText("Filters and sort");
-  await summary.focus();
+  const toggle = page.getByRole("button", { name: /^Filters/ });
+  await toggle.focus();
+  await expect(toggle).toHaveAttribute("aria-expanded", "false");
   await page.keyboard.press("Enter");
+  await expect(toggle).toHaveAttribute("aria-expanded", "true");
   await expect(page.getByLabel("Players")).toBeVisible();
   expect(await noOverflow(page)).toBe(0);
 
   // Tap targets are at least 44px tall.
   for (const locator of [
     page.getByRole("button", { name: "Search" }),
-    page.getByRole("button", { name: "Apply" }),
+    toggle,
     page.getByLabel("Players"),
     page.getByRole("link", { name: "Table" }),
   ]) {

@@ -4,7 +4,6 @@ import { GameShelf } from "@/components/library/GameShelf";
 import { GameTable } from "@/components/library/GameTable";
 import { LibraryControls } from "@/components/library/LibraryControls";
 import { Pagination } from "@/components/library/Pagination";
-import { ViewSwitch } from "@/components/library/ViewSwitch";
 import { EmptyState } from "@/components/shell/EmptyState";
 import { PageHeader } from "@/components/shell/PageHeader";
 import {
@@ -68,9 +67,8 @@ export default async function LibraryPage({
 
   return (
     <>
-      <PageHeader title="Library" subtitle={count} />
+      <PageHeader title="Library" aside={count} compact />
       <LibraryControls params={params} />
-      <ViewSwitch params={params} />
 
       {page.total === 0 ? (
         <section role="status" className="bg-cream rounded-card px-6 py-8">
@@ -109,7 +107,17 @@ export default async function LibraryPage({
             </p>
           ) : null}
           {params.view === "shelf" ? (
-            <GameShelf items={page.items} />
+            <>
+              {page.pageCount > 1 ? (
+                <a
+                  href="#library-pages"
+                  className="bg-cream text-ink rounded-input focus-visible:outline-bronze sr-only mb-4 px-4 py-3 text-sm focus:not-sr-only focus:inline-flex focus-visible:outline-2"
+                >
+                  Skip to pages
+                </a>
+              ) : null}
+              <GameShelf items={page.items} />
+            </>
           ) : params.view === "table" ? (
             <GameTable items={page.items} />
           ) : (
