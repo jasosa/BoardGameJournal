@@ -187,8 +187,10 @@ export type Database = {
       };
       game_images: {
         Row: {
+          accent_color: string | null;
           attribution: string | null;
           created_at: string;
+          dominant_color: string | null;
           edition_id: string | null;
           game_id: string;
           height: number | null;
@@ -201,8 +203,10 @@ export type Database = {
         };
         ComputedFields: never;
         Insert: {
+          accent_color?: string | null;
           attribution?: string | null;
           created_at?: string;
+          dominant_color?: string | null;
           edition_id?: string | null;
           game_id: string;
           height?: number | null;
@@ -214,8 +218,10 @@ export type Database = {
           width?: number | null;
         };
         Update: {
+          accent_color?: string | null;
           attribution?: string | null;
           created_at?: string;
+          dominant_color?: string | null;
           edition_id?: string | null;
           game_id?: string;
           height?: number | null;

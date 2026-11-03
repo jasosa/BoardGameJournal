@@ -1,6 +1,7 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import { z } from "zod";
 import { coverRef } from "@/features/catalogue/cover";
+import { isHexColour } from "@/features/catalogue/cover-colours";
 import {
   updateGameFactsInput,
   type GameDetails,
@@ -76,7 +77,7 @@ export async function getGameDossier(
 
   const { data: coverRow, error: coverError } = await supabase
     .from("game_images")
-    .select("id, storage_path")
+    .select("id, storage_path, dominant_color, accent_color")
     .eq("game_id", gameId)
     .eq("kind", "cover")
     .maybeSingle();
@@ -101,6 +102,13 @@ export async function getGameDossier(
       cover:
         coverRow?.storage_path != null
           ? coverRef(coverRow.id, coverRow.storage_path)
+          : null,
+      // Decoration only, so anything that is not a plain #rrggbb is ignored.
+      coverColours:
+        coverRow?.storage_path != null &&
+        isHexColour(coverRow.dominant_color) &&
+        isHexColour(coverRow.accent_color)
+          ? { tint: coverRow.dominant_color, glow: coverRow.accent_color }
           : null,
     },
     entries: rows.flatMap((row) =>

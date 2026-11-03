@@ -157,4 +157,19 @@ describe("processCover", () => {
       error: { code: "invalid_image" },
     });
   }, 60_000);
+
+  it("returns readable colours for the game page", async () => {
+    const png = await solid(600, 800).png().toBuffer();
+    const result = await processCover(png);
+    expect(result.ok).toBe(true);
+    if (!result.ok) return;
+    expect(result.data.colours.tint).toMatch(/^#[0-9a-f]{6}$/);
+    expect(result.data.colours.glow).toMatch(/^#[0-9a-f]{6}$/);
+    // The sample is reddish: red is the strongest channel in both colours.
+    for (const hex of [result.data.colours.tint, result.data.colours.glow]) {
+      const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+      expect(r).toBeGreaterThan(g ?? 0);
+      expect(r).toBeGreaterThan(b ?? 0);
+    }
+  });
 });

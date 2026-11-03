@@ -1,6 +1,10 @@
 import "server-only";
 import sharp from "sharp";
 import { COVER_MAX_BYTES, COVER_SIZES } from "@/features/catalogue/cover";
+import {
+  deriveCoverColours,
+  type CoverColours,
+} from "@/features/catalogue/cover-colours";
 import { err, ok, type Result } from "@/lib/result";
 
 /**
@@ -15,7 +19,12 @@ const MAX_CONCURRENT = 2;
 // Do not keep decoded images cached between requests.
 sharp.cache(false);
 
-export type ProcessedCover = { cover: Buffer; thumb: Buffer };
+export type ProcessedCover = {
+  cover: Buffer;
+  thumb: Buffer;
+  /** Colours for the game page, taken from the finished thumbnail. */
+  colours: CoverColours;
+};
 
 let running = 0;
 const waiting: (() => void)[] = [];
@@ -89,7 +98,8 @@ export async function processCover(
         .webp({ quality: 82 })
         .toBuffer();
 
-      return ok({ cover, thumb });
+      const { dominant } = await sharp(thumb).stats();
+      return ok({ cover, thumb, colours: deriveCoverColours(dominant) });
     } catch {
       // A damaged image, or one over the pixel limit.
       return err("invalid_image", "We could not read that image.");

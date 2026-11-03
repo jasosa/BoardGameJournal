@@ -110,8 +110,16 @@ describe("cover upload service and storage bucket", () => {
     ).metadata();
     expect([thumbMeta.width, thumbMeta.height]).toEqual([360, 480]);
 
+    // The colours for the game page: a #rrggbb tint and glow of the cover's hue (reddish here).
+    expect(row.data!.dominant_color).toMatch(/^#[0-9a-f]{6}$/);
+    expect(row.data!.accent_color).toMatch(/^#[0-9a-f]{6}$/);
+
     const dossier = await getGameDossier(a.client, a.id, gameId);
     expect(dossier.ok && dossier.data.game.cover?.imageId).toBe(row.data!.id);
+    expect(dossier.ok && dossier.data.game.coverColours).toEqual({
+      tint: row.data!.dominant_color,
+      glow: row.data!.accent_color,
+    });
     const library = await listLibrary(a.client, a.id);
     expect(
       library.ok &&
@@ -427,5 +435,66 @@ describe("cover upload service and storage bucket", () => {
         error: { code: "not_found" },
       });
     });
+  });
+
+  it("replacing the cover updates the colours, and a game with no cover has none", async () => {
+    const other = await newGame(a, "Colour test");
+    const none = await getGameDossier(a.client, a.id, other);
+    expect(none.ok && none.data.game.coverColours).toBeNull();
+
+    await uploadCover(a.client, a.id, {
+      gameId: other,
+      file: asFile(await png(600, 800, 220)),
+    });
+    const first = await admin
+      .from("game_images")
+      .select("dominant_color, accent_color")
+      .eq("game_id", other)
+      .single();
+    const blue = await sharp({
+      create: {
+        width: 600,
+        height: 800,
+        channels: 3,
+        background: { r: 20, g: 40, b: 220 },
+      },
+    })
+      .png()
+      .toBuffer();
+    await uploadCover(a.client, a.id, { gameId: other, file: asFile(blue) });
+    const second = await admin
+      .from("game_images")
+      .select("dominant_color, accent_color")
+      .eq("game_id", other)
+      .single();
+    expect(second.data!.dominant_color).not.toBe(first.data!.dominant_color);
+    expect(second.data!.accent_color).not.toBe(first.data!.accent_color);
+  });
+
+  it("the database refuses anything but #rrggbb, and another person cannot change the colours", async () => {
+    const row = await admin
+      .from("game_images")
+      .select("id")
+      .eq("game_id", gameId)
+      .single();
+    for (const bad of ["red", "#FFF", "#ABCDEF", "#12345", "url(x)"]) {
+      const { error } = await admin
+        .from("game_images")
+        .update({ dominant_color: bad })
+        .eq("id", row.data!.id);
+      expect(error).not.toBeNull();
+    }
+    const changed = await b.client
+      .from("game_images")
+      .update({ dominant_color: "#000000" })
+      .eq("id", row.data!.id)
+      .select("id");
+    expect(changed.data ?? []).toEqual([]);
+    const after = await admin
+      .from("game_images")
+      .select("dominant_color")
+      .eq("id", row.data!.id)
+      .single();
+    expect(after.data!.dominant_color).not.toBe("#000000");
   });
 });

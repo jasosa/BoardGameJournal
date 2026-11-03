@@ -74,4 +74,6 @@ export type GameDetails = {
   maxPlayers: number | null;
   playTimeMin: number | null;
   cover: CoverRef | null;
+  /** Colours of the cover for the game page backdrop; null without a cover or colours. */
+  coverColours: { tint: string; glow: string } | null;
 };

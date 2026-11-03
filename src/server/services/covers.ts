@@ -77,6 +77,8 @@ export async function uploadCover(
     height: 1200,
     licence: "own-upload",
     attribution: null,
+    dominant_color: processed.data.colours.tint,
+    accent_color: processed.data.colours.glow,
   };
   // Replacing only succeeds if the row still points at the files we read. If someone else
   // replaced the cover in the meantime, we back out instead of overwriting their files'

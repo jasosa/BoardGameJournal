@@ -16,7 +16,8 @@
     "test": "vitest run",
     "test:integration": "vitest run --config vitest.integration.config.mts",
     "test:e2e": "playwright test",
-    "user:create": "node --env-file-if-exists=.env.local scripts/create-user.mjs"
+    "user:create": "node --env-file-if-exists=.env.local scripts/create-user.mjs",
+    "covers:colours": "node --env-file-if-exists=.env.local scripts/backfill-cover-colours.mjs"
   },
   "dependencies": {
     "@supabase/ssr": "^0.12.7",
