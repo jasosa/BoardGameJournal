@@ -2,16 +2,16 @@
 @import "../lib/design-system/tokens.css";
 
 @theme inline {
-  --color-paper: var(--tk-paper);
-  --color-cream: var(--tk-cream);
+  --color-canvas: var(--tk-canvas);
+  --color-raised: var(--tk-raised);
   --color-line: var(--tk-line);
   --color-edge: var(--tk-edge);
   --color-ink: var(--tk-ink);
   --color-ink-soft: var(--tk-ink-soft);
   --color-ink-faint: var(--tk-ink-faint);
-  --color-bronze: var(--tk-bronze);
-  --color-bronze-deep: var(--tk-bronze-deep);
-  --color-on-bronze: var(--tk-on-bronze);
+  --color-accent: var(--tk-accent);
+  --color-accent-strong: var(--tk-accent-strong);
+  --color-on-accent: var(--tk-on-accent);
   --color-positive: var(--tk-positive);
   --color-negative: var(--tk-negative);
   --color-note: var(--tk-note);
@@ -45,7 +45,7 @@
     color-scheme: dark;
   }
   body {
-    background-color: var(--color-paper);
+    background-color: var(--color-canvas);
     color: var(--color-ink);
     font-family: var(--font-sans);
     font-size: var(--text-base);
@@ -64,7 +64,7 @@
     letter-spacing: -0.03em;
   }
   :focus-visible {
-    outline: 2px solid var(--color-bronze);
+    outline: 2px solid var(--color-accent);
     outline-offset: 2px;
   }
   @media (prefers-reduced-motion: reduce) {

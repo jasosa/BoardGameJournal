@@ -7,7 +7,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <>
       <a
         href="#main"
-        className="bg-paper text-ink rounded-input shadow-lift absolute top-2 left-2 z-20 inline-flex min-h-11 -translate-y-20 items-center px-4 focus:translate-y-0"
+        className="bg-canvas text-ink rounded-input shadow-lift absolute top-2 left-2 z-20 inline-flex min-h-11 -translate-y-20 items-center px-4 focus:translate-y-0"
       >
         Skip to content
       </a>

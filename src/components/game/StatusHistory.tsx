@@ -18,7 +18,7 @@ export function StatusHistory({
   return (
     <section aria-label="History" className="-mt-6">
       <details className="group">
-        <summary className="text-ink-soft hover:text-ink focus-visible:outline-bronze inline-flex min-h-11 cursor-pointer items-center text-sm underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 group-open:text-ink hover:underline">
+        <summary className="text-ink-soft hover:text-ink focus-visible:outline-accent inline-flex min-h-11 cursor-pointer items-center text-sm underline-offset-4 focus-visible:outline-2 focus-visible:outline-offset-2 group-open:text-ink hover:underline">
           <span
             aria-hidden="true"
             className="duration-fast mr-2 inline-block transition-transform group-open:rotate-90"

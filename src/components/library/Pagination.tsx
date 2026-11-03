@@ -6,7 +6,7 @@ import {
 } from "@/features/collection/library-query";
 
 const link =
-  "border-edge text-ink hover:border-bronze duration-fast rounded-input focus-visible:outline-bronze inline-flex min-h-11 items-center border px-4 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
+  "border-edge text-ink hover:border-accent duration-fast rounded-input focus-visible:outline-accent inline-flex min-h-11 items-center border px-4 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
 const off =
   "border-line text-ink-faint rounded-input inline-flex min-h-11 items-center border px-4 text-sm";
 

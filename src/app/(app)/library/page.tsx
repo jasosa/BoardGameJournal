@@ -20,7 +20,7 @@ import { listLibrary } from "@/server/services/collection";
 export const metadata = { title: "Library | Meeple Journal" };
 
 const actionLink =
-  "border-edge text-ink hover:border-bronze duration-fast rounded-input focus-visible:outline-bronze inline-flex min-h-11 items-center border px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
+  "border-edge text-ink hover:border-accent duration-fast rounded-input focus-visible:outline-accent inline-flex min-h-11 items-center border px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
 
 export default async function LibraryPage({
   searchParams,
@@ -35,7 +35,7 @@ export default async function LibraryPage({
     return (
       <>
         <PageHeader title="Library" />
-        <section role="alert" className="bg-cream rounded-card px-6 py-8">
+        <section role="alert" className="bg-raised rounded-card px-6 py-8">
           <h2 className="text-xl">Could not load your library</h2>
           <p className="text-ink-soft mt-2">{result.error.message}</p>
           <Link
@@ -84,7 +84,7 @@ export default async function LibraryPage({
       <LibraryMeta params={params} count={count} />
 
       {page.total === 0 ? (
-        <section role="status" className="bg-cream rounded-card px-6 py-8">
+        <section role="status" className="bg-raised rounded-card px-6 py-8">
           <h2 className="text-xl">
             {params.q ? `Nothing matches "${params.q}"` : "Nothing matches"}
           </h2>
@@ -119,7 +119,7 @@ export default async function LibraryPage({
               {page.pageCount > 1 ? (
                 <a
                   href="#library-pages"
-                  className="bg-cream text-ink rounded-input focus-visible:outline-bronze sr-only mb-4 px-4 py-3 text-sm focus:not-sr-only focus:inline-flex focus-visible:outline-2"
+                  className="bg-raised text-ink rounded-input focus-visible:outline-accent sr-only mb-4 px-4 py-3 text-sm focus:not-sr-only focus:inline-flex focus-visible:outline-2"
                 >
                   Skip to pages
                 </a>

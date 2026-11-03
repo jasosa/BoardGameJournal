@@ -15,10 +15,10 @@ const SORT_LABEL: Record<LibrarySort, string> = {
 };
 
 const metaLink =
-  "text-ink-soft hover:text-ink focus-visible:outline-bronze duration-fast inline-flex min-h-11 items-center border-b-2 border-transparent px-2 text-xs font-semibold tracking-wider uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 aria-[current=true]:border-ink aria-[current=true]:text-ink";
+  "text-ink-soft hover:text-ink focus-visible:outline-accent duration-fast inline-flex min-h-11 items-center border-b-2 border-transparent px-2 text-xs font-semibold tracking-wider uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 aria-[current=true]:border-ink aria-[current=true]:text-ink";
 
 const optionLink =
-  "text-ink-soft hover:text-ink focus-visible:outline-bronze inline-flex min-h-11 min-w-11 items-center justify-center border-b-2 border-transparent px-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 aria-[current=true]:border-ink aria-[current=true]:text-ink";
+  "text-ink-soft hover:text-ink focus-visible:outline-accent inline-flex min-h-11 min-w-11 items-center justify-center border-b-2 border-transparent px-2 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 aria-[current=true]:border-ink aria-[current=true]:text-ink";
 
 /**
  * The small row above the wall: how many games on the left; sort, view and "More filters" on
@@ -67,7 +67,7 @@ export function LibraryMeta({
           >
             More filters{hasMore ? " (on)" : ""}
           </summary>
-          <div className="bg-cream rounded-card shadow-lift absolute inset-x-0 z-10 mt-1 flex flex-col gap-3 px-4 py-4 md:inset-x-auto md:right-0 md:w-max">
+          <div className="bg-raised rounded-card shadow-lift absolute inset-x-0 z-10 mt-1 flex flex-col gap-3 px-4 py-4 md:inset-x-auto md:right-0 md:w-max">
             <div>
               <p className="text-ink-soft text-xs font-semibold tracking-wider uppercase">
                 Players

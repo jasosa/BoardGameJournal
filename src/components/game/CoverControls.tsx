@@ -55,7 +55,7 @@ export function CoverControls({
               }}
               className="peer absolute inset-0 cursor-pointer opacity-0 disabled:cursor-default"
             />
-            <span className="text-ink-soft hover:text-ink peer-focus-visible:outline-bronze inline-flex min-h-11 items-center text-sm underline underline-offset-4 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+            <span className="text-ink-soft hover:text-ink peer-focus-visible:outline-accent inline-flex min-h-11 items-center text-sm underline underline-offset-4 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
               {uploading
                 ? "Uploading"
                 : hasCover

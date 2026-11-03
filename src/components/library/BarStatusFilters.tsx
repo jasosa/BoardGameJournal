@@ -22,7 +22,7 @@ const SHORT: Record<CollectionStatus, string> = {
 };
 
 const link =
-  "text-ink-soft hover:text-ink focus-visible:outline-bronze duration-fast inline-flex min-h-11 min-w-11 items-center justify-center border-b-2 border-transparent px-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 aria-[current=true]:border-ink aria-[current=true]:text-ink";
+  "text-ink-soft hover:text-ink focus-visible:outline-accent duration-fast inline-flex min-h-11 min-w-11 items-center justify-center border-b-2 border-transparent px-2 text-sm font-medium whitespace-nowrap transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 aria-[current=true]:border-ink aria-[current=true]:text-ink";
 
 /**
  * Status filters as quiet text links, the current ones underlined. "All" clears them; each other

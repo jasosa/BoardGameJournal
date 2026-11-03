@@ -23,14 +23,14 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="bg-paper/90 border-line pb-safe fixed inset-x-0 bottom-0 z-10 border-t backdrop-blur-md md:hidden"
+      className="bg-canvas/90 border-line pb-safe fixed inset-x-0 bottom-0 z-10 border-t backdrop-blur-md md:hidden"
     >
       <div className="grid grid-cols-5 items-center">
         <Items items={NAV_ITEMS.slice(0, 2)} />
         <Link
           href={CAPTURE_ITEM.href}
           aria-label={CAPTURE_ITEM.label}
-          className="bg-bronze text-on-bronze shadow-lift duration-fast active:bg-bronze-deep focus-visible:outline-ink mx-auto -mt-6 flex size-14 items-center justify-center rounded-full transition-[background-color]"
+          className="bg-accent text-on-accent shadow-lift duration-fast active:bg-accent-strong focus-visible:outline-ink mx-auto -mt-6 flex size-14 items-center justify-center rounded-full transition-[background-color]"
         >
           <svg
             aria-hidden="true"

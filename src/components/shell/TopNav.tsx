@@ -7,7 +7,7 @@ import { CAPTURE_ITEM, NAV_ITEMS } from "./nav-items";
 
 export function TopNav() {
   return (
-    <header className="border-line bg-paper/80 fixed inset-x-0 top-0 z-10 hidden h-15 border-b backdrop-blur-md md:block">
+    <header className="border-line bg-canvas/80 fixed inset-x-0 top-0 z-10 hidden h-15 border-b backdrop-blur-md md:block">
       <div className="mx-auto flex h-full max-w-screen-2xl items-center gap-5 px-6">
         <Link
           href="/"
@@ -38,7 +38,7 @@ export function TopNav() {
           <Link
             href={CAPTURE_ITEM.href}
             aria-label={CAPTURE_ITEM.label}
-            className="border-ink text-ink hover:bg-ink hover:text-paper duration-fast rounded-input inline-flex min-h-11 items-center gap-1 border px-4 text-xs font-bold tracking-widest uppercase transition-colors"
+            className="border-ink text-ink hover:bg-ink hover:text-canvas duration-fast rounded-input inline-flex min-h-11 items-center gap-1 border px-4 text-xs font-bold tracking-widest uppercase transition-colors"
           >
             <span aria-hidden="true">+</span>
             Add

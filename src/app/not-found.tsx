@@ -15,7 +15,7 @@ export default function NotFound() {
       </p>
       <Link
         href="/library"
-        className="border-ink text-ink hover:bg-ink hover:text-paper duration-fast rounded-input focus-visible:outline-bronze mt-8 inline-flex min-h-11 w-max items-center border px-4 text-sm font-medium transition-colors"
+        className="border-ink text-ink hover:bg-ink hover:text-canvas duration-fast rounded-input focus-visible:outline-accent mt-8 inline-flex min-h-11 w-max items-center border px-4 text-sm font-medium transition-colors"
       >
         Back to Library
       </Link>

@@ -39,9 +39,9 @@ export function GameTable({ items }: { items: LibraryItem[] }) {
             <th scope="row" className={`${cell} text-left font-normal`}>
               <Link
                 href={`/games/${item.gameId}`}
-                className="text-ink focus-visible:outline-bronze inline-flex min-h-11 items-center gap-3 py-1 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
+                className="text-ink focus-visible:outline-accent inline-flex min-h-11 items-center gap-3 py-1 underline-offset-4 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2"
               >
-                <span className="bg-cream rounded-cover aspect-3/4 w-10 shrink-0 overflow-hidden">
+                <span className="bg-raised rounded-cover aspect-3/4 w-10 shrink-0 overflow-hidden">
                   {item.cover ? (
                     // eslint-disable-next-line @next/next/no-img-element -- private image from our own route; next/image cannot send the session cookie
                     <img

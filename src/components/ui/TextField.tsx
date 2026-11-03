@@ -26,7 +26,7 @@ export function TextField({
         aria-describedby={
           [errorId, hintId].filter(Boolean).join(" ") || undefined
         }
-        className="border-edge bg-paper text-ink rounded-input min-h-11 border px-3 text-base"
+        className="border-edge bg-canvas text-ink rounded-input min-h-11 border px-3 text-base"
       />
       {error ? (
         <p id={errorId} role="alert" className="text-negative text-sm">

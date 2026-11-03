@@ -1,13 +1,13 @@
-# ADR-0010: Visual direction "Night Wall" (trial)
+# ADR-0010: Visual direction "Night Wall"
 
-- Status: Proposed (trial on the `concept-b` branch, not merged)
+- Status: Accepted (2026-11-04). Tried on the `concept-b` branch, then merged into `main`.
 - Date: 2026-11-03
 
 ## Context
 
 The first direction (CLAUDE.md, `design-system` skill) was warm paper, cream, charcoal and one bronze accent with a display serif. After the Library and game page were built, three alternative directions were drawn as static concepts (`docs/design-concepts/`): A "Rulebook", B "Night Wall", C "Logbook". B was chosen to try: covers are lit art on a dark wall and the interface is the small museum label.
 
-## Decision (for the trial)
+## Decision
 
 - One dark theme. Token names are kept; values change (base `#121316`, raised `#1B1C20`, text `#ECE8DF`). "bronze" becomes a light accent (primary buttons are light-filled, focus rings are light). A control-edge token (`--tk-edge`) keeps input and button borders at 3:1 or more.
 - Schibsted Grotesk (display) and Inter (body). No serif.
@@ -17,7 +17,7 @@ The first direction (CLAUDE.md, `design-system` skill) was warm paper, cream, ch
 
 ## Update (same day): match the concept
 
-The first version of the trial did not look like the concept, so it was reworked:
+The first version did not look like the concept, so it was reworked:
 
 - Covers keep their own proportions (longer side 1200 px and 480 px, shape limited to 0.6 to 1.6, real width and height stored). Covers uploaded before this stay 3:4 because the originals were never kept. The Library is a masonry wall (CSS columns).
 - The top bar holds the search field and the status filters (links, several can be on); there is no page title. A small meta row has the count, sort, view and "More filters" (players, play time). On small screens search and status move into the page.
@@ -29,4 +29,4 @@ The first version of the trial did not look like the concept, so it was reworked
 - The wall is ragged only for covers uploaded after the pipeline change; older covers stay 3:4.
 - No light theme. If B is kept, decide whether to design a light counterpart.
 - Existing covers have no colours until `npm run covers:colours` is run.
-- If kept: mark this ADR Accepted, update CLAUDE.md "Visual direction" and the `design-system` skill, rename the `bronze` tokens, and merge. If dropped: delete the branch; nothing on `main` changes.
+- Done on acceptance: CLAUDE.md "Visual direction", PRODUCT_SPEC, the `design-system` skill and the `design-reviewer` agent describe this direction; the tokens were renamed (`paper` to `canvas`, `cream` to `raised`, `bronze` to `accent`, `bronze-deep` to `accent-strong`, `on-bronze` to `on-accent`).

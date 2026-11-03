@@ -1,23 +1,22 @@
 /* Design tokens. Single source of truth for colour, radius, shadow and motion.
    Raw values live here as --tk-*. globals.css maps them to Tailwind via @theme.
 
-   Concept B ("Night Wall", trial on the concept-b branch): one dark theme. The token names are
-   kept from the earlier direction so components do not change. "paper" is the base of the dark
-   wall, "cream" the raised surface, and "bronze" is now the light accent (primary buttons are
-   light-filled, focus rings are light). Rename them if this direction is kept. */
+   Direction: "Night Wall" (ADR-0010), one dark theme. "canvas" is the base of the wall,
+   "raised" the surface above it, "accent" the light accent (primary buttons are light-filled,
+   focus rings are light). "edge" is the border of controls, at least 3:1 on the canvas. */
 
 :root {
-  --tk-paper: #121316;
-  --tk-cream: #1b1c20;
+  --tk-canvas: #121316;
+  --tk-raised: #1b1c20;
   --tk-line: #2e2f35;
   /* Borders of controls (inputs, buttons, chips): at least 3:1 on the base and the raised surface. */
   --tk-edge: #6f6a62;
   --tk-ink: #ece8df;
   --tk-ink-soft: #b0aa9d;
   --tk-ink-faint: #8e887c;
-  --tk-bronze: #ece8df;
-  --tk-bronze-deep: #ffffff;
-  --tk-on-bronze: #121316;
+  --tk-accent: #ece8df;
+  --tk-accent-strong: #ffffff;
+  --tk-on-accent: #121316;
   --tk-positive: #8aa67f;
   --tk-negative: #cf7968;
   --tk-note: #9a9eb8;

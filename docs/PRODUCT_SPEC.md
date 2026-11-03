@@ -82,7 +82,7 @@ Navigation: desktop top or side nav with 4-5 items. Mobile bottom nav + a centra
 
 ## 8. Visual direction
 
-Premium collection catalogue + editorial journal. Warm neutral light theme (off-white, cream, charcoal, bronze accent), optional dark theme. Cover art first. Expressive display type + readable sans. Whitespace, restrained metadata, subtle motion. No dashboard look, bright primaries, badge clutter, dense stats. Details in `.claude/skills/design-system/SKILL.md`.
+Premium collection catalogue + editorial journal. "Night Wall" (ADR-0010): one dark theme, one light accent, colour from the covers. Cover art first. Expressive display type + readable sans. Whitespace, restrained metadata, subtle motion. No dashboard look, bright primaries, badge clutter, dense stats. Details in `.claude/skills/design-system/SKILL.md`.
 
 ## 9. Scope
 

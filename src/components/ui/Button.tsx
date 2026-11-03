@@ -4,8 +4,8 @@ const base =
   "duration-fast rounded-input inline-flex min-h-11 items-center justify-center px-4 text-sm font-medium transition-[background-color,border-color] disabled:opacity-60";
 const variants: Record<Variant, string> = {
   primary:
-    "bg-bronze text-on-bronze hover:bg-bronze-deep focus-visible:outline-ink",
-  quiet: "border-edge text-ink hover:border-bronze border",
+    "bg-accent text-on-accent hover:bg-accent-strong focus-visible:outline-ink",
+  quiet: "border-edge text-ink hover:border-accent border",
 };
 
 export function Button({

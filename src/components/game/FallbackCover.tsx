@@ -14,7 +14,7 @@ export function FallbackCover({
 }) {
   return (
     <div
-      className={`bg-cream rounded-cover shadow-soft aspect-3/4 flex items-center justify-center bg-linear-to-br from-ink/10 to-transparent ${className}`}
+      className={`bg-raised rounded-cover shadow-soft aspect-3/4 flex items-center justify-center bg-linear-to-br from-ink/10 to-transparent ${className}`}
     >
       {children}
     </div>

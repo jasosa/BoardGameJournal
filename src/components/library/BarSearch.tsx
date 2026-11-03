@@ -55,7 +55,7 @@ export function BarSearch({
         maxLength={100}
         autoComplete="off"
         enterKeyHint="search"
-        className="border-edge text-ink placeholder:text-ink-soft focus-visible:outline-bronze rounded-input min-h-11 w-full border bg-transparent px-3 text-sm"
+        className="border-edge text-ink placeholder:text-ink-soft focus-visible:outline-accent rounded-input min-h-11 w-full border bg-transparent px-3 text-sm"
       />
     </Form>
   );

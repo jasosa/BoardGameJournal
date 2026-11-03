@@ -46,7 +46,7 @@ export function StatusPicker({
             value={status}
             disabled={pending}
             aria-pressed={status === current}
-            className="border-edge text-ink-soft aria-pressed:pressed-glow aria-pressed:bg-cream aria-pressed:text-ink aria-pressed:font-medium duration-fast rounded-input inline-flex min-h-11 items-center border px-4 text-sm transition-colors disabled:opacity-60"
+            className="border-edge text-ink-soft aria-pressed:pressed-glow aria-pressed:bg-raised aria-pressed:text-ink aria-pressed:font-medium duration-fast rounded-input inline-flex min-h-11 items-center border px-4 text-sm transition-colors disabled:opacity-60"
           >
             {STATUS_LABELS[status]}
           </button>

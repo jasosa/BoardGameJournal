@@ -12,7 +12,7 @@ function spineHeight(title: string): string {
 }
 
 const common =
-  "border-edge hover:border-bronze rounded-cover duration-fast focus-visible:outline-bronze relative block overflow-hidden border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
+  "border-edge hover:border-accent rounded-cover duration-fast focus-visible:outline-accent relative block overflow-hidden border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
 
 /**
  * Games standing on a shelf, bottom-aligned. A game with a cover stands face out (a small
@@ -31,8 +31,8 @@ export function GameShelf({ items }: { items: LibraryItem[] }) {
               title={status ? `${item.title} (${status})` : item.title}
               className={
                 item.cover
-                  ? `${common} bg-cream shadow-soft aspect-3/4 h-48 md:h-56`
-                  : `${common} bg-cream w-12 md:w-14 ${spineHeight(item.title)}`
+                  ? `${common} bg-raised shadow-soft aspect-3/4 h-48 md:h-56`
+                  : `${common} bg-raised w-12 md:w-14 ${spineHeight(item.title)}`
               }
             >
               {item.cover ? (

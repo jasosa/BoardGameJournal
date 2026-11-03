@@ -48,12 +48,12 @@ export function GameCard({
         style={
           { "--tile-accent": accent ?? "var(--color-ink)" } as CSSProperties
         }
-        className="group rounded-cover focus-visible:outline-bronze block focus-visible:outline-2 focus-visible:outline-offset-4"
+        className="group rounded-cover focus-visible:outline-accent block focus-visible:outline-2 focus-visible:outline-offset-4"
       >
         {item.cover ? (
           <div
             style={{ aspectRatio: ratio }}
-            className={`${tile} bg-cream rounded-cover overflow-hidden group-hover:-translate-y-1.5 group-hover:ring-2 group-hover:ring-(--tile-accent)`}
+            className={`${tile} bg-raised rounded-cover overflow-hidden group-hover:-translate-y-1.5 group-hover:ring-2 group-hover:ring-(--tile-accent)`}
           >
             {/* eslint-disable-next-line @next/next/no-img-element -- private image from our own route; next/image cannot send the session cookie */}
             <img

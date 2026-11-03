@@ -15,7 +15,7 @@ Process
 
 Check
 - Cover art is the hero, with a consistent ratio and a good fallback when missing.
-- Warm neutral palette, bronze used sparingly. No bright primaries, no generic dashboard cards, no badge clutter.
+- One dark theme (Night Wall, ADR-0010) with a single light accent; colour comes from the covers. No bright primaries, no generic dashboard cards, no badge clutter.
 - Display font for titles, readable sans for UI. Clear hierarchy, generous whitespace, restrained metadata.
 - Only design tokens are used (grep for hex colours, arbitrary Tailwind values like `[#...]` or `p-[13px]`).
 - Loading, empty, error and success states exist and look intentional.

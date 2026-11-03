@@ -31,6 +31,7 @@ Node 24 (see `.nvmrc`). Keep this list current.
 - `npx supabase start` / `npx supabase db reset` - local database (needs Docker Desktop)
 - `npx supabase migration new <name>` - new migration
 - `npm run user:create -- <email>` - create an account (public sign-up is off). Needs the Supabase URL and `SUPABASE_SERVICE_ROLE_KEY` in the local env file
+- `npm run covers:colours` - fill the game-page colours of covers uploaded before the colours existed (same env needs)
 
 ## Code layout
 
@@ -65,7 +66,7 @@ Rules:
 
 ## Visual direction
 
-Premium collection catalogue + editorial journal. Warm off-white, cream, charcoal, restrained bronze. Cover art is the hero. Expressive display type + readable sans. Generous whitespace. Subtle motion. No generic dashboard look, no bright primaries, no badge soup. Use tokens from `src/lib/design-system`, never hard-coded colours or spacing. See the `design-system` skill.
+"Night Wall" (ADR-0010): a premium collection catalogue first, with an editorial journal behind it. One dark theme (canvas #121316, raised #1B1C20, warm off-white text), one light accent, no bright primaries. Cover art is the hero: covers keep their own proportions on a masonry wall, and each game page takes a tint from its cover. Schibsted Grotesk for display, Inter for body. Quiet, precise, subtle motion. No generic dashboard look, no badge soup. Use tokens from `src/lib/design-system`, never hard-coded colours or spacing. See the `design-system` skill and `docs/design-concepts/`.
 
 ## How we work
 

@@ -2,7 +2,7 @@ import { FallbackCover } from "@/components/game/FallbackCover";
 import { coverUrl, type CoverRef } from "@/features/catalogue/cover";
 
 /**
- * The game's cover, or a hairline-framed cream tile with the title's first letter until there
+ * The game's cover, or a raised tile with the title's first letter until there
  * is one. The picture is already stored at the right size, so a plain image is enough. The
  * tile fills the width its parent gives it.
  */
@@ -15,7 +15,7 @@ export function CoverTile({
 }) {
   if (cover) {
     return (
-      <div className="bg-cream rounded-cover shadow-soft aspect-3/4 w-full overflow-hidden">
+      <div className="bg-raised rounded-cover shadow-soft aspect-3/4 w-full overflow-hidden">
         {/* eslint-disable-next-line @next/next/no-img-element -- private image from our own route; next/image cannot send the session cookie */}
         <img
           src={coverUrl(cover)}

@@ -31,7 +31,7 @@ export default async function GamePage({
     return (
       <>
         <BackLink fallbackHref="/library">Library</BackLink>
-        <section role="alert" className="bg-cream rounded-card px-6 py-8">
+        <section role="alert" className="bg-raised rounded-card px-6 py-8">
           <h1 className="text-xl">Could not load this game</h1>
           <p className="text-ink-soft mt-2">{result.error.message}</p>
           <Link
