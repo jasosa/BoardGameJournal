@@ -15,11 +15,14 @@ export function StatusPicker({
   current,
   label,
   action,
+  aside,
 }: {
   entryId: string;
   current: CollectionStatus;
   label: string;
   action: (previous: FormState, formData: FormData) => Promise<FormState>;
+  /** A link shown on the same line as "Different date", for example "Edit facts". */
+  aside?: React.ReactNode;
 }) {
   const [state, formAction, pending] = useActionState(action, { error: null });
 
@@ -49,19 +52,22 @@ export function StatusPicker({
           </button>
         ))}
       </div>
-      <details className="mt-2">
-        <summary className="text-ink-soft hover:text-ink inline-flex min-h-11 cursor-pointer items-center text-sm underline underline-offset-4">
-          Different date
-        </summary>
-        <div className="mt-1 max-w-xs">
-          <TextField
-            label="Date of change"
-            name="changedOn"
-            type="date"
-            hint="Optional. Pick a status above to save it."
-          />
-        </div>
-      </details>
+      <div className="mt-2 flex flex-wrap items-start gap-x-6">
+        <details>
+          <summary className="text-ink-soft hover:text-ink inline-flex min-h-11 cursor-pointer items-center text-sm underline underline-offset-4">
+            Different date
+          </summary>
+          <div className="mt-1 max-w-xs">
+            <TextField
+              label="Date of change"
+              name="changedOn"
+              type="date"
+              hint="Optional. Pick a status above to save it."
+            />
+          </div>
+        </details>
+        {aside}
+      </div>
       {state.error ? (
         <p role="alert" className="text-negative mt-2 text-sm">
           {state.error}

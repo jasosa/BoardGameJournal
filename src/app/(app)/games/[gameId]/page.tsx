@@ -103,12 +103,6 @@ export default async function GamePage({
         </header>
 
         <div className="col-span-2 flex flex-col gap-10 md:col-span-1 md:col-start-2">
-          {game.description ? (
-            <p className="max-w-prose whitespace-pre-line">
-              {game.description}
-            </p>
-          ) : null}
-
           <section aria-labelledby="status-heading">
             <h2 id="status-heading" className="mb-3 text-xl">
               Status
@@ -135,6 +129,18 @@ export default async function GamePage({
                           : "Status"
                       }
                       action={changeStatus}
+                      aside={
+                        index === 0 && game.editable ? (
+                          <Link
+                            href={`/games/${game.id}/edit`}
+                            className="text-ink-soft hover:text-ink inline-flex min-h-11 items-center text-sm underline underline-offset-4"
+                          >
+                            {facts.length > 0 || game.description
+                              ? "Edit facts"
+                              : "Add facts"}
+                          </Link>
+                        ) : null
+                      }
                     />
                   </div>
                 ))}
@@ -142,17 +148,10 @@ export default async function GamePage({
             )}
           </section>
 
-          {game.editable ? (
-            <div className="-mt-6">
-              <Link
-                href={`/games/${game.id}/edit`}
-                className="text-ink-soft hover:text-ink inline-flex min-h-11 items-center text-sm underline underline-offset-4"
-              >
-                {facts.length > 0 || game.description
-                  ? "Edit facts"
-                  : "Add facts"}
-              </Link>
-            </div>
+          {game.description ? (
+            <p className="max-w-prose whitespace-pre-line">
+              {game.description}
+            </p>
           ) : null}
 
           <section aria-labelledby="details-heading">
