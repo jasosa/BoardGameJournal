@@ -116,18 +116,6 @@ export default async function GamePage({
         )}
       </section>
 
-      {history.length > 0 ? (
-        <section aria-labelledby="history-heading" className="mt-10">
-          <h2 id="history-heading" className="mb-3 text-xl">
-            History
-          </h2>
-          <StatusHistory
-            entryIds={entries.map((entry) => entry.entryId)}
-            history={history}
-          />
-        </section>
-      ) : null}
-
       <section aria-labelledby="details-heading" className="mt-10">
         <h2 id="details-heading" className="mb-3 text-xl">
           Details
@@ -143,6 +131,13 @@ export default async function GamePage({
           </dd>
         </dl>
       </section>
+
+      {history.length > 0 ? (
+        <StatusHistory
+          entryIds={entries.map((entry) => entry.entryId)}
+          history={history}
+        />
+      ) : null}
     </>
   );
 }

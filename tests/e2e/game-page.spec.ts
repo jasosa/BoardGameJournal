@@ -224,6 +224,9 @@ test("every status change is kept in the History, with its date", async ({
 }) => {
   await openGame(page, "Wingspan");
   const history = page.getByRole("region", { name: "History" });
+  // Collapsed by default.
+  await expect(history.getByText("Added as Owned")).toBeHidden();
+  await history.getByText("History", { exact: true }).click();
   await expect(history.getByText("Added as Owned")).toBeVisible();
 
   await page.getByRole("button", { name: "Wishlist" }).click();
@@ -249,6 +252,7 @@ test("every status change is kept in the History, with its date", async ({
 
   // It survives a reload, and the page still fits.
   await page.reload();
+  await history.getByText("History", { exact: true }).click();
   await expect(rows).toHaveCount(3);
   const overflow = await page.evaluate(
     () =>
@@ -272,6 +276,7 @@ test("a date in the future is refused and nothing changes", async ({
     page.getByRole("button", { name: "Owned", pressed: true, exact: true }),
   ).toBeVisible();
   const history = page.getByRole("region", { name: "History" });
+  await history.getByText("History", { exact: true }).click();
   await expect(history.getByRole("listitem")).toHaveCount(1);
 });
 
@@ -304,6 +309,7 @@ test("each copy has its own history", async ({ page }, testInfo) => {
   ).toBeVisible();
 
   const history = page.getByRole("region", { name: "History" });
+  await history.getByText("History", { exact: true }).click();
   await expect(history.getByRole("heading", { name: "Copy 1" })).toBeVisible();
   await expect(history.getByRole("heading", { name: "Copy 2" })).toBeVisible();
   await expect(history.getByText("Added as Owned")).toBeVisible();
