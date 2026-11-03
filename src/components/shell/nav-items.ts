@@ -9,7 +9,7 @@ export const NAV_ITEMS: readonly NavItem[] = [
 
 export const CAPTURE_ITEM: NavItem = {
   href: "/capture",
-  label: "Quick Capture",
+  label: "Add game",
 };
 
 export function isActive(pathname: string, href: string): boolean {

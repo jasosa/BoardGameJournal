@@ -1,8 +1,11 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import { GameGallery } from "@/components/library/GameGallery";
 import { GameShelf } from "@/components/library/GameShelf";
 import { GameTable } from "@/components/library/GameTable";
-import { LibraryControls } from "@/components/library/LibraryControls";
+import { BarSearch } from "@/components/library/BarSearch";
+import { BarStatusFilters } from "@/components/library/BarStatusFilters";
+import { LibraryMeta } from "@/components/library/LibraryMeta";
 import { Pagination } from "@/components/library/Pagination";
 import { EmptyState } from "@/components/shell/EmptyState";
 import { PageHeader } from "@/components/shell/PageHeader";
@@ -61,14 +64,24 @@ export default async function LibraryPage({
 
   const page = queryLibrary(result.data, params);
   const filtered = hasActiveFilters(params);
-  const count = filtered
+  const base = filtered
     ? `${page.total} of ${result.data.length} games`
     : `${result.data.length} ${result.data.length === 1 ? "game" : "games"}`;
+  const count =
+    page.pageCount > 1 ? `${base} · showing ${page.from} to ${page.to}` : base;
 
   return (
     <>
-      <PageHeader title="Library" aside={count} compact />
-      <LibraryControls params={params} />
+      <h1 className="sr-only">Library</h1>
+      {/* The top bar holds the search and the status filters on wide screens; below that
+          they sit here. */}
+      <div className="mb-3 flex flex-col gap-1 xl:hidden">
+        <Suspense fallback={null}>
+          <BarSearch id="library-search-page" className="md:hidden" />
+          <BarStatusFilters className="-mx-2" />
+        </Suspense>
+      </div>
+      <LibraryMeta params={params} count={count} />
 
       {page.total === 0 ? (
         <section role="status" className="bg-cream rounded-card px-6 py-8">
@@ -101,11 +114,6 @@ export default async function LibraryPage({
         </section>
       ) : (
         <>
-          {page.pageCount > 1 ? (
-            <p className="text-ink-soft mb-4 text-sm" aria-live="polite">
-              Showing {page.from} to {page.to} of {page.total}
-            </p>
-          ) : null}
           {params.view === "shelf" ? (
             <>
               {page.pageCount > 1 ? (

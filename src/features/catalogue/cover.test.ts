@@ -4,6 +4,7 @@ import {
   COVER_MAX_RATIO,
   COVER_MIN_RATIO,
   coverDimensions,
+  usableCoverShape,
   coverPaths,
   coverRef,
   coverUrl,
@@ -63,5 +64,18 @@ describe("cover helpers", () => {
     expect(tall.width / tall.height).toBeCloseTo(COVER_MIN_RATIO, 1);
     expect(Math.max(wide.width, wide.height)).toBe(1200);
     expect(Math.max(tall.width, tall.height)).toBe(1200);
+  });
+
+  it("only lets the wall use sane stored sizes", () => {
+    expect(usableCoverShape(1200, 750)).toEqual({ width: 1200, height: 750 });
+    expect(usableCoverShape(null, 750)).toBeNull();
+    expect(usableCoverShape(0, 750)).toBeNull();
+    expect(usableCoverShape(-5, 750)).toBeNull();
+    expect(usableCoverShape(Number.NaN, 750)).toBeNull();
+    // A hand-edited row cannot make a tile absurdly thin or flat.
+    const thin = usableCoverShape(1, 2_147_483_647);
+    expect(thin && thin.width / thin.height).toBeCloseTo(COVER_MIN_RATIO, 5);
+    const flat = usableCoverShape(2_147_483_647, 1);
+    expect(flat && flat.width / flat.height).toBeCloseTo(COVER_MAX_RATIO, 5);
   });
 });

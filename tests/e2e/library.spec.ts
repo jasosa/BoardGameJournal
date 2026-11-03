@@ -32,19 +32,31 @@ const noOverflow = (page: Page) =>
       document.documentElement.clientWidth,
   );
 
-async function openFilters(page: Page) {
-  await page.getByRole("button", { name: /^Filters/ }).click();
+/** The search field that is on screen (the top bar on wide screens, the page on small ones). */
+const searchField = (page: Page) =>
+  page.getByLabel("Search your games").filter({ visible: true });
+
+/** Opens the extra filters unless they are already open (they stay open while one is in use). */
+async function openMoreFilters(page: Page) {
+  const panel = page.getByRole("link", { name: "Up to 30 minutes" });
+  if (!(await panel.isVisible())) {
+    await page.getByText("More filters").click();
+  }
+  await expect(panel).toBeVisible();
 }
+
+const statusFilters = (page: Page) =>
+  page.getByRole("navigation", { name: "Status filter" });
 
 test("250 games are shown 48 at a time, with page links", async ({ page }) => {
   await page.goto("/library");
   await expect(page.getByText("250 games")).toBeVisible();
-  await expect(page.getByText("Showing 1 to 48 of 250")).toBeVisible();
+  await expect(page.getByText("250 games · showing 1 to 48")).toBeVisible();
   await expect(games(page).getByRole("listitem")).toHaveCount(48);
 
   await page.getByRole("link", { name: "Next" }).click();
   await expect(page).toHaveURL(/\/library\?page=2$/);
-  await expect(page.getByText("Showing 49 to 96 of 250")).toBeVisible();
+  await expect(page.getByText("250 games · showing 49 to 96")).toBeVisible();
 
   await page.goto("/library?page=6");
   await expect(games(page).getByRole("listitem")).toHaveCount(10);
@@ -52,22 +64,22 @@ test("250 games are shown 48 at a time, with page links", async ({ page }) => {
 
   // A page past the end shows the last page.
   await page.goto("/library?page=99");
-  await expect(page.getByText("Showing 241 to 250 of 250")).toBeVisible();
+  await expect(page.getByText("250 games · showing 241 to 250")).toBeVisible();
 });
 
 test("searching narrows the list, keeps the URL, and survives reload and Back", async ({
   page,
 }) => {
   await page.goto("/library");
-  await page.getByLabel("Search your games").fill("wing");
-  await page.getByRole("button", { name: "Search" }).click();
+  await searchField(page).fill("wing");
+  await searchField(page).press("Enter");
   await expect(page).toHaveURL(/q=wing/);
   await expect(games(page).getByRole("listitem")).toHaveCount(1);
   await expect(page.getByText("1 of 250 games")).toBeVisible();
 
   await page.reload();
   await expect(games(page).getByRole("listitem")).toHaveCount(1);
-  await expect(page.getByLabel("Search your games")).toHaveValue("wing");
+  await expect(searchField(page)).toHaveValue("wing");
 
   await page.goBack();
   await expect(games(page).getByRole("listitem")).toHaveCount(48);
@@ -85,25 +97,41 @@ test("a status filter shows only that status, with several shown together", asyn
   page,
 }) => {
   await page.goto("/library");
-  await openFilters(page);
-  await page.getByLabel("Wishlist", { exact: true }).check();
+  await statusFilters(page).getByRole("link", { name: "Wishlist" }).click();
   await expect(page).toHaveURL(/status=wishlist/);
   await expect(games(page).getByRole("listitem")).toHaveCount(1);
-  await expect(page.getByLabel("Wishlist", { exact: true })).toBeChecked();
+  await expect(
+    statusFilters(page).getByRole("link", { name: "Wishlist" }),
+  ).toHaveAttribute("aria-current", "true");
 
-  // Two statuses: every card names its status, even Owned.
-  await page.goto("/library?status=wishlist&status=interested");
+  // A second status adds to it; every card then names its status, even Owned.
+  await statusFilters(page).getByRole("link", { name: "Interested" }).click();
   await expect(games(page).getByRole("listitem")).toHaveCount(2);
   await expect(games(page)).toContainText("Wishlist");
   await expect(games(page)).toContainText("Interested");
+
+  // "All" clears them, and a chosen status switches off again when clicked twice.
+  await statusFilters(page).getByRole("link", { name: "All" }).click();
+  await expect(page).toHaveURL(/\/library$/);
+  await expect(games(page).getByRole("listitem")).toHaveCount(48);
+});
+
+test("the search keeps the chosen status", async ({ page }) => {
+  await page.goto("/library?status=wishlist");
+  await searchField(page).fill("cafe");
+  await searchField(page).press("Enter");
+  await expect(page).toHaveURL(/status=wishlist/);
+  await expect(page).toHaveURL(/q=cafe/);
+  await expect(games(page).getByRole("listitem")).toHaveCount(1);
 });
 
 test("players and play time filters combine", async ({ page }) => {
   await page.goto("/library");
-  await openFilters(page);
-  await page.getByLabel("Players").selectOption("1");
-  await page.getByLabel("Play time").selectOption("60");
+  await openMoreFilters(page);
+  await page.getByRole("link", { name: "1 player", exact: true }).click();
   await expect(page).toHaveURL(/players=1/);
+  await openMoreFilters(page);
+  await page.getByRole("link", { name: "Up to 60 minutes" }).click();
   await expect(page).toHaveURL(/time=60/);
   await expect(games(page).getByRole("listitem")).toHaveCount(2);
   await expect(
@@ -116,8 +144,7 @@ test("players and play time filters combine", async ({ page }) => {
 
 test("sorting by title puts Arkham first", async ({ page }) => {
   await page.goto("/library");
-  await openFilters(page);
-  await page.getByLabel("Sort").selectOption("title");
+  await page.getByRole("link", { name: "Title", exact: true }).click();
   await expect(page).toHaveURL(/sort=title/);
   await expect(
     games(page).getByRole("listitem").first().getByRole("heading"),
@@ -187,22 +214,33 @@ test("the controls fit the screen and work from the keyboard", async ({
   await page.goto("/library");
   expect(await noOverflow(page)).toBe(0);
 
-  const toggle = page.getByRole("button", { name: /^Filters/ });
-  await toggle.focus();
-  await expect(toggle).toHaveAttribute("aria-expanded", "false");
+  const more = page.getByText("More filters");
+  await more.focus();
   await page.keyboard.press("Enter");
-  await expect(toggle).toHaveAttribute("aria-expanded", "true");
-  await expect(page.getByLabel("Players")).toBeVisible();
+  await expect(
+    page.getByRole("link", { name: "Up to 30 minutes" }),
+  ).toBeVisible();
   expect(await noOverflow(page)).toBe(0);
 
   // Tap targets are at least 44px tall.
   for (const locator of [
-    page.getByRole("button", { name: "Search" }),
-    toggle,
-    page.getByLabel("Players"),
+    searchField(page),
+    more,
     page.getByRole("link", { name: "Table" }),
+    statusFilters(page).getByRole("link", { name: "Wishlist" }),
+    page.getByRole("link", { name: "Title", exact: true }),
   ]) {
     const box = await locator.boundingBox();
     expect(box?.height ?? 0).toBeGreaterThanOrEqual(44);
   }
+});
+
+test("the wall keeps each cover's own shape", async ({ page }) => {
+  await page.goto("/library");
+  // Seeded games have no cover, so their tiles are 3:4. Covered tiles follow the stored size
+  // (see the covers spec); here only the wall's columns are checked.
+  const columns = await games(page).evaluate(
+    (el) => getComputedStyle(el).columnCount,
+  );
+  expect(Number(columns)).toBeGreaterThanOrEqual(2);
 });

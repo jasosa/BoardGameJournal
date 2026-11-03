@@ -13,10 +13,12 @@ test("shows the right navigation for the viewport", async ({
   await expect(isMobile ? header : bottom).toBeHidden();
 });
 
-test("Quick Capture is reachable and opens its page", async ({ page }) => {
+test("Add game (Quick Capture) is reachable and opens its page", async ({
+  page,
+}) => {
   await page.goto("/");
   await page
-    .getByRole("link", { name: /Quick Capture/ })
+    .getByRole("link", { name: /Add game/ })
     .filter({ visible: true })
     .click();
   await expect(page).toHaveURL(/\/capture$/);

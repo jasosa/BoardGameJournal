@@ -52,6 +52,16 @@ function oneOf<T extends readonly (string | number)[]>(
   return found ?? null;
 }
 
+/** The browser's URLSearchParams in the shape parseLibraryParams reads (repeated keys become lists). */
+export function rawFromSearchParams(search: URLSearchParams): RawSearchParams {
+  const raw: RawSearchParams = {};
+  for (const key of new Set(search.keys())) {
+    const all = search.getAll(key);
+    raw[key] = all.length > 1 ? all : all[0];
+  }
+  return raw;
+}
+
 const QUERY_MAX_LENGTH = 100;
 const PAGE_MAX = 10_000;
 

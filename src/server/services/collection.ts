@@ -9,7 +9,7 @@ import {
   type TitleMatch,
 } from "@/features/collection/schemas";
 import { normalizeTitle } from "@/features/catalogue/title";
-import { coverRef } from "@/features/catalogue/cover";
+import { coverRef, usableCoverShape } from "@/features/catalogue/cover";
 import { isHexColour } from "@/features/catalogue/cover-colours";
 import type { Database } from "@/lib/database/types";
 import { err, ok, type Result } from "@/lib/result";
@@ -173,6 +173,9 @@ export async function listLibrary(
     const coverRow = row.games.game_images.find(
       (image) => image.kind === "cover" && image.storage_path,
     );
+    const shape = coverRow?.storage_path
+      ? usableCoverShape(coverRow.width, coverRow.height)
+      : null;
     items.push({
       entryId: row.id,
       gameId: row.game_id,
@@ -181,8 +184,8 @@ export async function listLibrary(
       cover: coverRow?.storage_path
         ? coverRef(coverRow.id, coverRow.storage_path)
         : null,
-      coverWidth: coverRow?.storage_path ? coverRow.width : null,
-      coverHeight: coverRow?.storage_path ? coverRow.height : null,
+      coverWidth: shape?.width ?? null,
+      coverHeight: shape?.height ?? null,
       accent: isHexColour(coverRow?.accent_color)
         ? coverRow.accent_color
         : null,

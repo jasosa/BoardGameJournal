@@ -44,3 +44,7 @@ Gives up: the cover wall as the front page. Depends on plays and notes existing.
 Benchmarks were not looked at (written from memory). Fonts are not checked for licence or
 loading cost. Only desktop (1440x900) first screens exist; no mobile, no dark or light
 counterpart, no interaction.
+
+## Concept B in the app
+
+B was built on the `concept-b` branch (ADR-0010). One deliberate difference: input and button borders use a stronger edge (3:1 contrast) than the concept's faint hairline. The search placeholder has no game count.

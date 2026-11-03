@@ -22,7 +22,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       </div>
       <main
         id="main"
-        className="mx-auto max-w-7xl px-4 pt-6 pb-28 md:px-6 md:pt-24 md:pb-16"
+        className="mx-auto max-w-screen-2xl px-4 pt-6 pb-28 md:px-6 md:pt-20 md:pb-16"
       >
         {children}
       </main>

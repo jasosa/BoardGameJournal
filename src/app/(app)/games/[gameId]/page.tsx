@@ -68,20 +68,12 @@ export default async function GamePage({
       <BackLink fallbackHref="/library">Library</BackLink>
 
       <div className="grid grid-cols-[9rem_1fr] gap-x-5 gap-y-8 md:grid-cols-[22.5rem_1fr] md:gap-x-16">
-        <div className="md:sticky md:top-8 md:row-span-2 md:self-start">
+        <div>
           <CoverTile title={game.title} cover={game.cover} />
-          {game.editable ? (
-            <CoverControls
-              gameId={game.id}
-              hasCover={game.cover !== null}
-              uploadAction={uploadCoverAction}
-              removeAction={removeCoverAction}
-            />
-          ) : null}
         </div>
 
-        <header className="min-w-0">
-          <h1 className="text-3xl break-words hyphens-auto md:text-7xl">
+        <header className="min-w-0 self-end">
+          <h1 className="text-3xl break-words hyphens-auto md:text-8xl">
             {game.title}
           </h1>
           {facts.length > 0 ? (
@@ -97,16 +89,6 @@ export default async function GamePage({
                 </div>
               ))}
             </dl>
-          ) : null}
-          {game.editable ? (
-            <Link
-              href={`/games/${game.id}/edit`}
-              className="text-ink mt-1 inline-flex min-h-11 items-center text-sm underline underline-offset-4"
-            >
-              {facts.length > 0 || game.description
-                ? "Edit facts"
-                : "Add facts"}
-            </Link>
           ) : null}
         </header>
 
@@ -149,6 +131,25 @@ export default async function GamePage({
               </div>
             )}
           </section>
+
+          {game.editable ? (
+            <div className="-mt-6 flex flex-wrap items-center gap-x-5">
+              <Link
+                href={`/games/${game.id}/edit`}
+                className="text-ink-soft hover:text-ink inline-flex min-h-11 items-center text-sm underline underline-offset-4"
+              >
+                {facts.length > 0 || game.description
+                  ? "Edit facts"
+                  : "Add facts"}
+              </Link>
+              <CoverControls
+                gameId={game.id}
+                hasCover={game.cover !== null}
+                uploadAction={uploadCoverAction}
+                removeAction={removeCoverAction}
+              />
+            </div>
+          ) : null}
 
           <section aria-labelledby="details-heading">
             <h2 id="details-heading" className="mb-3 text-xl">

@@ -87,7 +87,8 @@ test("a cover shows on the game page and on the Library card", async ({
   await expect(thumb).toHaveAttribute("src", /\/covers\/.+size=thumb/);
   await expect.poll(() => loaded(page, 'a[href^="/games/"] img')).toBe(true);
   const box = await thumb.boundingBox();
-  expect(box!.width / box!.height).toBeCloseTo(0.75, 1);
+  // The picture was 800 x 1000, and the cover keeps that shape.
+  expect(box!.width / box!.height).toBeCloseTo(0.8, 1);
 });
 
 test("the cover is served privately, resized, and without photo metadata", async ({
@@ -124,7 +125,7 @@ test("the cover is served privately, resized, and without photo metadata", async
 
   const bytes = await response.body();
   const meta = await sharp(bytes).metadata();
-  expect([meta.format, meta.width, meta.height]).toEqual(["webp", 900, 1200]);
+  expect([meta.format, meta.width, meta.height]).toEqual(["webp", 1200, 900]);
   expect(meta.exif).toBeUndefined();
   expect(bytes.includes(Buffer.from("my secret home address"))).toBe(false);
 
@@ -275,4 +276,32 @@ test("a large photo just under the limit uploads", async ({ page }) => {
   ).toBeVisible({
     timeout: 20_000,
   });
+});
+
+test("covers of different shapes keep them on the wall", async ({ page }) => {
+  await openGame(page, "Wide box");
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles(file(await picture(200, 1600, 1000)));
+  await expect(page.getByText("Replace cover")).toBeVisible();
+
+  await openGame(page, "Tall box");
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles(file(await picture(120, 600, 1000)));
+  await expect(page.getByText("Replace cover")).toBeVisible();
+
+  await page.goto("/library");
+  const ratio = async (title: string) => {
+    const img = page
+      .getByRole("link", { name: new RegExp(title) })
+      .locator("img");
+    await expect
+      .poll(() => img.evaluate((el: HTMLImageElement) => el.complete))
+      .toBe(true);
+    const box = await img.boundingBox();
+    return box!.width / box!.height;
+  };
+  expect(await ratio("Wide box")).toBeGreaterThan(1.4);
+  expect(await ratio("Tall box")).toBeLessThan(0.7);
 });

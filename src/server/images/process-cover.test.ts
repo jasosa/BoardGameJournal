@@ -3,6 +3,7 @@ import { describe, expect, it } from "vitest";
 import {
   COVER_LONG_SIDE,
   COVER_MAX_BYTES,
+  COVER_MAX_RATIO,
   coverDimensions,
 } from "@/features/catalogue/cover";
 import { processCover } from "./process-cover";
@@ -216,4 +217,22 @@ describe("processCover", () => {
       expect(r).toBeGreaterThan(b ?? 0);
     }
   }, 60_000);
+
+  it("enlarges a tiny picture and limits an extreme shape", async () => {
+    const tiny = await expectCover(await solid(10, 10).png().toBuffer());
+    expect([tiny.cover.width, tiny.cover.height]).toEqual([1200, 1200]);
+    const wide = await expectCover(await solid(4000, 500).png().toBuffer());
+    expect((wide.cover.width ?? 0) / (wide.cover.height ?? 1)).toBeCloseTo(
+      COVER_MAX_RATIO,
+      1,
+    );
+  });
+
+  it("never crashes on an extremely thin picture", async () => {
+    const sliver = await solid(1, 100_000).png().toBuffer();
+    const result = await processCover(sliver);
+    // Either it is cropped to the allowed shape or it is refused with a clear message.
+    if (!result.ok) expect(result.error.code).toBe("invalid_image");
+    else expect(result.data.width / result.data.height).toBeCloseTo(0.6, 1);
+  });
 });

@@ -12,6 +12,9 @@ const LABELS: Record<LibraryView, string> = {
   table: "Table",
 };
 
+const link =
+  "text-ink-soft hover:text-ink focus-visible:outline-bronze duration-fast inline-flex min-h-11 items-center border-b-2 border-transparent px-2 text-xs font-semibold tracking-wider uppercase transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 aria-[current=page]:border-ink aria-[current=page]:text-ink";
+
 /** Links, not buttons: each view has its own URL. Changing view goes back to page 1. */
 export function ViewSwitch({
   params,
@@ -21,25 +24,17 @@ export function ViewSwitch({
   className?: string;
 }) {
   return (
-    <nav aria-label="Library view" className={className}>
-      <ul className="flex gap-1">
-        {LIBRARY_VIEWS.map((view) => {
-          const current = view === params.view;
-          return (
-            <li key={view}>
-              <Link
-                href={buildLibraryHref(params, { view, page: 1 })}
-                aria-current={current ? "page" : undefined}
-                className={`rounded-input focus-visible:outline-bronze inline-flex min-h-11 items-center px-3 text-sm focus-visible:outline-2 focus-visible:outline-offset-2 ${
-                  current ? "bg-cream text-ink" : "text-ink-soft hover:text-ink"
-                }`}
-              >
-                {LABELS[view]}
-              </Link>
-            </li>
-          );
-        })}
-      </ul>
+    <nav aria-label="Library view" className={`flex ${className}`}>
+      {LIBRARY_VIEWS.map((view) => (
+        <Link
+          key={view}
+          href={buildLibraryHref(params, { view, page: 1 })}
+          aria-current={view === params.view ? "page" : undefined}
+          className={link}
+        >
+          {LABELS[view]}
+        </Link>
+      ))}
     </nav>
   );
 }

@@ -1,6 +1,10 @@
 import type { LibraryItem } from "@/features/collection/schemas";
 import { GameCard } from "./GameCard";
 
+/**
+ * The wall: covers keep their own proportions and flow into columns, like pictures hung side
+ * by side. Reading and tab order follow the columns (top to bottom, then the next column).
+ */
 export function GameGallery({
   items,
   alwaysShowStatus = false,
@@ -11,7 +15,7 @@ export function GameGallery({
   return (
     <ul
       aria-label="Your games"
-      className="grid grid-cols-2 gap-x-3 gap-y-6 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6"
+      className="columns-2 gap-x-3.5 md:columns-3 lg:columns-4 xl:columns-6"
     >
       {items.map((item) => (
         <GameCard

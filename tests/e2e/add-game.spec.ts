@@ -26,7 +26,7 @@ test("a new account sees the empty library with a way to add a game", async ({
 test("Back returns to the page I came from", async ({ page }) => {
   await page.goto("/settings");
   await page
-    .getByRole("link", { name: /Quick Capture/ })
+    .getByRole("link", { name: /Add game/ })
     .filter({ visible: true })
     .click();
   await expect(page).toHaveURL(/\/capture$/);

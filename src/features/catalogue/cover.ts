@@ -16,6 +16,34 @@ export const COVER_LONG_SIDE = { cover: 1200, thumb: 480 } as const;
 export const COVER_MIN_RATIO = 0.6;
 export const COVER_MAX_RATIO = 1.6;
 
+/**
+ * The stored size of a cover as the wall may use it: only sane, positive numbers, with the shape
+ * limited to the allowed range. Anything else (a hand-edited row) gives null, and the wall then
+ * falls back to 3:4.
+ */
+export function usableCoverShape(
+  width: number | null,
+  height: number | null,
+): { width: number; height: number } | null {
+  if (
+    width === null ||
+    height === null ||
+    !Number.isFinite(width) ||
+    !Number.isFinite(height) ||
+    width <= 0 ||
+    height <= 0
+  ) {
+    return null;
+  }
+  const ratio = width / height;
+  if (ratio >= COVER_MIN_RATIO && ratio <= COVER_MAX_RATIO) {
+    return { width, height };
+  }
+  return ratio > COVER_MAX_RATIO
+    ? { width: COVER_MAX_RATIO * 1000, height: 1000 }
+    : { width: COVER_MIN_RATIO * 1000, height: 1000 };
+}
+
 /** Size to store for a picture of `width` x `height`: its own shape, within the allowed range. */
 export function coverDimensions(
   width: number,
