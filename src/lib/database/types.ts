@@ -340,6 +340,10 @@ export type Database = {
       [_ in never]: never;
     };
     Functions: {
+      add_game_copy: {
+        Args: { p_added_on?: string; p_game_id: string; p_status: string };
+        Returns: string;
+      };
       add_manual_game: {
         Args: { p_added_on?: string; p_status: string; p_title: string };
         Returns: string;

@@ -67,6 +67,23 @@ export const addManualGameInput = z.object({
 
 export type AddManualGameInput = z.infer<typeof addManualGameInput>;
 
+/** Another copy of a game that already exists (one the person already has, or a provider's). */
+export const addGameCopyInput = z.object({
+  gameId: z.uuid(),
+  status: z.enum(COLLECTION_STATUSES, { error: "Choose a status." }),
+  addedOn: optionalDate,
+});
+
+export type AddGameCopyInput = z.infer<typeof addGameCopyInput>;
+
+/** A game in the person's collection whose title matches what they typed. */
+export type TitleMatch = {
+  gameId: string;
+  title: string;
+  /** Status of the most recently added copy. */
+  status: CollectionStatus;
+};
+
 export const changeEntryStatusInput = z.object({
   entryId: z.uuid(),
   status: z.enum(COLLECTION_STATUSES, { error: "Choose a status." }),

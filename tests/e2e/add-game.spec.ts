@@ -101,3 +101,110 @@ test("another account does not see my games", async ({
     await deleteAccount(other.id);
   }
 });
+
+test("a title I already have shows a notice and saves nothing yet", async ({
+  page,
+}) => {
+  await addGame(page, "Wingspan");
+
+  await page.goto("/capture");
+  await page.getByLabel("Title").fill("  wingspan! ");
+  await page.getByRole("button", { name: "Save game" }).click();
+
+  const notice = page.getByRole("status").filter({ hasText: "already have" });
+  await expect(notice).toContainText("You already have Wingspan (Owned).");
+  await expect(page).toHaveURL(/\/capture$/);
+  // What was typed stays, and Save game is replaced by the two choices.
+  await expect(page.getByLabel("Title")).toHaveValue("  wingspan! ");
+  await expect(page.getByRole("button", { name: "Save game" })).toHaveCount(0);
+
+  // Nothing was saved: still one card.
+  await page.goto("/library");
+  await expect(
+    page.getByRole("list", { name: "Your games" }).getByRole("listitem"),
+  ).toHaveCount(1);
+});
+
+test("Add another copy puts a second copy on the same game", async ({
+  page,
+}) => {
+  await addGame(page, "Wingspan");
+
+  await page.goto("/capture");
+  await page.getByLabel("Title").fill("WINGSPAN");
+  await page.getByLabel("Wishlist", { exact: true }).check();
+  await page.getByRole("button", { name: "Save game" }).click();
+  await page.getByRole("button", { name: "Add another copy" }).click();
+
+  await expect(page).toHaveURL(/\/games\/[0-9a-f-]+$/);
+  await expect(page.getByRole("heading", { name: "Wingspan" })).toBeVisible();
+  await expect(
+    page.getByRole("group", { name: "Status of copy 1" }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("group", { name: "Status of copy 2" }),
+  ).toBeVisible();
+
+  // The Library shows one card per copy, and both open the same game.
+  await page.goto("/library");
+  const links = page
+    .getByRole("list", { name: "Your games" })
+    .getByRole("link", { name: /Wingspan/ });
+  await expect(links).toHaveCount(2);
+  const hrefs = await links.evaluateAll((els) =>
+    els.map((el) => el.getAttribute("href")),
+  );
+  expect(hrefs[0]).toBe(hrefs[1]);
+});
+
+test("the notice can open the existing game, and a new title brings Save back", async ({
+  page,
+}) => {
+  await addGame(page, "Wingspan");
+
+  await page.goto("/capture");
+  await page.getByLabel("Title").fill("Wingspan");
+  await page.getByRole("button", { name: "Save game" }).click();
+  await page.getByRole("link", { name: "Open Wingspan" }).click();
+  await expect(page).toHaveURL(/\/games\/[0-9a-f-]+$/);
+  await expect(page.getByRole("heading", { name: "Wingspan" })).toBeVisible();
+
+  // Typing a different title takes the notice away and a different game can be saved.
+  await page.goto("/capture");
+  await page.getByLabel("Title").fill("Wingspan");
+  await page.getByRole("button", { name: "Save game" }).click();
+  await expect(
+    page.getByRole("button", { name: "Add another copy" }),
+  ).toBeVisible();
+  await page.getByLabel("Title").fill("Wingspan Asia");
+  await expect(
+    page.getByRole("button", { name: "Add another copy" }),
+  ).toHaveCount(0);
+  await page.getByRole("button", { name: "Save game" }).click();
+  await expect(page).toHaveURL(/\/library$/);
+  await expect(
+    page.getByRole("list", { name: "Your games" }).getByRole("listitem"),
+  ).toHaveCount(2);
+});
+
+test("the notice fits the screen and its actions are reachable by keyboard", async ({
+  page,
+}) => {
+  await addGame(page, "Wingspan");
+  await page.goto("/capture");
+  await page.getByLabel("Title").fill("Wingspan");
+  await page.getByRole("button", { name: "Save game" }).click();
+  const open = page.getByRole("link", { name: "Open Wingspan" });
+  await open.focus();
+  await expect(open).toBeFocused();
+  await page.keyboard.press("Tab");
+  await expect(
+    page.getByRole("button", { name: "Add another copy" }),
+  ).toBeFocused();
+  const overflow = await page.evaluate(
+    () =>
+      document.documentElement.scrollWidth -
+      document.documentElement.clientWidth,
+  );
+  expect(overflow).toBe(0);
+});

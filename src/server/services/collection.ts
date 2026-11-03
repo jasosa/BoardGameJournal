@@ -1,11 +1,14 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
 import {
   COLLECTION_STATUSES,
+  addGameCopyInput,
   addManualGameInput,
   changeEntryStatusInput,
   type CollectionStatus,
   type LibraryItem,
+  type TitleMatch,
 } from "@/features/collection/schemas";
+import { normalizeTitle } from "@/features/catalogue/title";
 import { coverRef } from "@/features/catalogue/cover";
 import type { Database } from "@/lib/database/types";
 import { err, ok, type Result } from "@/lib/result";
@@ -38,6 +41,78 @@ export async function addManualGame(
     return err("save_failed", "We could not save the game. Try again.");
   }
   return ok({ entryId: data });
+}
+
+/**
+ * Adds another copy of a game that already exists, for the signed-in user. RLS requires that
+ * the game is visible to the caller, so someone else's private game is "not found".
+ */
+export async function addGameCopy(
+  supabase: Client,
+  input: unknown,
+): Promise<Result<{ entryId: string }>> {
+  const parsed = addGameCopyInput.safeParse(input);
+  if (!parsed.success) {
+    return err(
+      "validation",
+      parsed.error.issues[0]?.message ?? "Check the form and try again.",
+    );
+  }
+
+  const { data, error } = await supabase.rpc("add_game_copy", {
+    p_game_id: parsed.data.gameId,
+    p_status: parsed.data.status,
+    ...(parsed.data.addedOn ? { p_added_on: parsed.data.addedOn } : {}),
+  });
+  if (error || !data) {
+    if (error?.message.includes("invalid_date")) {
+      return err("validation", "Choose a date that is not in the future.");
+    }
+    // 42501: row security refused it (game not visible). 23503: no such game.
+    if (error?.code === "42501" || error?.code === "23503") {
+      return err("not_found", "We could not find that game.");
+    }
+    return err("save_failed", "We could not save the game. Try again.");
+  }
+  return ok({ entryId: data });
+}
+
+/**
+ * Games in the signed-in user's collection whose title is the same as `title` once accents,
+ * case and punctuation are ignored. Each game appears once, with the status of its newest copy.
+ */
+export async function findTitleMatches(
+  supabase: Client,
+  userId: string,
+  title: string,
+): Promise<Result<TitleMatch[]>> {
+  const wanted = normalizeTitle(title);
+  if (wanted === "") return ok([]);
+
+  const { data, error } = await supabase
+    .from("collection_entries")
+    .select("status, game_id, games(name)")
+    // RLS already limits rows to the caller; the filter is a second guard.
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false });
+  if (error) {
+    return err("load_failed", "We could not check your library.");
+  }
+
+  const matches = new Map<string, TitleMatch>();
+  for (const row of data) {
+    if (!row.games || !isStatus(row.status)) continue;
+    if (normalizeTitle(row.games.name) !== wanted) continue;
+    // Rows are newest first, so the first one seen is the newest copy.
+    if (!matches.has(row.game_id)) {
+      matches.set(row.game_id, {
+        gameId: row.game_id,
+        title: row.games.name,
+        status: row.status,
+      });
+    }
+  }
+  return ok([...matches.values()]);
 }
 
 function isStatus(value: string): value is CollectionStatus {

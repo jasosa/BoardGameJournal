@@ -1,6 +1,7 @@
 "use client";
 
-import { useActionState } from "react";
+import Link from "next/link";
+import { useActionState, useEffect, useRef, useState } from "react";
 import { Button } from "@/components/ui/Button";
 import { TextField } from "@/components/ui/TextField";
 import type { FormState } from "@/components/ui/form-state";
@@ -8,6 +9,7 @@ import {
   COLLECTION_STATUSES,
   STATUS_LABELS,
   TITLE_MAX_LENGTH,
+  type TitleMatch,
 } from "@/features/collection/schemas";
 
 /** `field` says where the error belongs: under Title, or as a general message. */
@@ -15,6 +17,8 @@ export type AddGameState = FormState & {
   field?: "title" | null;
   title?: string;
   status?: string;
+  /** Games the person already has under this title. Nothing is saved until they choose. */
+  duplicates?: TitleMatch[];
 };
 
 export function AddGameForm({
@@ -26,6 +30,14 @@ export function AddGameForm({
     error: null,
   });
   const selected = state.status ?? "owned";
+  // Typing in the title takes the notice away, so Save game comes back for a different title.
+  const [editedAt, setEditedAt] = useState<AddGameState | null>(null);
+  // Screen readers can miss a notice that appears already filled in, so focus moves to it.
+  const noticeRef = useRef<HTMLDivElement>(null);
+  const duplicates = editedAt === state ? [] : (state.duplicates ?? []);
+  useEffect(() => {
+    if (duplicates.length > 0) noticeRef.current?.focus();
+  }, [duplicates.length, state]);
 
   // The first history row gets the person's own "today", not the server's.
   function submit(formData: FormData) {
@@ -49,6 +61,7 @@ export function AddGameForm({
         autoComplete="off"
         required
         autoFocus
+        onChange={() => setEditedAt(state)}
         error={state.field === "title" ? state.error : null}
       />
 
@@ -72,15 +85,55 @@ export function AddGameForm({
         </div>
       </fieldset>
 
+      {duplicates.length > 0 ? (
+        <div
+          ref={noticeRef}
+          role="status"
+          tabIndex={-1}
+          className="bg-cream rounded-card flex flex-col gap-4 px-4 py-4 focus:outline-none"
+        >
+          {duplicates.map((match) => (
+            <div key={match.gameId} className="flex flex-col gap-3">
+              <p className="text-sm">
+                You already have <strong>{match.title}</strong> (
+                {STATUS_LABELS[match.status]}).
+              </p>
+              <div className="flex flex-wrap gap-2">
+                <Link
+                  href={`/games/${match.gameId}`}
+                  className="border-line text-ink hover:border-bronze duration-fast rounded-input inline-flex min-h-11 items-center border px-4 text-sm transition-colors"
+                >
+                  Open {match.title}
+                </Link>
+                <Button
+                  type="submit"
+                  name="copyOf"
+                  value={match.gameId}
+                  disabled={pending}
+                  variant="quiet"
+                >
+                  {pending ? "Saving" : "Add another copy"}
+                </Button>
+              </div>
+            </div>
+          ))}
+          <p className="text-ink-soft text-sm">
+            To add a different game, change the title.
+          </p>
+        </div>
+      ) : null}
+
       {state.error && state.field !== "title" ? (
         <p role="alert" className="text-negative text-sm">
           {state.error}
         </p>
       ) : null}
 
-      <Button type="submit" disabled={pending}>
-        {pending ? "Saving" : "Save game"}
-      </Button>
+      {duplicates.length > 0 ? null : (
+        <Button type="submit" disabled={pending}>
+          {pending ? "Saving" : "Save game"}
+        </Button>
+      )}
     </form>
   );
 }

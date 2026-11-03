@@ -33,6 +33,7 @@ Exit: data model, design direction and first slice validated.
 - [ ] L1 Auth: magic link, private workspace, sign-up restricted (allowlist).
 - [ ] L2 Catalogue search via provider + pick edition + add with status. Manual fallback when provider fails.
   - AC: provider timeout shows fallback; duplicate external id never creates a second game.
+  - Prepared 2026-11-03 by the duplicate warning: reuse `normalizeTitle`, `findTitleMatches` and the `add_game_copy` function for games already held.
 - [x] L3 Collection status changes (any transition, history kept).
   - AC: every change is recorded with from and to status and a date (today by default, or a date the person sets, not in the future); history is visible on the game page and cannot be edited by the person; a status cannot change without a history row; two-user isolation tests pass. See ADR-0009.
   - Done 2026-11-02: verified locally. CI run on GitHub pending the push.
