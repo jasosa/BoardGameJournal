@@ -68,11 +68,21 @@ export default async function GamePage({
       <BackLink fallbackHref="/library">Library</BackLink>
 
       <div className="grid grid-cols-[9rem_1fr] gap-x-5 gap-y-8 md:grid-cols-[22.5rem_1fr] md:gap-x-16">
-        <div>
+        <div className="md:sticky md:top-20 md:row-span-2 md:self-start">
           <CoverTile title={game.title} cover={game.cover} />
+          {game.editable ? (
+            <div className="mt-3">
+              <CoverControls
+                gameId={game.id}
+                hasCover={game.cover !== null}
+                uploadAction={uploadCoverAction}
+                removeAction={removeCoverAction}
+              />
+            </div>
+          ) : null}
         </div>
 
-        <header className="min-w-0 self-end">
+        <header className="min-w-0">
           <h1 className="text-3xl break-words hyphens-auto md:text-8xl">
             {game.title}
           </h1>
@@ -133,7 +143,7 @@ export default async function GamePage({
           </section>
 
           {game.editable ? (
-            <div className="-mt-6 flex flex-wrap items-center gap-x-5">
+            <div className="-mt-6">
               <Link
                 href={`/games/${game.id}/edit`}
                 className="text-ink-soft hover:text-ink inline-flex min-h-11 items-center text-sm underline underline-offset-4"
@@ -142,12 +152,6 @@ export default async function GamePage({
                   ? "Edit facts"
                   : "Add facts"}
               </Link>
-              <CoverControls
-                gameId={game.id}
-                hasCover={game.cover !== null}
-                uploadAction={uploadCoverAction}
-                removeAction={removeCoverAction}
-              />
             </div>
           ) : null}
 

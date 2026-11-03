@@ -72,7 +72,7 @@ export function CoverControls({
               type="submit"
               variant="quiet"
               disabled={uploading || removing}
-              className="text-ink-soft hover:text-ink border-transparent px-0! underline underline-offset-4"
+              className="text-ink-soft hover:text-ink border-0 px-0! underline underline-offset-4"
             >
               {removing ? "Removing" : "Remove cover"}
             </Button>
