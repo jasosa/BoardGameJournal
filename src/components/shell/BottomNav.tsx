@@ -23,7 +23,7 @@ export function BottomNav() {
   return (
     <nav
       aria-label="Main"
-      className="bg-paper border-line pb-safe fixed inset-x-0 bottom-0 z-10 border-t md:hidden"
+      className="bg-paper/90 border-line pb-safe fixed inset-x-0 bottom-0 z-10 border-t backdrop-blur-md md:hidden"
     >
       <div className="grid grid-cols-5 items-center">
         <Items items={NAV_ITEMS.slice(0, 2)} />

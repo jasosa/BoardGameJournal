@@ -34,14 +34,20 @@ test("marks the current page in the navigation", async ({ page }) => {
   ).toHaveAttribute("aria-current", "page");
 });
 
-test("theme toggle switches and remembers the theme", async ({ page }) => {
+test("the app is dark only and Settings has no theme choice", async ({
+  page,
+}) => {
   await page.goto("/settings");
-  await page.getByRole("button", { name: "Dark" }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await page.reload();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "dark");
-  await page.getByRole("button", { name: "Light" }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "light");
+  await expect(page.getByRole("button", { name: "Light" })).toHaveCount(0);
+  const scheme = await page.evaluate(
+    () => getComputedStyle(document.documentElement).colorScheme,
+  );
+  expect(scheme).toBe("dark");
+  const background = await page.evaluate(
+    () => getComputedStyle(document.body).backgroundColor,
+  );
+  // #121316
+  expect(background).toBe("rgb(18, 19, 22)");
 });
 
 for (const path of ["/", "/library", "/journal", "/settings", "/capture"]) {
@@ -70,4 +76,19 @@ test("active item in the bottom nav shows an ink marker", async ({
     page.evaluate(() => getComputedStyle(document.body).color),
   ]);
   expect(border).toBe(ink);
+});
+
+test("an unknown address shows our dark not-found page", async ({ page }) => {
+  const response = await page.goto("/nope-nothing-here");
+  expect(response?.status()).toBe(404);
+  await expect(
+    page.getByRole("heading", { name: "We could not find that page" }),
+  ).toBeVisible();
+  const background = await page.evaluate(
+    () => getComputedStyle(document.body).backgroundColor,
+  );
+  expect(background).toBe("rgb(18, 19, 22)");
+  await expect(
+    page.getByRole("link", { name: "Back to Library" }),
+  ).toBeVisible();
 });

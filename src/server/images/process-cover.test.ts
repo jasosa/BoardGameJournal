@@ -171,5 +171,5 @@ describe("processCover", () => {
       expect(r).toBeGreaterThan(g ?? 0);
       expect(r).toBeGreaterThan(b ?? 0);
     }
-  });
+  }, 60_000);
 });

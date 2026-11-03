@@ -18,7 +18,7 @@ export function FallbackCover({
     <div
       className={`bg-cream rounded-cover shadow-soft aspect-3/4 relative ${className}`}
     >
-      <div className="border-line rounded-cover absolute inset-2 flex flex-col items-center justify-center border px-3 text-center">
+      <div className="border-ink-faint/50 rounded-cover absolute inset-2 flex flex-col items-center justify-center border px-3 text-center">
         {children}
         {footer ? (
           <div className="text-ink-soft absolute inset-x-2 bottom-3 text-sm">

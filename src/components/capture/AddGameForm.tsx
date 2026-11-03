@@ -79,7 +79,7 @@ export function AddGameForm({
                 defaultChecked={selected === status}
                 className="peer absolute inset-0 opacity-0"
               />
-              <span className="border-line text-ink-soft peer-checked:border-ink peer-checked:bg-cream peer-checked:text-ink peer-focus-visible:outline-bronze duration-fast rounded-input inline-flex min-h-11 items-center border px-4 text-sm transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+              <span className="border-edge text-ink-soft peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper peer-checked:font-medium peer-focus-visible:outline-bronze duration-fast rounded-input inline-flex min-h-11 items-center border px-4 text-sm transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
                 {STATUS_LABELS[status]}
               </span>
             </label>
@@ -103,7 +103,7 @@ export function AddGameForm({
               <div className="flex flex-wrap gap-2">
                 <Link
                   href={`/games/${match.gameId}`}
-                  className="border-line text-ink hover:border-bronze duration-fast rounded-input inline-flex min-h-11 items-center border px-4 text-sm transition-colors"
+                  className="border-edge text-ink hover:border-bronze duration-fast rounded-input inline-flex min-h-11 items-center border px-4 text-sm transition-colors"
                 >
                   Open {match.title}
                 </Link>

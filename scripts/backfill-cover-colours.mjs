@@ -6,7 +6,8 @@
 // npm script loads a local env file if one exists). Server-side only: it uses the service role,
 // so run it only against a project you own. It reads each cover's thumbnail from storage, takes
 // its dominant colour and writes the two colour columns. Rows that already have colours are left
-// alone, so it is safe to run again.
+// alone, so it is safe to run again. It reads up to 1000 covers per run (the API row limit);
+// run it again for more.
 
 import { createClient } from "@supabase/supabase-js";
 import sharp from "sharp";
@@ -55,7 +56,10 @@ for (const row of rows) {
     const { error: updateError } = await supabase
       .from("game_images")
       .update({ dominant_color: colours.tint, accent_color: colours.glow })
-      .eq("id", row.id);
+      .eq("id", row.id)
+      // Only the row and file we read: a cover replaced meanwhile keeps its own colours.
+      .eq("storage_path", row.storage_path)
+      .is("dominant_color", null);
     if (updateError) throw updateError;
     done += 1;
   } catch (cause) {

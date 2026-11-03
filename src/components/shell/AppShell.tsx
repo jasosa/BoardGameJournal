@@ -7,7 +7,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
     <>
       <a
         href="#main"
-        className="bg-paper text-ink rounded-input shadow-lift absolute top-2 left-2 z-20 -translate-y-20 px-4 py-2 focus:translate-y-0"
+        className="bg-paper text-ink rounded-input shadow-lift absolute top-2 left-2 z-20 inline-flex min-h-11 -translate-y-20 items-center px-4 focus:translate-y-0"
       >
         Skip to content
       </a>
@@ -15,14 +15,14 @@ export function AppShell({ children }: { children: React.ReactNode }) {
       <div className="px-4 pt-2 md:hidden">
         <Link
           href="/"
-          className="font-display inline-flex min-h-11 items-center text-xl"
+          className="font-display inline-flex min-h-11 items-center text-sm font-bold tracking-widest uppercase"
         >
           Meeple Journal
         </Link>
       </div>
       <main
         id="main"
-        className="mx-auto max-w-5xl px-4 pt-6 pb-28 md:px-6 md:pt-12 md:pb-16"
+        className="mx-auto max-w-7xl px-4 pt-6 pb-28 md:px-6 md:pt-24 md:pb-16"
       >
         {children}
       </main>

@@ -4,11 +4,11 @@ import { CAPTURE_ITEM, NAV_ITEMS } from "./nav-items";
 
 export function TopNav() {
   return (
-    <header className="border-line hidden border-b md:block">
-      <div className="mx-auto flex max-w-5xl items-center gap-8 px-6 py-4">
+    <header className="border-line bg-paper/80 fixed inset-x-0 top-0 z-10 hidden h-16 border-b backdrop-blur-md md:block">
+      <div className="mx-auto flex h-full max-w-7xl items-center gap-8 px-6">
         <Link
           href="/"
-          className="font-display inline-flex min-h-11 items-center text-xl"
+          className="font-display inline-flex min-h-11 items-center text-sm font-bold tracking-widest uppercase"
         >
           Meeple Journal
         </Link>
@@ -18,7 +18,7 @@ export function TopNav() {
               key={item.href}
               href={item.href}
               className="text-ink-soft hover:text-ink duration-fast rounded-input inline-flex min-h-11 items-center px-3 text-sm transition-colors"
-              activeClassName="text-ink underline decoration-ink decoration-2 underline-offset-8"
+              activeClassName="text-ink"
             >
               {item.label}
             </NavLink>
@@ -26,7 +26,7 @@ export function TopNav() {
         </nav>
         <Link
           href={CAPTURE_ITEM.href}
-          className="bg-bronze text-on-bronze hover:bg-bronze-deep duration-fast rounded-input focus-visible:outline-ink inline-flex min-h-11 items-center gap-1 px-4 text-sm font-medium transition-[background-color]"
+          className="border-ink text-ink hover:bg-ink hover:text-paper duration-fast rounded-input inline-flex min-h-11 items-center gap-1 border px-4 text-sm font-medium transition-colors"
         >
           <span aria-hidden="true">+</span>
           {CAPTURE_ITEM.label}

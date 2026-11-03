@@ -17,9 +17,9 @@ import {
 
 const FORM_ID = "library-form";
 const field =
-  "border-line bg-paper text-ink rounded-input min-h-11 border px-3 text-base";
+  "border-edge bg-paper text-ink rounded-input min-h-11 border px-3 text-base";
 const quiet =
-  "border-line text-ink hover:border-bronze duration-fast rounded-input focus-visible:outline-bronze inline-flex min-h-11 items-center border px-4 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
+  "border-edge text-ink hover:border-bronze duration-fast rounded-input focus-visible:outline-bronze inline-flex min-h-11 items-center border px-4 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
 
 /**
  * One toolbar row: search, a Filters button and the view switch. The filters open in a panel
@@ -111,7 +111,7 @@ export function LibraryControls({ params }: { params: LibraryParams }) {
                   defaultChecked={params.statuses.includes(status)}
                   className="peer absolute inset-0 opacity-0"
                 />
-                <span className="border-line bg-paper text-ink-soft peer-checked:border-ink peer-checked:text-ink peer-focus-visible:outline-bronze duration-fast rounded-input inline-flex min-h-11 items-center border px-4 text-sm transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+                <span className="border-edge bg-paper text-ink-soft peer-checked:border-ink peer-checked:bg-ink peer-checked:text-paper peer-checked:font-medium peer-focus-visible:outline-bronze duration-fast rounded-input inline-flex min-h-11 items-center border px-4 text-sm transition-colors peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
                   {STATUS_LABELS[status]}
                 </span>
               </label>

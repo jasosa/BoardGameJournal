@@ -6,11 +6,34 @@ import { STATUS_LABELS, type LibraryItem } from "@/features/collection/schemas";
 const tile =
   "shadow-soft group-hover:shadow-lift duration-base transition-shadow";
 
+/** One quiet line under a tile: the status (with a small square) or, for Owned, the year. */
+function CardMeta({
+  year,
+  status,
+}: {
+  year: number | null;
+  status: string | null;
+}) {
+  if (!status && year === null) return null;
+  return (
+    <p className="text-ink-soft mt-1 flex items-center gap-2 truncate text-sm">
+      {status ? (
+        <>
+          <span aria-hidden="true" className="bg-ink size-2 shrink-0" />
+          {status}
+        </>
+      ) : (
+        year
+      )}
+    </p>
+  );
+}
+
 /**
- * A game in the Library. With a cover, the picture is the tile and the title sits under it in
- * one line, so a long list can be scanned. Without one, the tile carries the title itself.
- * Either way the status (when named) sits under the tile, so rows keep one rhythm.
- * Owned is the quiet default: only other statuses are named, unless `alwaysShowStatus` is set.
+ * A game on the wall. With a cover, the picture is the tile and the title sits under it in
+ * one line, like a museum label. Without one, the tile carries the title itself. Either way the
+ * status (when named) sits under the tile, so rows keep one rhythm. Owned is the quiet default:
+ * only other statuses are named, unless `alwaysShowStatus` is set.
  */
 export function GameCard({
   item,
@@ -47,25 +70,21 @@ export function GameCard({
               />
             </div>
             <h2
-              className="mt-3 truncate text-sm font-medium"
+              className="mt-2 truncate text-sm font-semibold"
               title={item.title}
             >
               {item.title}
             </h2>
-            {status ? (
-              <p className="text-ink-soft truncate text-sm">{status}</p>
-            ) : null}
+            <CardMeta year={item.year} status={status} />
           </>
         ) : (
           <>
             <FallbackCover className={tile}>
-              <h2 className="font-display line-clamp-5 text-lg break-words">
+              <h2 className="font-display line-clamp-5 text-lg font-semibold break-words">
                 {item.title}
               </h2>
             </FallbackCover>
-            {status ? (
-              <p className="text-ink-soft mt-3 truncate text-sm">{status}</p>
-            ) : null}
+            <CardMeta year={null} status={status} />
           </>
         )}
       </Link>

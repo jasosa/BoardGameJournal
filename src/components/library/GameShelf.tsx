@@ -12,7 +12,7 @@ function spineHeight(title: string): string {
 }
 
 const common =
-  "border-line hover:border-bronze rounded-cover duration-fast focus-visible:outline-bronze relative block overflow-hidden border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
+  "border-edge hover:border-bronze rounded-cover duration-fast focus-visible:outline-bronze relative block overflow-hidden border transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
 
 /**
  * Games standing on a shelf, bottom-aligned. A game with a cover stands face out (a small

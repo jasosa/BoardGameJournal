@@ -5,7 +5,7 @@ const base =
 const variants: Record<Variant, string> = {
   primary:
     "bg-bronze text-on-bronze hover:bg-bronze-deep focus-visible:outline-ink",
-  quiet: "border-line text-ink hover:border-bronze border",
+  quiet: "border-edge text-ink hover:border-bronze border",
 };
 
 export function Button({

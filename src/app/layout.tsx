@@ -1,10 +1,13 @@
 import type { Metadata, Viewport } from "next";
-import { Fraunces, Inter } from "next/font/google";
-import { themeInitScript } from "@/lib/design-system/theme";
+import { Inter, Schibsted_Grotesk } from "next/font/google";
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
-const fraunces = Fraunces({ subsets: ["latin"], variable: "--font-fraunces" });
+const schibsted = Schibsted_Grotesk({
+  subsets: ["latin"],
+  weight: ["600", "700"],
+  variable: "--font-schibsted",
+});
 
 export const metadata: Metadata = {
   title: "Meeple Journal",
@@ -23,14 +26,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html
-      lang="en"
-      className={`${inter.variable} ${fraunces.variable}`}
-      suppressHydrationWarning
-    >
-      <head>
-        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-      </head>
+    <html lang="en" className={`${inter.variable} ${schibsted.variable}`}>
       <body>{children}</body>
     </html>
   );

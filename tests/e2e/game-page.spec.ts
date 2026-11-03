@@ -103,15 +103,18 @@ test("facts can be added, shown, and changed again", async ({ page }) => {
   await page.getByRole("button", { name: "Save facts" }).click();
 
   await expect(page).toHaveURL(/\/games\/[0-9a-f-]{36}$/);
-  await expect(page.getByText("1-5 players · 60 min · 2019")).toBeVisible();
+  const facts = page.locator("dl").filter({ hasText: "Players" });
+  await expect(facts.getByText("1-5 players")).toBeVisible();
+  await expect(facts.getByText("60 min")).toBeVisible();
+  await expect(facts.getByText("2019")).toBeVisible();
   await expect(page.getByText("Engine building with birds.")).toBeVisible();
 
   await page.getByRole("link", { name: "Edit facts" }).click();
   await expect(page.getByLabel("Year")).toHaveValue("2019");
   await page.getByLabel("Year").fill("");
   await page.getByRole("button", { name: "Save facts" }).click();
-  await expect(page.getByText("1-5 players · 60 min")).toBeVisible();
-  await expect(page.getByText("2019")).toHaveCount(0);
+  await expect(facts.getByText("60 min")).toBeVisible();
+  await expect(facts.getByText("2019")).toHaveCount(0);
 });
 
 test("bad facts show an error on the field and keep what was typed", async ({

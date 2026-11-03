@@ -54,6 +54,8 @@ test("a cover shows on the game page and on the Library card", async ({
   await expect(page.getByRole("button", { name: "Remove cover" })).toHaveCount(
     0,
   );
+  // No cover, no colour: the page stays neutral.
+  await expect(page.locator("[style*='--game-tint']")).toHaveCount(0);
 
   await page
     .locator('input[type="file"]')
@@ -64,6 +66,13 @@ test("a cover shows on the game page and on the Library card", async ({
     .poll(() => loaded(page, 'img[alt="Cover of Wingspan"]'))
     .toBe(true);
   await expect(page.getByText("Replace cover")).toBeVisible();
+  // The page takes its tint and glow from the cover.
+  await page.reload();
+  const tinted = page.locator("[style*='--game-tint']");
+  await expect(tinted).toHaveCount(1);
+  const style = (await tinted.getAttribute("style")) ?? "";
+  expect(style).toMatch(/--game-tint:\s*#[0-9a-f]{6}/);
+  expect(style).toMatch(/--game-glow:\s*#[0-9a-f]{6}/);
 
   const overflow = await page.evaluate(
     () =>

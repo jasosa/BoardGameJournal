@@ -477,7 +477,14 @@ describe("cover upload service and storage bucket", () => {
       .select("id")
       .eq("game_id", gameId)
       .single();
-    for (const bad of ["red", "#FFF", "#ABCDEF", "#12345", "url(x)"]) {
+    for (const bad of [
+      "red",
+      "#FFF",
+      "#ABCDEF",
+      "#12345",
+      "url(x)",
+      "#abcdef\n",
+    ]) {
       const { error } = await admin
         .from("game_images")
         .update({ dominant_color: bad })
@@ -496,5 +503,19 @@ describe("cover upload service and storage bucket", () => {
       .eq("id", row.data!.id)
       .single();
     expect(after.data!.dominant_color).not.toBe("#000000");
+  });
+
+  it("gives no colours to the page when only one of the two is stored", async () => {
+    const half = await newGame(a, "Half colours");
+    await uploadCover(a.client, a.id, {
+      gameId: half,
+      file: asFile(await png()),
+    });
+    await admin
+      .from("game_images")
+      .update({ accent_color: null })
+      .eq("game_id", half);
+    const dossier = await getGameDossier(a.client, a.id, half);
+    expect(dossier.ok && dossier.data.game.coverColours).toBeNull();
   });
 });

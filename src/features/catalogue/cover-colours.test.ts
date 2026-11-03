@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import {
   BASE_HEX,
+  GLOW_MIN_CONTRAST,
+  TINT_MIN_CONTRAST,
   TEXT_HEX,
   contrastRatio,
   deriveCoverColours,
@@ -26,9 +28,13 @@ describe("deriveCoverColours", () => {
       expect(isHexColour(tint)).toBe(true);
       expect(isHexColour(glow)).toBe(true);
       // Light text on the tinted backdrop.
-      expect(contrastRatio(tint, TEXT_HEX)).toBeGreaterThanOrEqual(7);
+      expect(contrastRatio(tint, TEXT_HEX)).toBeGreaterThanOrEqual(
+        TINT_MIN_CONTRAST,
+      );
       // A line or label in the glow colour on the dark base.
-      expect(contrastRatio(glow, BASE_HEX)).toBeGreaterThanOrEqual(4.5);
+      expect(contrastRatio(glow, BASE_HEX)).toBeGreaterThanOrEqual(
+        GLOW_MIN_CONTRAST,
+      );
     });
   }
 

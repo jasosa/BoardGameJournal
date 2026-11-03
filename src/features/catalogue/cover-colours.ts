@@ -10,6 +10,10 @@ export type CoverColours = { tint: string; glow: string };
 export const BASE_HEX = "#121316";
 export const TEXT_HEX = "#ece8df";
 
+/** Contrast the page text keeps against the tint, and the glow against the base. */
+export const TINT_MIN_CONTRAST = 5.5;
+export const GLOW_MIN_CONTRAST = 4.5;
+
 const HEX = /^#[0-9a-f]{6}$/;
 
 export function isHexColour(value: unknown): value is string {
@@ -88,16 +92,19 @@ const clamp = (n: number, lo: number, hi: number) =>
 
 /**
  * `tint`: same hue, medium saturation, dark. Lightness goes down until the page's text has at
- * least 7:1 against it. `glow`: same hue, lightness goes up until it has at least 4.5:1 against
+ * least 5.5:1 against it (WCAG AA for body text, with margin). `glow`: same hue, lightness goes up until it has at least 4.5:1 against
  * the base, so a line or a label in this colour is readable on the dark page.
  */
 export function deriveCoverColours(rgb: Rgb): CoverColours {
   const { h, s } = rgbToHsl(rgb);
 
   const tintSat = s < 0.06 ? 0 : clamp(s, 0.3, 0.65);
-  let tintLight = 0.3;
+  let tintLight = 0.4;
   let tint = toHex(hslToRgb(h, tintSat, tintLight));
-  while (tintLight > 0.05 && contrastRatio(tint, TEXT_HEX) < 7) {
+  while (
+    tintLight > 0.05 &&
+    contrastRatio(tint, TEXT_HEX) < TINT_MIN_CONTRAST
+  ) {
     tintLight -= 0.02;
     tint = toHex(hslToRgb(h, tintSat, tintLight));
   }
@@ -105,7 +112,10 @@ export function deriveCoverColours(rgb: Rgb): CoverColours {
   const glowSat = s < 0.06 ? 0 : clamp(s, 0.45, 0.85);
   let glowLight = 0.62;
   let glow = toHex(hslToRgb(h, glowSat, glowLight));
-  while (glowLight < 0.92 && contrastRatio(glow, BASE_HEX) < 4.5) {
+  while (
+    glowLight < 0.92 &&
+    contrastRatio(glow, BASE_HEX) < GLOW_MIN_CONTRAST
+  ) {
     glowLight += 0.02;
     glow = toHex(hslToRgb(h, glowSat, glowLight));
   }

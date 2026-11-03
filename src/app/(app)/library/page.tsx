@@ -17,7 +17,7 @@ import { listLibrary } from "@/server/services/collection";
 export const metadata = { title: "Library | Meeple Journal" };
 
 const actionLink =
-  "border-line text-ink hover:border-bronze duration-fast rounded-input focus-visible:outline-bronze inline-flex min-h-11 items-center border px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
+  "border-edge text-ink hover:border-bronze duration-fast rounded-input focus-visible:outline-bronze inline-flex min-h-11 items-center border px-4 text-sm font-medium transition-colors focus-visible:outline-2 focus-visible:outline-offset-2";
 
 export default async function LibraryPage({
   searchParams,

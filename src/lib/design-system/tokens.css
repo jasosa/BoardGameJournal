@@ -1,66 +1,34 @@
 /* Design tokens. Single source of truth for colour, radius, shadow and motion.
-   Raw values live here as --tk-*. globals.css maps them to Tailwind via @theme. */
+   Raw values live here as --tk-*. globals.css maps them to Tailwind via @theme.
+
+   Concept B ("Night Wall", trial on the concept-b branch): one dark theme. The token names are
+   kept from the earlier direction so components do not change. "paper" is the base of the dark
+   wall, "cream" the raised surface, and "bronze" is now the light accent (primary buttons are
+   light-filled, focus rings are light). Rename them if this direction is kept. */
 
 :root {
-  --tk-paper: #faf7f2;
-  --tk-cream: #f2ece1;
-  --tk-line: #e4dccd;
-  --tk-ink: #23211e;
-  --tk-ink-soft: #5c574f;
-  --tk-ink-faint: #8e877c;
-  --tk-bronze: #94653a;
-  --tk-bronze-deep: #7a5230;
-  --tk-on-bronze: #faf7f2;
-  --tk-positive: #5e7a55;
-  --tk-negative: #a2483a;
-  --tk-note: #6b6f86;
-
-  --tk-shadow-1: 0 1px 2px rgb(60 40 20 / 0.08);
-  --tk-shadow-2: 0 8px 24px rgb(60 40 20 / 0.12);
-
-  --tk-radius-cover: 2px;
-  --tk-radius-input: 4px;
-  --tk-radius-card: 8px;
-
-  --tk-motion-fast: 150ms;
-  --tk-motion-base: 250ms;
-}
-
-/* Dark values are repeated in the media query block below. Keep both in sync. */
-/* Dark: explicit choice. */
-:root[data-theme="dark"] {
-  --tk-paper: #1b1a18;
-  --tk-cream: #24221f;
-  --tk-line: #36332e;
-  --tk-ink: #ede6d9;
-  --tk-ink-soft: #b5ad9f;
-  --tk-ink-faint: #8e877c;
-  --tk-bronze: #c08a57;
-  --tk-bronze-deep: #d19e6e;
-  --tk-on-bronze: #1b1a18;
+  --tk-paper: #121316;
+  --tk-cream: #1b1c20;
+  --tk-line: #2e2f35;
+  /* Borders of controls (inputs, buttons, chips): at least 3:1 on the base and the raised surface. */
+  --tk-edge: #6f6a62;
+  --tk-ink: #ece8df;
+  --tk-ink-soft: #b0aa9d;
+  --tk-ink-faint: #8e887c;
+  --tk-bronze: #ece8df;
+  --tk-bronze-deep: #ffffff;
+  --tk-on-bronze: #121316;
   --tk-positive: #8aa67f;
   --tk-negative: #cf7968;
   --tk-note: #9a9eb8;
-  --tk-shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
-  --tk-shadow-2: 0 8px 24px rgb(0 0 0 / 0.5);
-}
 
-/* Dark: system preference, unless the user chose light. Covers no-JS. */
-@media (prefers-color-scheme: dark) {
-  :root:not([data-theme="light"]):not([data-theme="dark"]) {
-    --tk-paper: #1b1a18;
-    --tk-cream: #24221f;
-    --tk-line: #36332e;
-    --tk-ink: #ede6d9;
-    --tk-ink-soft: #b5ad9f;
-    --tk-ink-faint: #8e877c;
-    --tk-bronze: #c08a57;
-    --tk-bronze-deep: #d19e6e;
-    --tk-on-bronze: #1b1a18;
-    --tk-positive: #8aa67f;
-    --tk-negative: #cf7968;
-    --tk-note: #9a9eb8;
-    --tk-shadow-1: 0 1px 2px rgb(0 0 0 / 0.4);
-    --tk-shadow-2: 0 8px 24px rgb(0 0 0 / 0.5);
-  }
+  --tk-shadow-1: 0 1px 2px rgb(0 0 0 / 0.4), 0 6px 18px rgb(0 0 0 / 0.35);
+  --tk-shadow-2: 0 18px 40px rgb(0 0 0 / 0.6);
+
+  --tk-radius-cover: 2px;
+  --tk-radius-input: 2px;
+  --tk-radius-card: 4px;
+
+  --tk-motion-fast: 150ms;
+  --tk-motion-base: 250ms;
 }
