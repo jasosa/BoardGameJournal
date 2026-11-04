@@ -81,12 +81,6 @@ export default async function GamePage({
                     ? "Edit facts"
                     : "Add facts"}
                 </Link>
-                <CoverControls
-                  gameId={game.id}
-                  hasCover={game.cover !== null}
-                  uploadAction={uploadCoverAction}
-                  removeAction={removeCoverAction}
-                />
               </>
             ) : null}
             {entries.map((entry, index) =>
@@ -105,7 +99,31 @@ export default async function GamePage({
 
       <div className="grid grid-cols-[9rem_1fr] gap-x-5 gap-y-8 md:grid-cols-[22.5rem_1fr] md:gap-x-16">
         <div className="md:sticky md:top-20 md:row-span-2 md:self-start">
-          <CoverTile title={game.title} cover={game.cover} />
+          {game.editable && game.cover === null ? (
+            <CoverControls
+              gameId={game.id}
+              hasCover={false}
+              uploadAction={uploadCoverAction}
+              removeAction={removeCoverAction}
+              tile={<CoverTile title={game.title} cover={null} />}
+            />
+          ) : game.editable ? (
+            <div className="relative">
+              <CoverTile title={game.title} cover={game.cover} />
+              <div className="absolute bottom-3 left-3 z-10">
+                <ManageMenu variant="chip" label="Cover" ariaLabel="Cover">
+                  <CoverControls
+                    gameId={game.id}
+                    hasCover
+                    uploadAction={uploadCoverAction}
+                    removeAction={removeCoverAction}
+                  />
+                </ManageMenu>
+              </div>
+            </div>
+          ) : (
+            <CoverTile title={game.title} cover={game.cover} />
+          )}
         </div>
 
         <header className="min-w-0">

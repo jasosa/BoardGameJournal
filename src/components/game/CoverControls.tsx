@@ -8,7 +8,7 @@ import { menuItemClass, useCloseMenu } from "./ManageMenu";
 type Action = (previous: FormState, formData: FormData) => Promise<FormState>;
 
 /**
- * Rows of the Manage menu: choose, replace or remove the cover. Choosing a file uploads it
+ * Choose, replace or remove the cover: rows inside the cover chip's popover, or (with `tile`) the empty cover tile itself. Choosing a file uploads it
  * straight away, and the menu closes when the change is done.
  */
 export function CoverControls({
@@ -16,9 +16,12 @@ export function CoverControls({
   hasCover,
   uploadAction,
   removeAction,
+  tile,
 }: {
   gameId: string;
   hasCover: boolean;
+  /** With no cover yet: the empty cover tile, which becomes the "Add cover" target itself. */
+  tile?: React.ReactNode;
   uploadAction: Action;
   removeAction: Action;
 }) {
@@ -48,7 +51,9 @@ export function CoverControls({
     <>
       <form action={upload}>
         <input type="hidden" name="gameId" value={gameId} />
-        <label className="relative flex">
+        <label
+          className={tile ? "group relative block" : "group relative flex"}
+        >
           <input
             type="file"
             name="cover"
@@ -66,15 +71,28 @@ export function CoverControls({
             }}
             className="peer absolute inset-0 cursor-pointer opacity-0 disabled:cursor-default"
           />
-          <span
-            className={`${menuItemClass} peer-focus-visible:outline-accent peer-focus-visible:outline-2 peer-disabled:opacity-60`}
-          >
-            {uploading ? "Uploading" : hasCover ? "Replace cover" : "Add cover"}
-          </span>
+          {tile ? (
+            <>
+              {tile}
+              <span className="text-ink-soft group-hover:text-ink peer-focus-visible:outline-accent mt-2 inline-flex min-h-11 items-center text-sm underline underline-offset-4 peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2">
+                {uploading ? "Uploading" : "Add cover"}
+              </span>
+            </>
+          ) : (
+            <span
+              className={`${menuItemClass} group-hover:text-ink group-hover:bg-canvas peer-focus-visible:outline-accent peer-focus-visible:outline-2 peer-disabled:opacity-60`}
+            >
+              {uploading
+                ? "Uploading"
+                : hasCover
+                  ? "Replace cover"
+                  : "Add cover"}
+            </span>
+          )}
         </label>
       </form>
 
-      {hasCover ? (
+      {hasCover && !tile ? (
         <form action={remove}>
           <input type="hidden" name="gameId" value={gameId} />
           <button type="submit" disabled={busy} className={menuItemClass}>
@@ -84,7 +102,12 @@ export function CoverControls({
       ) : null}
 
       {error ? (
-        <p role="alert" className="text-negative px-3 pb-2 text-sm">
+        <p
+          role="alert"
+          className={
+            tile ? "text-negative text-sm" : "text-negative px-3 pb-2 text-sm"
+          }
+        >
           {error}
         </p>
       ) : null}

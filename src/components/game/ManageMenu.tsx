@@ -27,7 +27,18 @@ export const menuItemClass =
  * buttons reached with Tab. Items stay mounted while it is closed, so an action that is still
  * running (an upload) is not cancelled by closing.
  */
-export function ManageMenu({ children }: { children: React.ReactNode }) {
+export function ManageMenu({
+  children,
+  label = "Manage",
+  ariaLabel = "Manage this game",
+  variant = "button",
+}: {
+  children: React.ReactNode;
+  label?: string;
+  ariaLabel?: string;
+  /** "chip" is a small dark pill for sitting on top of a cover; its panel opens upward. */
+  variant?: "button" | "chip";
+}) {
   const [open, setOpen] = useState(false);
   const root = useRef<HTMLDivElement>(null);
   const trigger = useRef<HTMLButtonElement>(null);
@@ -61,9 +72,13 @@ export function ManageMenu({ children }: { children: React.ReactNode }) {
         aria-expanded={open}
         aria-controls={panelId}
         onClick={() => setOpen((value) => !value)}
-        className="text-ink-soft hover:text-ink border-edge focus-visible:outline-accent duration-fast rounded-input inline-flex min-h-11 items-center gap-2 border px-4 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+        className={
+          variant === "chip"
+            ? "bg-canvas/85 text-ink hover:bg-canvas border-edge focus-visible:outline-accent duration-fast rounded-input inline-flex min-h-11 items-center gap-2 border px-4 text-sm backdrop-blur-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+            : "text-ink-soft hover:text-ink border-edge focus-visible:outline-accent duration-fast rounded-input inline-flex min-h-11 items-center gap-2 border px-4 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2"
+        }
       >
-        Manage
+        {label}
         <span aria-hidden="true" className="text-xs">
           {open ? "▴" : "▾"}
         </span>
@@ -71,9 +86,13 @@ export function ManageMenu({ children }: { children: React.ReactNode }) {
       <div
         id={panelId}
         role="group"
-        aria-label="Manage this game"
+        aria-label={ariaLabel}
         hidden={!open}
-        className="bg-raised rounded-card shadow-lift absolute top-full right-0 z-30 mt-2 flex w-64 max-w-[calc(100vw-2rem)] flex-col p-1"
+        className={`bg-raised rounded-card shadow-lift absolute z-30 flex w-64 max-w-[calc(100vw-2rem)] flex-col p-1 ${
+          variant === "chip"
+            ? "bottom-full left-0 mb-2"
+            : "top-full right-0 mt-2"
+        }`}
       >
         <CloseMenu.Provider value={close}>{children}</CloseMenu.Provider>
       </div>

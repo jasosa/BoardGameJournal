@@ -16,3 +16,11 @@ export async function openManage(page: Page) {
     await trigger.click();
   }
 }
+
+/** Opens the Cover chip menu on a game page that has a cover (Replace cover, Remove cover). */
+export async function openCoverMenu(page: Page) {
+  const trigger = page.getByRole("button", { name: "Cover", exact: true });
+  if ((await trigger.getAttribute("aria-expanded")) !== "true") {
+    await trigger.click();
+  }
+}

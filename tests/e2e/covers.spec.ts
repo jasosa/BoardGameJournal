@@ -7,7 +7,7 @@ import {
   resetLibrary,
 } from "../support/accounts";
 import { accountFor, accountKey, storageStatePath } from "./accounts";
-import { addGame, openManage } from "./helpers";
+import { addGame, openCoverMenu } from "./helpers";
 
 // This file has its own signed-in account per project (see game-page.spec.ts for why).
 test.describe.configure({ mode: "serial" });
@@ -91,6 +91,41 @@ test("a cover shows on the game page and on the Library card", async ({
   expect(box!.width / box!.height).toBeCloseTo(0.8, 1);
 });
 
+test("the Cover chip sits on the cover and its rows highlight on hover", async ({
+  page,
+}, testInfo) => {
+  await openGame(page, "Azul");
+  // No cover yet: the empty tile is the Add cover target, and there is no chip.
+  await expect(
+    page.getByRole("button", { name: "Cover", exact: true }),
+  ).toHaveCount(0);
+  await page
+    .locator('input[type="file"]')
+    .setInputFiles(file(await picture(120)));
+  await expect(page.getByRole("img", { name: "Cover of Azul" })).toBeVisible();
+
+  const chip = page.getByRole("button", { name: "Cover", exact: true });
+  await expect(chip).toBeVisible();
+  const [coverBox, chipBox] = await Promise.all([
+    page.getByRole("img", { name: "Cover of Azul" }).boundingBox(),
+    chip.boundingBox(),
+  ]);
+  // The chip is inside the cover, near its bottom-left corner.
+  expect(chipBox!.x).toBeGreaterThanOrEqual(coverBox!.x);
+  expect(chipBox!.y + chipBox!.height).toBeLessThanOrEqual(
+    coverBox!.y + coverBox!.height,
+  );
+
+  await openCoverMenu(page);
+  // Touch screens have no hover, so the highlight is checked on desktop only.
+  if (testInfo.project.name !== "desktop") return;
+  const row = page.getByText("Replace cover");
+  await expect(row).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+  // The file input covers the row, so hover the label that holds both.
+  await page.locator("label").filter({ hasText: "Replace cover" }).hover();
+  await expect(row).not.toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
+});
+
 test("the cover is served privately, resized, and without photo metadata", async ({
   page,
 }) => {
@@ -152,7 +187,7 @@ test("replacing shows the new cover at once, and removing brings the placeholder
     .poll(() => loaded(page, 'img[alt="Cover of Cascadia"]'))
     .toBe(true);
 
-  await openManage(page);
+  await openCoverMenu(page);
   await page.getByRole("button", { name: "Remove cover" }).click();
   await expect(cover).toHaveCount(0);
   await expect(page.getByText("Add cover")).toBeAttached();
