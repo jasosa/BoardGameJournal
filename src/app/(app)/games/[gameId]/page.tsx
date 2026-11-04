@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { Suspense } from "react";
 import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import { CoverControls } from "@/components/game/CoverControls";
@@ -14,6 +15,10 @@ import { requireUser } from "@/server/authorization/require-user";
 import { listAssessments } from "@/server/services/assessments";
 import { getGameDossier } from "@/server/services/games";
 import { RatingPopover } from "@/components/game/RatingPopover";
+import {
+  ThoughtsSection,
+  ThoughtsSkeleton,
+} from "@/components/thoughts/ThoughtsSection";
 import {
   currentAssessment,
   sortLatestFirst,
@@ -221,6 +226,14 @@ export default async function GamePage({
               </div>
             )}
           </section>
+
+          <Suspense fallback={<ThoughtsSkeleton />}>
+            <ThoughtsSection
+              supabase={supabase}
+              userId={user.id}
+              gameId={game.id}
+            />
+          </Suspense>
 
           {game.description ? (
             <p className="max-w-prose whitespace-pre-line">

@@ -52,7 +52,8 @@ Phase 0 closed 2026-11-04.
 - [x] L6 Overall rating as dated assessments; current = latest. (Dimension scores were dropped on 2026-11-04, see ADR-0012.)
   - AC: new assessment never overwrites old; history visible.
   - Done 2026-11-04: verified locally (ADR-0012). CI run on GitHub pending the push. Library sort by rating is not built yet.
-- [ ] L7 Thoughts: free-form notes on a game (markdown-lite), each tagged with one or more topics (parts of the game). Concept: topic notebook, with filter tabs by topic.
+- [x] L7 Thoughts: free-form notes on a game (light Markdown), each tagged with one or more topics (parts of the game). Concept: topic notebook, Option B (approved), in `docs/design-concepts/thoughts/`. ADR-0013.
+  - Done 2026-11-04: verified locally. CI run on GitHub pending the push. Not in the export yet (L8).
 - [ ] L8 Export foundation: full JSON export of my data.
   - AC: export → import into empty account round-trips (test).
 

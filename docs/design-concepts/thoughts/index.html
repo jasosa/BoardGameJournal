@@ -1,0 +1,690 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L7 Thoughts: concept | Meeple Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  /* Concept sheet for slice L7 "Thoughts". Static drawings, not wired to the app.
+     Night Wall tokens copied from src/lib/design-system/tokens.css. --glow and --tint stand in
+     for the per-game colours the app derives from the Wingspan cover. */
+  :root {
+    --canvas: #121316;
+    --raised: #1b1c20;
+    --line: #2e2f35;
+    --edge: #6f6a62;
+    --ink: #ece8df;
+    --ink-soft: #b0aa9d;
+    --ink-faint: #8e887c;
+    --accent: #ece8df;
+    --on-accent: #121316;
+    --negative: #cf7968;
+    --positive: #8aa67f;
+    --stage: #0b0c0e;
+    --tint: rgba(46, 110, 126, 0.42);
+    --glow: #8cc3cf;
+    --shadow-lift: 0 10px 28px rgb(0 0 0 / 0.55);
+    --shadow-soft: 0 18px 40px rgb(0 0 0 / 0.6);
+    --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { overflow-x: hidden; }
+  body { margin: 0; background: var(--stage); color: var(--ink); font-family: var(--font-body); padding: 32px 16px 80px; }
+  .wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; min-width: 0; }
+  .intro h1 { font: 700 clamp(28px, 4vw, 40px)/1.1 var(--font-display); letter-spacing: -0.03em; margin: 0 0 12px; }
+  .intro p { margin: 0 0 10px; max-width: 70ch; color: var(--ink-soft); font-size: 16px; line-height: 1.55; }
+  .toc { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 14px; margin-top: 12px; }
+  .toc a { color: var(--ink-soft); text-underline-offset: 4px; }
+  .part-h { font: 700 30px/1.15 var(--font-display); letter-spacing: -0.02em; margin: 0; border-top: 1px solid var(--line); padding-top: 32px; }
+  .board { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .board h2 { font: 600 24px/1.2 var(--font-display); letter-spacing: -0.02em; margin: 0; }
+  .board h3.st { font: 600 19px/1.25 var(--font-display); margin: 0; }
+  .tag { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 6px; font-weight: 600; }
+  .tag.rec { color: var(--glow); }
+  .why { margin: 0; max-width: 75ch; color: var(--ink-soft); font-size: 15px; line-height: 1.55; }
+  .why b { color: var(--ink); font-weight: 600; }
+  .shots { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; min-width: 0; }
+  .shot { min-width: 0; }
+  .shot.d { flex: 1 1 560px; }
+  .shot.m { flex: 0 1 auto; }
+  .cap { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 8px; }
+  .stage { overflow: hidden; border: 1px solid var(--line); border-radius: 4px; position: relative; background: var(--canvas); }
+  .frame { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+
+  /* ---------- the app screen ---------- */
+  .gp { background: var(--canvas); color: var(--ink); position: relative; overflow: hidden; font-size: 16px; line-height: 1.5; padding-bottom: 48px; }
+  .gp::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 560px; background: radial-gradient(70% 100% at 18% 0%, var(--tint), transparent 70%); pointer-events: none; }
+  .gp > * { position: relative; }
+  .bar { height: 60px; display: flex; align-items: center; gap: 28px; padding: 0 24px; border-bottom: 1px solid var(--line); background: rgba(18,19,22,.85); }
+  .bar b { font: 700 13px var(--font-display); letter-spacing: 0.14em; }
+  .bar nav { display: flex; gap: 22px; color: var(--ink-soft); font-size: 14px; }
+  .bar .search { width: 288px; height: 44px; border: 1px solid var(--edge); border-radius: 2px; padding: 0 12px; display: flex; align-items: center; color: var(--ink-soft); font-size: 14px; }
+  .bar .add { margin-left: auto; border: 1px solid var(--ink); border-radius: 2px; height: 44px; padding: 0 16px; display: flex; align-items: center; font: 600 12px var(--font-body); letter-spacing: .1em; }
+  .m .bar { padding: 0 20px; height: 56px; }
+  .toprow { display: flex; justify-content: space-between; align-items: center; padding: 20px 24px 0; color: var(--ink-soft); font-size: 14px; }
+  .m .toprow { padding: 12px 20px 0; }
+  .manage { border: 1px solid var(--edge); border-radius: 2px; height: 44px; padding: 0 16px; display: inline-flex; align-items: center; gap: 8px; }
+  .hero { display: grid; grid-template-columns: 360px minmax(0, 1fr); gap: 0 64px; padding: 16px 24px 0; }
+  .m .hero { grid-template-columns: 144px minmax(0, 1fr); gap: 0 16px; padding: 12px 20px 0; }
+  .cover { grid-row: 1 / span 2; align-self: start; aspect-ratio: 3/4; border-radius: 2px; box-shadow: var(--shadow-soft); overflow: hidden; position: relative; }
+  .m .cover { grid-row: 1; }
+  .cover svg { width: 100%; height: 100%; display: block; }
+  .cchip { position: absolute; left: 12px; bottom: 12px; background: rgba(18,19,22,.85); border: 1px solid var(--edge); border-radius: 2px; min-height: 44px; padding: 0 16px; display: inline-flex; align-items: center; gap: 8px; font-size: 14px; }
+  .m .cchip { display: none; }
+  .head { min-width: 0; }
+  .title { font: 700 88px/1 var(--font-display); letter-spacing: -0.03em; margin: 0; overflow-wrap: break-word; hyphens: auto; }
+  .title.long { font-size: 72px; }
+  .m .title { font-size: 30px; line-height: 1.1; }
+  .facts { display: flex; flex-wrap: wrap; gap: 12px 32px; margin: 20px 0 0; padding: 0; }
+  .m .facts { gap: 10px 20px; margin-top: 12px; }
+  .facts div { display: flex; flex-direction: column; }
+  .facts dt { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; }
+  .facts dd { margin: 0; font: 600 20px/1.3 var(--font-display); min-height: 26px; }
+  .facts dd.rate { text-decoration: underline dashed var(--ink-faint); text-underline-offset: 8px; }
+  .m .facts dd { font-size: 17px; }
+  .body { grid-column: 2; display: flex; flex-direction: column; gap: 40px; margin-top: 32px; min-width: 0; }
+  .m .body { grid-column: 1 / -1; margin-top: 24px; gap: 36px; }
+  h2.sec { font: 600 22px/1.2 var(--font-display); margin: 0 0 12px; }
+  .status { display: flex; flex-wrap: wrap; gap: 8px; }
+  .status span { border: 1px solid var(--edge); border-radius: 2px; min-height: 44px; padding: 0 16px; display: inline-flex; align-items: center; font-size: 14px; color: var(--ink-soft); }
+  .status span.on { background: var(--raised); color: var(--ink); font-weight: 500; border-color: var(--glow); box-shadow: inset 0 -2px 0 var(--glow); }
+  .desc { max-width: 65ch; margin: 0; }
+  .details { display: grid; grid-template-columns: auto 1fr; gap: 4px 24px; font-size: 14px; color: var(--ink-soft); margin: 0; max-width: 28rem; }
+  .details dd { margin: 0; color: var(--ink); }
+  .hist { color: var(--ink-soft); font-size: 14px; min-height: 44px; display: inline-flex; align-items: center; margin-top: -24px; }
+
+  /* ---------- shared bits ---------- */
+  .q { color: var(--ink-soft); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; min-height: 44px; display: inline-flex; align-items: center; background: none; border: 0; padding: 0; font-family: inherit; }
+  .q.faint { color: var(--ink-faint); }
+  .btn { background: var(--accent); color: var(--on-accent); min-height: 44px; padding: 0 16px; border-radius: 2px; display: inline-flex; align-items: center; justify-content: center; font-weight: 500; font-size: 14px; white-space: nowrap; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--edge); }
+  .btn.neg { background: transparent; color: var(--negative); border: 1px solid var(--negative); }
+  .btn.off { opacity: .6; }
+  .alert { color: var(--negative); font-size: 14px; margin: 0; }
+  .hint { color: var(--ink-soft); font-size: 14px; margin: 0; line-height: 1.45; }
+  .hint code { font-family: var(--font-body); color: var(--ink); background: var(--canvas); padding: 0 3px; border-radius: 2px; }
+  .focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .sr { font-size: 12px; color: var(--ink-faint); border: 1px dashed var(--line); border-radius: 2px; padding: 2px 8px; display: inline-block; margin-top: 6px; }
+  .sr::before { content: "Screen reader: "; letter-spacing: .04em; }
+
+  /* ---------- Thoughts section, option A ---------- */
+  .th-sec { min-width: 0; }
+  .th-sec h2.sec { margin-bottom: 14px; }
+  .cmp { max-width: 42rem; }
+  .cmp.col { border: 1px solid var(--edge); border-radius: 2px; min-height: 44px; padding: 0 12px; display: flex; align-items: center; color: var(--ink-faint); font-size: 16px; }
+  .cmp.open { background: var(--raised); border-radius: 4px; padding: 16px; display: flex; flex-direction: column; gap: 14px; box-shadow: var(--shadow-lift); }
+  .m .cmp.open { padding: 12px; margin: 0 -8px; }
+  .ta { background: var(--canvas); border: 1px solid var(--edge); border-radius: 2px; padding: 10px 12px; min-height: 136px; font-size: 16px; line-height: 1.55; white-space: pre-wrap; overflow-wrap: anywhere; }
+  .ta.ph { color: var(--ink-faint); }
+  .ta.bad { border-color: var(--negative); }
+  .ta.ro { opacity: .75; }
+  .caret { display: inline-block; width: 1px; height: 1.1em; background: var(--ink); vertical-align: text-bottom; margin-left: 1px; }
+  .lab { font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-soft); font-weight: 600; margin: 0 0 8px; }
+  .lab i { font-style: normal; text-transform: none; letter-spacing: 0; font-weight: 400; color: var(--ink-faint); font-size: 13px; }
+  .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+  .chip { border: 1px solid var(--edge); border-radius: 2px; min-height: 44px; padding: 0 14px; display: inline-flex; align-items: center; font-size: 14px; color: var(--ink-soft); white-space: nowrap; }
+  .chip.on { background: var(--canvas); color: var(--ink); font-weight: 500; border-color: var(--glow); box-shadow: inset 0 -2px 0 var(--glow); }
+  .chip.off { opacity: .6; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 12px 16px; flex-wrap: wrap; }
+  .foot .acts { display: flex; gap: 8px; margin-left: auto; }
+  .m .foot .hint { flex-basis: 100%; }
+  .count { color: var(--ink-soft); font-size: 14px; }
+  .count.bad { color: var(--negative); }
+  .msgrow { display: flex; flex-wrap: wrap; align-items: center; gap: 0 16px; max-width: 42rem; }
+
+  .tabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--line); margin: 28px 0 20px; }
+  .tabs span { min-height: 44px; padding: 0 12px; display: inline-flex; align-items: center; gap: 6px; color: var(--ink-soft); font-size: 14px; border-bottom: 2px solid transparent; margin-bottom: -1px; white-space: nowrap; flex: 0 0 auto; }
+  .tabs span:first-child { padding-left: 0; }
+  .tabs span i { font-style: normal; color: var(--ink-faint); font-size: 12px; }
+  .tabs span.on { color: var(--ink); border-color: var(--glow); font-weight: 500; }
+  .tabs span.on i { color: var(--ink-soft); }
+  .m .tabs { flex-wrap: nowrap; overflow: hidden; -webkit-mask-image: linear-gradient(to right, #000 80%, transparent); mask-image: linear-gradient(to right, #000 80%, transparent); margin-right: -20px; }
+  .m .tabs.scrolled span:first-child { padding-left: 12px; }
+  .m .tabs.scrolled { justify-content: flex-end; -webkit-mask-image: linear-gradient(to right, transparent, #000 14%); mask-image: linear-gradient(to right, transparent, #000 14%); margin-right: 0; }
+
+  .list { display: flex; flex-direction: column; gap: 12px; }
+  .row { display: grid; grid-template-columns: 9rem 1fr; gap: 2px 20px; padding: 10px 12px 0; margin: 0 -12px; border-radius: 4px; }
+  .m .row { grid-template-columns: 1fr; }
+  .row time { color: var(--ink-soft); font-size: 14px; padding-top: 2px; }
+  .row .txt { max-width: 65ch; overflow-wrap: anywhere; }
+  .row .txt p { margin: 0 0 10px; }
+  .row .txt p:last-child { margin-bottom: 0; }
+  .row .txt ul { margin: 0 0 10px; padding-left: 20px; }
+  .row .txt.clamp { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+  .row .meta { display: flex; align-items: center; gap: 0 16px; flex-wrap: wrap; }
+  .row .tp { color: var(--ink-soft); font-size: 13px; letter-spacing: .02em; }
+  .row .meta .q { font-size: 13px; }
+  .row .meta .push { margin-left: auto; }
+  .m .row .meta .push { margin-left: 0; }
+  .row.new { background: var(--raised); padding-bottom: 2px; }
+  .row.edit { background: transparent; }
+  .row.edit .cmp.open { max-width: 42rem; }
+  .row.gone { opacity: .55; }
+  .more { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 20px; margin-top: 16px; }
+  .empty { color: var(--ink-soft); margin: 16px 0 0; max-width: 42rem; }
+  .confirm { background: var(--canvas); border-radius: 4px; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px; border: 1px solid var(--line); }
+  .confirm p { margin: 0; font-size: 14px; }
+  .confirm .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .skel { background: var(--raised); border-radius: 2px; }
+  .errbox { background: var(--raised); border-radius: 4px; padding: 20px 24px; max-width: 42rem; }
+  .errbox p { margin: 0; }
+
+  /* ---------- option B ---------- */
+  .bhead { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .bhead h2.sec { margin: 0; }
+  .m .tabs.wrapped { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; margin-right: 0; }
+  .brow { display: flex; flex-direction: column; gap: 6px; padding: 18px 0; border-top: 1px solid var(--line); position: relative; }
+  .brow:first-child { border-top: 0; padding-top: 4px; }
+  .brow .bd { display: flex; justify-content: space-between; align-items: center; }
+  .brow time { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-faint); font-weight: 600; }
+  .dots { width: 44px; height: 44px; display: grid; place-items: center; color: var(--ink-soft); border-radius: 2px; margin: -10px -10px -10px 0; font-size: 18px; letter-spacing: 1px; }
+  .dots.on { border: 1px solid var(--edge); }
+  .brow .tp { color: var(--ink-soft); font-size: 13px; }
+  .bmenu { position: absolute; right: 0; top: 40px; z-index: 5; background: var(--raised); border-radius: 4px; box-shadow: var(--shadow-lift); padding: 4px; width: 200px; display: flex; flex-direction: column; }
+  .bmenu span { min-height: 44px; display: flex; align-items: center; padding: 0 12px; font-size: 14px; color: var(--ink-soft); border-radius: 2px; }
+  .bmenu span:first-child { background: var(--canvas); color: var(--ink); }
+
+  /* ---------- option C ---------- */
+  .cgrid { display: grid; grid-template-columns: 176px 1fr; gap: 0 32px; }
+  .index { display: flex; flex-direction: column; border-left: 1px solid var(--line); }
+  .index span { min-height: 40px; display: flex; justify-content: space-between; align-items: center; padding: 0 12px; font-size: 14px; color: var(--ink-soft); margin-left: -1px; border-left: 2px solid transparent; }
+  .index span i { font-style: normal; color: var(--ink-faint); font-size: 12px; }
+  .index span.on { color: var(--ink); border-left-color: var(--glow); background: var(--raised); font-weight: 500; min-height: 44px; }
+  .index span.none { color: var(--ink-faint); }
+  .sel { border: 1px solid var(--edge); border-radius: 2px; min-height: 44px; padding: 0 14px; display: inline-flex; align-items: center; gap: 10px; font-size: 14px; margin: 4px 0 20px; }
+  .sel b { font-weight: 500; }
+  .scrim { position: absolute; inset: 0; background: rgba(0,0,0,.62); z-index: 10; }
+  .dialog { position: absolute; z-index: 11; background: var(--raised); border-radius: 4px; box-shadow: var(--shadow-soft); padding: 24px; display: flex; flex-direction: column; gap: 16px; }
+  .dialog h3 { margin: 0; font: 600 22px/1.2 var(--font-display); }
+  .dialog .sub { color: var(--ink-soft); font-size: 14px; margin: -10px 0 0; }
+  .sheet { left: 0; right: 0; bottom: 0; border-radius: 4px 4px 0 0; padding: 16px 20px 24px; }
+  .grab { width: 40px; height: 4px; border-radius: 2px; background: var(--edge); align-self: center; margin-bottom: -4px; }
+
+
+  /* ---------- option B: every state (approved) ---------- */
+  .tabw { border-bottom: 1px solid var(--line); margin: 12px 0 20px; }
+  .tabw .tabs { margin: 0; border-bottom: 0; flex-wrap: wrap; gap: 0 24px; }
+  .tabw .tabs span, .tabw .tabs span:first-child { padding: 0; min-width: 44px; justify-content: flex-start; }
+  .m .tabw .tabs { flex-wrap: wrap; overflow: visible; -webkit-mask-image: none; mask-image: none; margin-right: 0; gap: 0 20px; }
+  .brow .bd { min-height: 24px; }
+  .brow .txt { max-width: 65ch; overflow-wrap: anywhere; }
+  .brow .txt p { margin: 0 0 10px; }
+  .brow .txt p:last-child { margin-bottom: 0; }
+  .brow .txt ul { margin: 0 0 10px; padding-left: 20px; }
+  .brow .txt.clamp { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+  .brow .meta { display: flex; flex-wrap: wrap; align-items: center; gap: 0 16px; min-height: 20px; }
+  .brow .meta .q { font-size: 13px; }
+  .brow.new { background: var(--raised); margin: 0 -12px; padding-left: 12px; padding-right: 12px; border-radius: 4px; border-top-color: transparent; }
+  .brow.focus { outline-offset: 6px; }
+  .brow.new.focus { outline-offset: 2px; }
+  .dwrap { position: relative; display: inline-flex; }
+  .dwrap .bmenu { top: calc(100% + 14px); right: -10px; max-width: calc(100vw - 32px); }
+  .dwrap .bmenu.up { top: auto; bottom: calc(100% + 14px); }
+  .bconfirm { background: var(--raised); border-radius: 4px; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; max-width: 42rem; margin-top: 6px; }
+  .m .bconfirm { padding: 12px; }
+  .bconfirm p { margin: 0; font-size: 14px; }
+  .bconfirm .acts { display: flex; flex-wrap: wrap; gap: 8px; }
+  .brow.edit .cmp.open { margin-top: 4px; }
+  .m .brow.edit .cmp.open { margin: 4px -8px 0; }
+  .lbl { display: inline-block; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--ink-faint); border: 1px dashed var(--line); border-radius: 2px; padding: 1px 6px; margin-left: 8px; vertical-align: middle; }
+
+  /* state notes */
+  .stnote { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.5; max-width: 80ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <p class="tag">Slice L7 · Option B approved on 4 November 2026</p>
+    <h1>Thoughts on the game page</h1>
+    <p>Approved direction: the topic notebook (Concept C of the rating concepts). A thought is free text about a game, marked with none, one or several of nine topics. Thoughts sit under Status, with topic filter tabs above a dated list, newest first. The rating stays as it is: one number in the facts row.</p>
+    <p>Three ways to build that direction follow. They differ in where you write and how the topic filter is laid out. <b style="color:var(--ink)">The user approved Option B</b> (link opens the composer). Options A and C are kept for reference and were not chosen. Every state of Option B is drawn in the last part, and is the contract for the build. Sample game: Wingspan, with a drawn stand-in cover.</p>
+    <nav class="toc" aria-label="Contents">
+      <a href="#opt-a">Option A (not chosen)</a><a href="#opt-b">Option B (approved)</a><a href="#opt-c">Option C (not chosen)</a><a href="#states">States of A (not chosen)</a><a href="#states-b">States of B (approved)</a>
+    </nav>
+  </header>
+  <div id="root" class="wrap" style="gap:64px"></div>
+</div>
+
+<script>
+var COVER = '<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="g" x1="0" y1="0" x2="0.4" y2="1"><stop offset="0" stop-color="#2c6e7e"/><stop offset="0.55" stop-color="#d8a24a"/><stop offset="1" stop-color="#7a3b2e"/></linearGradient></defs><rect width="300" height="400" fill="url(#g)"/><circle cx="210" cy="120" r="54" fill="#f2dfb0" opacity="0.9"/><path d="M20 250 Q90 170 150 250 Q210 170 280 250 Q210 230 150 300 Q90 230 20 250Z" fill="#14262d"/><rect y="330" width="300" height="70" fill="#14262d" opacity="0.55"/></svg>';
+var COVER_LONG = '<svg viewBox="0 0 300 400" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="g2" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#3a2f52"/><stop offset="1" stop-color="#b0743a"/></linearGradient></defs><rect width="300" height="400" fill="url(#g2)"/><path d="M150 60 L230 300 L70 300Z" fill="#e8d3a6" opacity="0.85"/><rect x="40" y="300" width="220" height="16" fill="#1d1a26"/><rect y="340" width="300" height="60" fill="#1d1a26" opacity="0.6"/></svg>';
+
+var TOPICS = ['Mechanics','Theme','Artwork','Components','Production','Replayability','Solo mode','Interaction','Combat'];
+var T = [
+  { d: '2 November 2026', x: '<p>The bird cards are gorgeous, but the egg economy drags in the middle game.</p>', tp: ['Mechanics','Artwork'] },
+  { d: '19 October 2026', x: '<p>Great at three players. Solo is fine, but I would not pick it first.</p>', tp: ['Solo mode','Interaction'] },
+  { d: '4 October 2026', x: '<p>The goal tiles bring a lot of replay value. The dice tower is a gimmick.</p>', tp: ['Replayability','Components'] },
+  { d: '21 September 2026', x: '<p>Food runs out too fast with five. <b>Next time</b> deal the swift-start cards to new players.</p>', tp: ['Mechanics'] },
+  { d: '11 August 2026', x: '<p>The painted birds are the reason I keep reaching for the box.</p>', tp: ['Artwork','Theme'] },
+  { d: '30 July 2026', x: '<p>It feels like a nature walk, not a fight. A nice change after a heavy week.</p>', tp: ['Theme'] },
+  { d: '2 July 2026', x: '<p>First game. Slow to learn the three habitat rows, then it clicked by round two.</p>', tp: ['Mechanics'] }
+];
+var LONG = '<p>Tried it again with the full table of five, and I have mixed feelings.</p><p>The <b>engine building</b> is still lovely: by round three every bird you play sets off something, and that chain is the whole joy of the game. But at five the wait between turns is real, and two people checked their phones.</p><ul><li>Food dice run dry fast at five</li><li>The end-of-round goals decide too much</li><li><i>Next time</i>: swift-start cards for new players</li></ul><p>Still the game I reach for when someone new comes over.</p>';
+var LONG_RAW = 'Tried it again with the full table of five, and I have mixed feelings.\n\nThe **engine building** is still lovely: by round three every bird you play sets off something, and that chain is the whole joy of the game. But at five the wait between turns is real, and two people checked their phones.\n\n- Food dice run dry fast at five\n- The end-of-round goals decide too much\n- *Next time*: swift-start cards for new players';
+
+function counts(list){ var c = {}; list.forEach(function(t){ t.tp.forEach(function(p){ c[p] = (c[p] || 0) + 1; }); }); return c; }
+
+/* ---------- page shell ---------- */
+function page(o){
+  var m = o.m, h = '<div class="gp' + (m ? ' m' : '') + '">';
+  h += '<div class="bar"><b>MEEPLE JOURNAL</b>' + (m ? '' : '<nav><span>Home</span><span>Library</span><span>Journal</span><span>Settings</span></nav><div class="search">Search your games</div>') + '<span class="add">+ ADD</span></div>';
+  h += '<div class="toprow"><span>← Library</span><span class="manage">Manage <span style="font-size:11px">▾</span></span></div>';
+  h += '<div class="hero"><div class="cover">' + (o.longTitle ? COVER_LONG : COVER) + '<span class="cchip">Cover <span style="font-size:11px">▴</span></span></div>';
+  var title = o.longTitle ? 'Through the Ages: A New Story of Civilization' : 'Wingspan';
+  h += '<div class="head"><h1 class="title' + (o.longTitle && !m ? ' long' : '') + '">' + title + '</h1><dl class="facts"><div><dt>Players</dt><dd>' + (o.longTitle ? '2-4' : '1-5') + '</dd></div><div><dt>Time</dt><dd>' + (o.longTitle ? '120 min' : '70 min') + '</dd></div><div><dt>Year</dt><dd>' + (o.longTitle ? '2015' : '2019') + '</dd></div><div><dt>Your rating</dt><dd class="rate">8.5 / 10</dd></div></dl></div>';
+  h += '<div class="body"><section><h2 class="sec">Status</h2><div class="status"><span class="on">Owned</span><span>Wishlist</span><span>Interested</span><span>Previously owned</span></div></section>';
+  h += o.area;
+  h += '<p class="desc">' + (o.longTitle ? 'Lead a civilization from antiquity to the modern age.' : 'Bird enthusiasts seek to discover and attract the best birds to their aviaries.') + '</p>';
+  h += '<section><h2 class="sec">Details</h2><dl class="details"><dt>Source</dt><dd>Manual entry</dd><dt>Added</dt><dd>12 September 2026</dd></dl></section><span class="hist">› History</span>';
+  h += '</div></div>' + (o.overlay || '') + '</div>';
+  return h;
+}
+
+/* ---------- option A pieces ---------- */
+function chipsA(sel, off){ return '<div><p class="lab">Topics <i>(optional)</i></p><div class="chips">' + TOPICS.map(function(t){ return '<span class="chip' + (sel.indexOf(t) >= 0 ? ' on' : '') + (off ? ' off' : '') + '">' + t + '</span>'; }).join('') + '</div></div>'; }
+var HINT = '<p class="hint">Light Markdown works: <code>**bold**</code>, <code>*italics*</code>, lists, links. A draft stays on this device until you save.</p>';
+function composerA(o){
+  o = o || {};
+  if (!o.open) return '<div class="cmp col' + (o.focus ? ' focus' : '') + (o.off ? ' off' : '') + '">Add a thought</div>';
+  var ta = o.text ? '<div class="ta' + (o.bad ? ' bad' : '') + (o.pending ? ' ro' : '') + '">' + o.text + (o.caret ? '<span class="caret"></span>' : '') + '</div>' : '<div class="ta ph' + (o.bad ? ' bad' : '') + ' focus"><span class="caret" style="margin-left:0"></span>Add a thought</div>';
+  var h = '<div class="cmp open">';
+  if (o.restored) h += '<div class="msgrow"><p class="hint" style="color:var(--ink)">Restored your unsaved draft.</p><span class="q">Discard draft</span></div>';
+  h += ta;
+  if (o.err) h += '<p class="alert" role="alert">' + o.err + '</p>';
+  h += chipsA(o.sel || [], o.pending);
+  if (o.saveErr) h += '<p class="alert">' + o.saveErr + '</p>';
+  h += '<div class="foot">' + (o.count ? '<span class="count' + (o.countBad ? ' bad' : '') + '">' + o.count + '</span>' : HINT) + '<div class="acts"><span class="btn ghost' + (o.pending ? ' off' : '') + '">' + (o.cancelLabel || 'Cancel') + '</span><span class="btn' + (o.pending ? ' off' : '') + (o.saveFocus ? ' focus' : '') + '">' + (o.pending ? 'Saving' : (o.saveLabel || 'Save')) + '</span></div></div>';
+  return h + '</div>';
+}
+function tabsA(list, sel, o){
+  o = o || {};
+  var c = o.counts || counts(list), total = o.total || list.length;
+  var h = '<div class="tabs' + (o.scrolled ? ' scrolled' : '') + '">';
+  if (!o.scrolled) h += '<span class="' + (sel === 'All' ? 'on' : '') + '">All <i>' + total + '</i></span>';
+  TOPICS.forEach(function(t, i){
+    var n = c[t] || 0;
+    if (o.scrolled && i < 5) return;
+    if (n === 0 && t !== sel) return;
+    h += '<span class="' + (sel === t ? 'on' : '') + '">' + t + ' <i>' + n + '</i></span>';
+  });
+  return h + '</div>';
+}
+function rowA(t, filter, o){
+  o = o || {};
+  var others = filter === 'All' ? t.tp : t.tp.filter(function(p){ return p !== filter; });
+  var tp = others.length ? '<span class="tp">' + (filter === 'All' ? '' : 'also: ') + others.map(function(p){ return p.toLowerCase(); }).join(' · ') + '</span>' : '';
+  var h = '<article class="row' + (o.hl ? ' new' : '') + (o.gone ? ' gone' : '') + (o.focus ? ' focus' : '') + '"><time>' + t.d + '</time><div>';
+  h += '<div class="txt' + (o.clamp ? ' clamp' : '') + '">' + t.x + '</div>';
+  h += '<div class="meta">' + (o.clamp !== undefined ? '<span class="q">' + (o.clamp ? 'Show all' : 'Show less') + '</span>' : '') + tp + '<span class="q faint' + (tp ? ' push' : '') + (o.editFocus ? ' focus' : '') + '">Edit</span></div>';
+  if (o.note) h += o.note;
+  return h + '</div></article>';
+}
+function editRowA(t, o){
+  o = o || {};
+  var h = '<article class="row edit"><time>' + t.d + '</time><div><div class="cmp open">';
+  if (o.restored) h += '<div class="msgrow"><p class="hint" style="color:var(--ink)">Restored your unsaved changes.</p><span class="q">Discard changes</span></div>';
+  h += '<div class="ta' + (o.pending ? ' ro' : '') + '">' + o.raw + (o.caret ? '<span class="caret"></span>' : '') + '</div>';
+  h += chipsA(o.sel, o.pending || o.confirm);
+  if (o.err) h += '<p class="alert">' + o.err + '</p>';
+  if (o.confirm) {
+    h += '<div class="confirm" role="group"><p>Delete this thought? Its text and topics are removed for good. This cannot be undone.</p><div class="acts"><span class="btn ghost' + (o.deleting ? ' off' : ' focus') + '">Cancel</span><span class="btn neg' + (o.deleting ? ' off' : '') + '">' + (o.deleting ? 'Deleting' : 'Delete thought') + '</span></div></div>';
+  } else {
+    h += '<div class="foot"><span class="q' + (o.pending ? ' off' : '') + '" style="' + (o.pending ? 'opacity:.6' : '') + '">Delete thought</span><div class="acts"><span class="btn ghost' + (o.pending ? ' off' : '') + '">Cancel</span><span class="btn' + (o.pending ? ' off' : '') + '">' + (o.pending ? 'Saving' : 'Save changes') + '</span></div></div>';
+  }
+  return h + '</div></div></article>';
+}
+function listA(list, filter, mod){
+  mod = mod || {};
+  var shown = list.filter(function(t){ return filter === 'All' || t.tp.indexOf(filter) >= 0; });
+  return '<div class="list">' + shown.map(function(t, i){ return mod[i] ? mod[i](t) : rowA(t, filter); }).join('') + '</div>';
+}
+function sectionA(inner){ return '<section class="th-sec cs ce"><h2 class="sec">Thoughts</h2>' + inner + '</section>'; }
+function areaA(o){
+  o = o || {};
+  var list = o.list || T, filter = o.filter || 'All';
+  var h = composerA(o.cmp);
+  if (o.after) h += o.after;
+  h += tabsA(list, filter, o.tabs);
+  h += o.listHtml || listA(list, filter, o.mod);
+  return sectionA(h);
+}
+
+/* ---------- option B pieces ---------- */
+function rowB(t, o){
+  o = o || {};
+  return '<article class="brow"><div class="bd"><time>' + t.d + '</time><span class="dots' + (o.menu ? ' on' : '') + '">···</span></div><div class="txt" style="max-width:65ch">' + t.x.replace(/<\/?p>/g,'') + '</div><span class="tp">' + t.tp.map(function(p){return p.toLowerCase();}).join(' · ') + '</span>' + (o.menu ? '<div class="bmenu"><span>Edit</span><span>Delete</span></div>' : '') + '</article>';
+}
+function areaB(o){
+  o = o || {};
+  var h = '<section class="th-sec"><div class="bhead"><h2 class="sec">Thoughts</h2>' + (o.open ? '' : '<span class="q">+ Add thought</span>') + '</div>';
+  if (o.open) h += '<div style="margin:6px 0 4px">' + composerA({ open: true, text: 'Scoring is generous, so nobody falls out of the game before the last round.', caret: true, sel: ['Mechanics','Replayability'] }) + '</div>';
+  h += '<div class="tabs' + (o.m ? ' wrapped' : '') + '" style="margin-top:12px"><span class="on">All <i>7</i></span><span>Mechanics <i>3</i></span><span>Theme <i>2</i></span><span>Artwork <i>2</i></span><span>Components <i>1</i></span><span>Replayability <i>1</i></span><span>Solo mode <i>1</i></span><span>Interaction <i>1</i></span></div><div>';
+  T.slice(0, 4).forEach(function(t, i){ h += rowB(t, { menu: o.menu && i === 0 }); });
+  return h + '</div></section>';
+}
+
+/* ---------- option C pieces ---------- */
+function areaC(o){
+  o = o || {};
+  var c = counts(T), h = '<section class="th-sec"><div class="bhead"><h2 class="sec">Thoughts</h2><span class="q">+ Add thought</span></div>';
+  var rows = T.filter(function(t){ return o.filter === 'All' || t.tp.indexOf(o.filter) >= 0; });
+  var list = '<div class="list">' + rows.slice(0, 4).map(function(t){ return rowA(t, o.filter); }).join('') + '</div>';
+  if (o.m) {
+    h += '<span class="sel">Topic: <b>' + o.filter + ' (' + (o.filter === 'All' ? 7 : c[o.filter]) + ')</b><span style="font-size:11px;color:var(--ink-soft)">▾</span></span>' + list.replace(/grid-template-columns/g,'x');
+  } else {
+    h += '<div class="cgrid"><nav class="index"><span class="' + (o.filter === 'All' ? 'on' : '') + '">All <i>7</i></span>';
+    TOPICS.forEach(function(t){ var n = c[t] || 0; h += '<span class="' + (o.filter === t ? 'on' : (n ? '' : 'none')) + '">' + t + ' <i>' + n + '</i></span>'; });
+    h += '</nav><div style="min-width:0">' + list + '</div></div>';
+  }
+  return h + '</section>';
+}
+function dialogC(m){
+  var inner = '<h3>New thought</h3><p class="sub">Wingspan</p><div class="ta" style="min-height:160px">Scoring is generous, so nobody falls out of the game before the last round.<span class="caret"></span></div>' + chipsA(['Mechanics','Replayability']) + '<div class="foot">' + (m ? '' : HINT) + '<div class="acts"><span class="btn ghost">Cancel</span><span class="btn">Save</span></div></div>';
+  if (m) return '<div class="scrim"></div><div class="dialog sheet"><span class="grab"></span>' + inner + '</div>';
+  return '<div class="scrim"></div><div class="dialog" style="left:50%;top:150px;width:600px;margin-left:-300px">' + inner + '</div>';
+}
+
+/* ---------- boards ---------- */
+var root = document.getElementById('root');
+function stage(html, w, opt){
+  opt = opt || {};
+  return '<div class="stage" data-w="' + w + '"' + (opt.crop ? ' data-crop="1"' : '') + (opt.cx ? ' data-cx="' + opt.cx + '"' : '') + (opt.fixed ? ' data-fixed="' + opt.fixed + '"' : '') + '><div class="frame" style="width:' + w + 'px">' + html + '</div></div>';
+}
+function pair(d, m, opt){
+  opt = opt || {};
+  var crop = opt.crop;
+  return '<div class="shots"><div class="shot d"><p class="cap">Desktop, 1280 px' + (crop ? ', body column' : '') + '</p>' + stage(page({ m: false, area: d, longTitle: opt.longTitle, overlay: opt.dOverlay }), 1280, { crop: crop, cx: crop ? 424 : 0 }) + '</div><div class="shot m"><p class="cap">Phone, 390 px</p>' + stage(page({ m: true, area: m, longTitle: opt.longTitle, overlay: opt.mOverlay }), 390, { crop: crop, fixed: crop ? 0.8 : 0.62 }) + '</div></div>';
+}
+function board(o){
+  var s = document.createElement('section'); s.className = 'board'; if (o.id) s.id = o.id;
+  s.innerHTML = (o.tag ? '<div><p class="tag' + (o.rec ? ' rec' : '') + '">' + o.tag + '</p>' : '<div>') + (o.h2 ? '<h2>' + o.h2 + '</h2>' : '<h3 class="st">' + o.h3 + '</h3>') + '</div>' + (o.why ? '<p class="why">' + o.why + '</p>' : '') + (o.pairs || '');
+  root.appendChild(s);
+}
+function part(id, text){ var h = document.createElement('h2'); h.className = 'part-h'; h.id = id; h.textContent = text; root.appendChild(h); }
+
+part('options', 'Options');
+
+board({ id: 'opt-a', tag: 'Option A · not chosen (was the recommendation)', h2: 'Inline line', why: 'The writing field is always there, as one quiet line under the heading: <b>Add a thought</b>. Focus it and it opens in place into a text box with the nine topic toggles, Cancel and Save. The topic tabs sit under it, then the dated list. On a phone the tabs stay in one row and scroll sideways, so the list never moves down. Edit opens in place in the row. <b>Trade-off:</b> one more line on the page at rest than the approved sketch (the line replaces the "+ Add thought" link), and the tabs on a phone hide some topics until you scroll.',
+  pairs: pair(areaA({}), areaA({}), {}) + pair(areaA({ cmp: { open: true, text: 'Scoring is generous, so nobody falls out of the game before the last round.', caret: true, sel: ['Mechanics','Replayability'] } }), areaA({ cmp: { open: true, text: 'Scoring is generous, so nobody falls out of the game before the last round.', caret: true, sel: ['Mechanics','Replayability'] } }), {}) });
+
+board({ id: 'opt-b', tag: 'Option B · approved', rec: true, h2: 'Link opens the composer', why: 'Closest to the approved sketch: only a quiet <b>+ Add thought</b> link beside the heading. The link opens the composer at the top of the section, already focused; Cancel hides it again. Rows put a small date label above the text, with a hairline between rows, and each row has a "···" menu for Edit and Delete. On a phone the tabs wrap onto several rows. <b>Trade-off:</b> the calmest page at rest, but one extra tap before every thought, eight "···" buttons on the page, and with many topics the wrapped tabs push the list down by two or three rows on a phone.',
+  pairs: pair(areaB({}), areaB({ m: true }), {}) + pair(areaB({ open: true }), areaB({ open: true, m: true, menu: false }), {}) + pair(areaB({ menu: true }), areaB({ m: true, menu: true }), { crop: true }).replace(/class="th-sec"/g, 'class="th-sec cs ce"') });
+
+board({ id: 'opt-c', tag: 'Option C · not chosen', h2: 'Topic index and a writing dialog', why: 'On desktop the topics become a short index column on the left of the section, always all nine plus All, with counts (empty ones faint). On a phone the index becomes one select field: <b>Topic: All (7)</b>. <b>+ Add thought</b> opens a dialog on desktop and a bottom sheet on a phone; Edit opens the same dialog with Delete in it. <b>Trade-off:</b> scales best with nine topics and many thoughts, and the page stays still while you write. But it is the heaviest at rest (a second column inside the body), the select hides the counts on a phone, and a dialog feels less like a notebook.',
+  pairs: pair(areaC({ filter: 'Artwork' }), areaC({ filter: 'Artwork', m: true }), {}) + pair(areaC({ filter: 'All' }), areaC({ filter: 'All', m: true }), { dOverlay: dialogC(false), mOverlay: dialogC(true) }) });
+
+/* ---------- states of option A ---------- */
+part('states', 'Option A: every state (not chosen, kept for reference)');
+
+function st(h3, note, d, m, opt){ board({ h3: h3, why: note, pairs: pair(d, m, Object.assign({ crop: true }, opt || {})) }); }
+var DRAFT = 'Scoring is generous, so nobody falls out of the game before the last round.';
+
+st('1. Empty: no thoughts yet', 'No tabs and no list. The line under the heading is the only control.',
+  sectionA(composerA() + '<p class="empty">No thoughts yet. Write what you think of the game, and mark the parts it is about.</p>'),
+  sectionA(composerA() + '<p class="empty">No thoughts yet. Write what you think of the game, and mark the parts it is about.</p>'));
+
+var SK = function(m){ return '<section class="th-sec cs ce" aria-busy="true"><h2 class="sec">Thoughts</h2><div class="skel" style="height:44px;max-width:42rem"></div><div style="display:flex;gap:20px;margin:28px 0 24px"><div class="skel" style="height:16px;width:56px"></div><div class="skel" style="height:16px;width:96px"></div><div class="skel" style="height:16px;width:72px"></div></div>' + [0,1,2].map(function(){ return '<div style="display:grid;grid-template-columns:' + (m ? '1fr' : '9rem 1fr') + ';gap:8px 20px;margin-bottom:24px"><div class="skel" style="height:14px;width:110px"></div><div><div class="skel" style="height:14px;max-width:560px;margin-bottom:8px"></div><div class="skel" style="height:14px;width:60%"></div></div></div>'; }).join('') + '<span class="sr">Loading your thoughts</span></section>'; };
+st('2. Loading', 'Only the Thoughts section waits (it streams in after the page). Grey bars, no motion, a polite status for screen readers.', SK(false), SK(true));
+
+var ERR = sectionA('<div class="errbox" role="alert"><p>Could not load your thoughts.</p><span class="q" style="color:var(--ink)">Try again</span></div>');
+st('3. Error loading', 'The rest of the page works. No composer while the list is missing, so nothing looks saved that is not.', ERR, ERR);
+
+st('4. Default: some thoughts, All selected', 'Tabs show All plus only the topics that have thoughts, in the fixed topic order. Each row: date, text, its topics, and a quiet Edit.', areaA({}), areaA({}));
+
+st('5. Composer open, nothing typed', 'Focusing the line opens it in place. The text box takes focus. Topics are optional and none is chosen. Leaving it empty (focus moves away with no text and no topic) closes it again.',
+  areaA({ cmp: { open: true } }), areaA({ cmp: { open: true } }));
+
+st('6. Composer with text and two topics', 'Typing saves a draft on this device. Toggles show their pressed state with the cover glow, as in Status.',
+  areaA({ cmp: { open: true, text: DRAFT, caret: true, sel: ['Mechanics','Replayability'] } }), areaA({ cmp: { open: true, text: DRAFT, caret: true, sel: ['Mechanics','Replayability'] } }));
+
+st('7. Validation: saved with no text', 'Topics alone are not a thought. The message sits under the box; focus goes back to the box.',
+  areaA({ cmp: { open: true, bad: true, err: 'Write something before you save.', sel: ['Theme'] } }), areaA({ cmp: { open: true, bad: true, err: 'Write something before you save.', sel: ['Theme'] } }));
+
+var NEAR = 'Long thought near the limit ... and the last few lines of it.';
+var NEAR_O = { open: true, text: NEAR, caret: true, sel: ['Mechanics'], count: '212 characters left' };
+var OVER_O = { open: true, text: NEAR, sel: ['Mechanics'], bad: true, count: '38 characters too many', countBad: true, err: 'This thought is too long. Keep it to 10,000 characters.' };
+st('8. Validation: near the length limit', 'A counter replaces the hint in the last 500 characters of the 10,000 limit.', areaA({ cmp: NEAR_O }), areaA({ cmp: NEAR_O }));
+st('8b. Validation: over the limit, after Save', 'Over the limit the counter turns to the negative colour. Save shows the message under the box, keeps the text, and focus goes back to the box.', areaA({ cmp: OVER_O }), areaA({ cmp: OVER_O }));
+
+st('9. Saving (pending)', 'Save reads "Saving". Text box read-only, toggles and both buttons disabled. Nothing else on the page is blocked.',
+  areaA({ cmp: { open: true, text: DRAFT, sel: ['Mechanics','Replayability'], pending: true } }), areaA({ cmp: { open: true, text: DRAFT, sel: ['Mechanics','Replayability'], pending: true } }));
+
+st('10. Save failed (offline or server error)', 'Text and topics stay, the draft stays on the device, Save is enabled again. No retry queue.',
+  areaA({ cmp: { open: true, text: DRAFT, sel: ['Mechanics','Replayability'], saveErr: 'Could not save your thought. It is still here and on this device. Try again.', saveFocus: true } }),
+  areaA({ cmp: { open: true, text: DRAFT, sel: ['Mechanics','Replayability'], saveErr: 'Could not save your thought. It is still here and on this device. Try again.', saveFocus: true } }));
+
+var SAVED = [{ d: '4 November 2026', x: '<p>' + DRAFT + '</p>', tp: ['Mechanics','Replayability'] }].concat(T);
+var savedMod = { 0: function(t){ return rowA(t, 'All', { hl: true, focus: true, note: '<span class="sr">Thought saved.</span>' }); } };
+st('11. Saved (success)', 'The composer closes and clears, the draft is removed, and the new thought is first in the list with a short raised background that fades out (none with reduced motion). Focus moves to the new row. Counts update.',
+  areaA({ list: SAVED, mod: savedMod }), areaA({ list: SAVED, mod: savedMod }));
+
+st('12. Draft restored', 'Coming back to the page with an unsaved draft: the composer is open with the text and topics, and says so. Discard draft clears both.',
+  areaA({ cmp: { open: true, restored: true, text: DRAFT, sel: ['Mechanics'] } }), areaA({ cmp: { open: true, restored: true, text: DRAFT, sel: ['Mechanics'] } }));
+
+var DISC = '<div class="msgrow" style="margin-top:4px"><p class="hint">Draft discarded.</p><span class="q focus">Undo</span></div>';
+st('13. Cancel with text: discarded, with Undo', 'Cancel (or Escape) with text closes the composer and clears the draft, and offers Undo until you write again or leave the page. Cancel with nothing typed just closes, with no message.',
+  areaA({ after: DISC }), areaA({ after: DISC }));
+
+st('14. Filtered by one topic', 'Artwork is selected. Rows show only their other topics, as "also: ...". A row with no other topic shows only Edit.',
+  areaA({ filter: 'Artwork' }), areaA({ filter: 'Artwork' }));
+
+var EMPTYF = '<p class="empty" style="margin-top:0">No thoughts about artwork.</p><span class="q">Show all thoughts</span>';
+st('15. Selected topic became empty', 'After editing or deleting the last Artwork thought while Artwork is selected. The tab stays, with 0, until another tab is chosen; then it disappears.',
+  areaA({ filter: 'Artwork', list: T.map(function(t){ return { d: t.d, x: t.x, tp: t.tp.filter(function(p){ return p !== 'Artwork'; }) }; }), listHtml: EMPTYF }),
+  areaA({ filter: 'Artwork', list: T.map(function(t){ return { d: t.d, x: t.x, tp: t.tp.filter(function(p){ return p !== 'Artwork'; }) }; }), listHtml: EMPTYF }));
+
+var ALLC = { Mechanics: 12, Theme: 6, Artwork: 5, Components: 4, Production: 2, Replayability: 3, 'Solo mode': 2, Interaction: 3, Combat: 1 };
+st('16. All nine topics in use', 'Desktop: the tabs wrap onto a second line inside the body column. Phone: one row that scrolls sideways (no scrollbar, a fade at the edge that has more); 16b shows it scrolled to the end. The selected tab is scrolled into view.',
+  areaA({ tabs: { counts: ALLC, total: 34 } }),
+  areaA({ tabs: { counts: ALLC, total: 34 } }) );
+board({ h3: '16b. Phone tabs scrolled to the end, Combat selected', why: '', pairs: '<div class="shots"><div class="shot m"><p class="cap">Phone, 390 px</p>' + stage(page({ m: true, area: areaA({ filter: 'Combat', list: [{ d: '9 June 2026', x: '<p>There is no combat, and that is the point.</p>', tp: ['Combat','Theme'] }], tabs: { counts: ALLC, total: 34, scrolled: true } }) }), 390, { crop: true, fixed: 0.8 }) + '</div></div>' });
+
+var LT = [{ d: '28 October 2026', x: LONG, tp: ['Mechanics','Interaction','Replayability'] }].concat(T.slice(1, 3));
+st('17. Long title and long text, collapsed', 'Long game titles only affect the header (the composer says "Add a thought", without the title). A thought longer than six lines is cut with "Show all". Markdown paragraphs, lists and line breaks are kept.',
+  areaA({ list: LT, mod: { 0: function(t){ return rowA(t, 'All', { clamp: true }); } } }), areaA({ list: LT, mod: { 0: function(t){ return rowA(t, 'All', { clamp: true }); } } }), { longTitle: true, crop: false });
+st('17b. Long text, expanded', '"Show all" becomes "Show less". Focus stays on that button.',
+  areaA({ list: LT, mod: { 0: function(t){ return rowA(t, 'All', { clamp: false }); } } }), areaA({ list: LT, mod: { 0: function(t){ return rowA(t, 'All', { clamp: false }); } } }));
+
+var MANY = [];
+for (var i = 0; i < 10; i++) MANY.push(T[i % 7]);
+var MANYH = listA(MANY, 'All') + '<div class="more"><span class="btn ghost">Show 10 more</span><span class="count">10 of 34 shown</span></div>';
+st('18. Many thoughts', 'Ten rows at first. "Show 10 more" adds the next ten (the last step says "Show 4 more"). Choosing a tab starts again at ten.',
+  areaA({ tabs: { counts: ALLC, total: 34 }, listHtml: MANYH }), areaA({ tabs: { counts: ALLC, total: 34 }, listHtml: MANYH }));
+
+var RAW1 = 'The bird cards are gorgeous, but the egg economy drags in the middle game. Better with the automa';
+var editMod = function(o){ return { 0: function(t){ return editRowA(t, Object.assign({ raw: RAW1, caret: true, sel: ['Mechanics','Artwork'] }, o)); } }; };
+st('19. Edit open', 'Edit replaces the row in place with the same box, filled in. The date does not change. Delete sits on the left, away from Save. Only one row is in edit mode at a time.',
+  areaA({ mod: editMod({}) }), areaA({ mod: editMod({}) }));
+st('19b. Edit saving', 'Same pending rules as a new thought.',
+  areaA({ mod: editMod({ pending: true, caret: false }) }), areaA({ mod: editMod({ pending: true, caret: false }) }));
+st('19c. Edit failed', 'Changes are kept here and as a draft on this device.',
+  areaA({ mod: editMod({ caret: false, err: 'Could not save your changes. They are still here and on this device. Try again.' }) }), areaA({ mod: editMod({ caret: false, err: 'Could not save your changes. They are still here and on this device. Try again.' }) }));
+
+st('20. Delete: confirm open', 'Delete thought opens a confirm inside the box, saying what is lost. Focus goes to Cancel. Escape or Cancel closes the confirm and returns focus to Delete thought.',
+  areaA({ mod: editMod({ caret: false, confirm: true }) }), areaA({ mod: editMod({ caret: false, confirm: true }) }));
+st('20b. Deleting (pending)', 'Both buttons disabled. On success the row is removed, focus moves to the next row (or the previous one, or the Thoughts heading when none is left), and screen readers hear "Thought deleted."',
+  areaA({ mod: editMod({ caret: false, confirm: true, deleting: true }) }), areaA({ mod: editMod({ caret: false, confirm: true, deleting: true }) }));
+
+var DELMOD = { 0: function(t){ return rowA(t, 'All', { focus: true, note: '<span class="sr">Thought deleted.</span>' }); } };
+st('20c. Deleted', 'The thought is gone and the counts drop. Focus is on the row that took its place.',
+  areaA({ list: T.slice(1), mod: DELMOD }), areaA({ list: T.slice(1), mod: DELMOD }));
+
+
+/* ---------- states of option B (approved) ---------- */
+part('states-b', 'Option B: every state (approved)');
+
+function tabsB(list, sel, o){ return '<div class="tabw">' + tabsA(list, sel, o) + '</div>'; }
+function lower(p){ return p.toLowerCase(); }
+function rowB2(t, filter, o){
+  o = o || {}; filter = filter || 'All';
+  var others = filter === 'All' ? t.tp : t.tp.filter(function(p){ return p !== filter; });
+  var tp = others.length ? '<span class="tp">' + (filter === 'All' ? '' : 'also: ') + others.map(lower).join(' · ') + '</span>' : '';
+  var h = '<article class="brow' + (o.hl ? ' new' : '') + (o.focus ? ' focus' : '') + '"><div class="bd"><time>' + t.d + '</time>';
+  if (!o.confirm) h += '<span class="dwrap"><span class="dots' + (o.menu ? ' on' : '') + (o.dotsFocus ? ' focus' : '') + '">···</span>' + (o.menu ? '<div class="bmenu' + (o.menu === 'up' ? ' up' : '') + '"><span>Edit</span><span>Delete</span></div>' : '') + '</span>';
+  h += '</div><div class="txt' + (o.clamp ? ' clamp' : '') + '">' + t.x + '</div>';
+  var sa = o.clamp !== undefined ? '<span class="q' + (o.saFocus ? ' focus' : '') + '">' + (o.clamp ? 'Show all' : 'Show less') + '</span>' : '';
+  if (sa || tp) h += '<div class="meta">' + sa + tp + '</div>';
+  if (o.confirm) {
+    var dis = o.deleting ? ' off' : '';
+    h += '<div class="bconfirm" role="group"><p>Delete this thought? Its text and topics are removed for good. This cannot be undone.</p>' + (o.delErr ? '<p class="alert">Could not delete this thought. Try again.</p>' : '') + '<div class="acts"><span class="btn ghost' + dis + (!o.deleting && !o.delErr ? ' focus' : '') + '">Cancel</span><span class="btn neg' + dis + (o.delErr ? ' focus' : '') + '">' + (o.deleting ? 'Deleting' : 'Delete thought') + '</span></div></div>';
+  }
+  if (o.note) h += o.note;
+  return h + '</article>';
+}
+function editRowB(t, o){
+  o = o || {};
+  var off = o.pending ? ' off' : '';
+  var h = '<article class="brow edit"><div class="bd"><time>' + t.d + '</time></div><div class="cmp open">';
+  if (o.restored) h += '<div class="msgrow"><p class="hint" style="color:var(--ink)">Restored your unsaved changes.</p><span class="q">Discard changes</span></div>';
+  h += '<div class="ta' + (o.pending ? ' ro' : '') + '">' + o.raw + (o.caret ? '<span class="caret"></span>' : '') + '</div>';
+  h += chipsA(o.sel, o.pending);
+  if (o.err) h += '<p class="alert">' + o.err + '</p>';
+  h += '<div class="foot"><div class="acts"><span class="btn ghost' + off + '">Cancel</span><span class="btn' + off + (o.err ? ' focus' : '') + '">' + (o.pending ? 'Saving' : 'Save changes') + '</span></div></div>';
+  return h + '</div>' + (o.note || '') + '</article>';
+}
+function listB(list, filter, mod){
+  mod = mod || {};
+  var shown = list.filter(function(t){ return filter === 'All' || t.tp.indexOf(filter) >= 0; });
+  return '<div>' + shown.map(function(t, i){ return mod[i] ? mod[i](t) : rowB2(t, filter); }).join('') + '</div>';
+}
+function areaB2(o){
+  o = o || {};
+  var list = o.list || T, filter = o.filter || 'All';
+  var h = '<section class="th-sec cs ce"><div class="bhead"><h2 class="sec">Thoughts</h2>' + (o.cmp ? '' : '<span class="q' + (o.linkFocus ? ' focus' : '') + '">+ Add thought</span>') + '</div>';
+  if (o.cmp) h += '<div style="margin:6px 0 4px">' + composerA(o.cmp) + '</div>';
+  if (o.after) h += o.after;
+  if (o.empty !== undefined) return h + o.empty + '</section>';
+  h += tabsB(list, filter, o.tabs);
+  h += o.listHtml || listB(list, filter, o.mod);
+  return h + '</section>';
+}
+function stB(h3, note, d, m, opt){ board({ id: 'st-' + h3.split('.')[0].toLowerCase(), h3: h3, why: note, pairs: pair(d, m, Object.assign({ crop: true }, opt || {})) }); }
+function both(fn){ return [fn(false), fn(true)]; }
+function stB2(h3, note, fn, opt){ var p = both(fn); stB(h3, note, p[0], p[1], opt); }
+var EMPTYLINE = '<p class="empty" style="margin-top:4px">No thoughts yet. Write what you think of the game, and mark the parts it is about.</p>';
+
+stB2('B1. Empty: no thoughts yet', 'Heading, the "+ Add thought" link on the right, and one line of help. No tabs and no list.',
+  function(){ return areaB2({ empty: EMPTYLINE }); });
+
+stB2('B1b. Empty, composer open', 'The link opens the composer under the heading; the link and the help line hide while it is open. Cancel brings both back and puts focus on the link.',
+  function(){ return areaB2({ empty: '', cmp: { open: true } }); });
+
+var SKB = function(m){
+  var h = '<section class="th-sec cs ce" aria-busy="true"><div class="bhead" style="min-height:44px"><h2 class="sec">Thoughts</h2></div><div style="display:flex;gap:20px;margin:12px 0 24px"><div class="skel" style="height:16px;width:56px"></div><div class="skel" style="height:16px;width:96px"></div><div class="skel" style="height:16px;width:72px"></div></div>';
+  [0,1,2].forEach(function(i){ h += '<div style="padding:' + (i ? '18px' : '4px') + ' 0 18px;' + (i ? 'border-top:1px solid var(--line)' : '') + '"><div class="skel" style="height:12px;width:120px;margin-bottom:12px"></div><div class="skel" style="height:14px;max-width:560px;margin-bottom:8px"></div><div class="skel" style="height:14px;width:60%"></div></div>'; });
+  return h + '<span class="sr">Loading your thoughts</span></section>';
+};
+stB2('B2. Loading', 'Only the Thoughts section waits (its own Suspense boundary). Grey bars, no motion, no link until the list is there, a polite status for screen readers.', SKB);
+
+stB2('B3. Load error', 'The rest of the page works. No link, no tabs, no list, so nothing looks saved that is not. A local draft is kept for later.',
+  function(){ return '<section class="th-sec cs ce"><div class="bhead" style="min-height:44px"><h2 class="sec">Thoughts</h2></div><div class="errbox" role="alert" style="margin-top:4px"><p>Could not load your thoughts.</p><span class="q" style="color:var(--ink)">Try again</span></div></section>'; });
+
+stB2('B4. Default: some thoughts, All selected', 'All plus only the topics in use, in the fixed order. Each row: date label, the "···" button, the text, its topics in lowercase. A hairline between rows.',
+  function(){ return areaB2({}); });
+
+stB2('B5. Composer open from the link, nothing typed', 'The link hides and the composer appears under the heading with focus in the text box. No topic pressed. It does not close when focus leaves; only Cancel, Escape or a save closes it.',
+  function(){ return areaB2({ cmp: { open: true } }); });
+
+stB2('B6. Composer with text and two topics', 'Typing writes a draft to this device about half a second after each change.',
+  function(){ return areaB2({ cmp: { open: true, text: DRAFT, caret: true, sel: ['Mechanics','Replayability'] } }); });
+
+stB2('B7. Composer opened while a topic tab is selected', 'Artwork is selected, so Artwork starts pressed. It can be unpressed. The other tabs and the list stay as they are below.',
+  function(){ return areaB2({ filter: 'Artwork', cmp: { open: true, sel: ['Artwork'] } }); });
+
+stB2('B8. Validation: Save with no text', 'Topics alone are not a thought. The message sits under the box and focus goes back to the box.',
+  function(){ return areaB2({ cmp: { open: true, bad: true, err: 'Write something before you save.', sel: ['Theme'] } }); });
+stB2('B8b. Validation: near the 10,000 limit', 'From 500 characters left, a counter replaces the hint.',
+  function(){ return areaB2({ cmp: NEAR_O }); });
+stB2('B8c. Validation: over the limit, after Save', 'The counter turns negative. Save shows the message and keeps the text; focus goes to the box.',
+  function(){ return areaB2({ cmp: OVER_O }); });
+
+stB2('B9. Saving (pending)', 'Save reads "Saving". Text box read-only, toggles and both buttons disabled. The rest of the page is not blocked.',
+  function(){ return areaB2({ cmp: { open: true, text: DRAFT, sel: ['Mechanics','Replayability'], pending: true } }); });
+
+stB2('B10. Save failed (offline or server error)', 'Text, topics and draft stay. Save is enabled again and keeps focus. No retry queue.',
+  function(){ return areaB2({ cmp: { open: true, text: DRAFT, sel: ['Mechanics','Replayability'], saveErr: 'Could not save your thought. It is still here and on this device. Try again.', saveFocus: true } }); });
+
+var savedModB = { 0: function(t){ return rowB2(t, 'All', { hl: true, focus: true, note: '<span class="sr">Thought saved.</span>' }); } };
+stB2('B11. Saved', 'The composer closes, the link comes back, the draft is removed. The new thought is first with a raised background that fades over about 2 seconds (none with reduced motion). Focus is on the new row. Counts update.',
+  function(){ return areaB2({ list: SAVED, mod: savedModB }); });
+
+stB2('B12. Draft restored', 'Back on the page with an unsaved draft: the composer is open, filled, and says so. Focus is not moved. Discard draft clears it and closes the composer.',
+  function(){ return areaB2({ cmp: { open: true, restored: true, text: DRAFT, sel: ['Mechanics'] } }); });
+
+stB2('B13. Cancel with text: Draft discarded, with Undo', 'The composer closes, the link is back, and the line offers Undo until the composer opens again or the page is left. Focus is on Undo. Cancel with nothing typed just closes, focus on the link.',
+  function(){ return areaB2({ after: DISC }); });
+
+stB2('B14. Filtered by one topic', 'Artwork selected. Rows show only their other topics, as "also: ...". A row with no other topic shows no topics line.',
+  function(){ return areaB2({ filter: 'Artwork' }); });
+
+var NOART = T.map(function(t){ return { d: t.d, x: t.x, tp: t.tp.filter(function(p){ return p !== 'Artwork'; }) }; });
+stB2('B15. Selected topic became empty', 'The last Artwork thought was deleted or edited while Artwork was selected. The tab stays with 0 until another tab is chosen.',
+  function(){ return areaB2({ filter: 'Artwork', list: NOART, listHtml: EMPTYF }); });
+
+stB2('B16. All nine topics in use, tabs wrapped', 'Tabs wrap at both widths. Every line starts on the same left edge (the first tab of each line lines up with the text), lines are 44px tall, one hairline under the group. Desktop: two lines. Phone: three lines (132px).',
+  function(){ return areaB2({ tabs: { counts: ALLC, total: 34 }, list: T }); });
+stB2('B16b. Wrapped tabs, a tab on the last line selected', 'Combat is selected; its underline sits under it on the last line. Nothing scrolls sideways.',
+  function(){ return areaB2({ filter: 'Combat', list: [{ d: '9 June 2026', x: '<p>There is no combat, and that is the point.</p>', tp: ['Combat','Theme'] }], tabs: { counts: ALLC, total: 34 } }); });
+
+stB2('B17. Long title and long text, collapsed', 'A long game title only changes the header. A thought over six lines is cut with "Show all", on the topics line.',
+  function(){ return areaB2({ list: LT, mod: { 0: function(t){ return rowB2(t, 'All', { clamp: true }); } } }); }, { longTitle: true, crop: false });
+stB2('B17b. Long text, expanded', '"Show all" becomes "Show less". Focus stays on it.',
+  function(){ return areaB2({ list: LT, mod: { 0: function(t){ return rowB2(t, 'All', { clamp: false, saFocus: true }); } } }); });
+
+var MANYHB = listB(MANY, 'All') + '<div class="more"><span class="btn ghost">Show 10 more</span><span class="count">10 of 34 shown</span></div>';
+stB2('B18. Many thoughts', 'Ten rows first. "Show 10 more" adds the next ten (the last step says "Show 4 more"). Choosing a tab starts again at ten.',
+  function(){ return areaB2({ tabs: { counts: ALLC, total: 34 }, listHtml: MANYHB }); });
+
+stB2('B19. "···" menu open on a row', 'Opens under its button, right edges lined up, so it grows to the left into the column and never reaches the page edge. It covers the row below; nothing moves. The button shows its open state.',
+  function(){ return areaB2({ mod: { 0: function(t){ return rowB2(t, 'All', { menu: 'down' }); } } }); });
+board({ id: 'st-b19b', h3: 'B19b. Menu near the bottom of the screen opens upward', why: 'When there is less room below the button than the menu needs (plus 8px), it opens above the button instead. Drawn on the last row of a phone screen.', pairs: '<div class="shots"><div class="shot m"><p class="cap">Phone, 390 px</p>' + stage(page({ m: true, area: areaB2({ list: T.slice(0, 4), mod: { 3: function(t){ return rowB2(t, 'All', { menu: 'up' }); } } }) }), 390, { crop: true, fixed: 0.8 }) + '</div></div>' });
+
+var RAWB = 'The bird cards are gorgeous, but the egg economy drags in the middle game. Better with the automa';
+var editB = function(o){ return { 0: function(t){ return editRowB(t, Object.assign({ raw: RAWB, caret: true, sel: ['Mechanics','Artwork'] }, o)); } }; };
+stB2('B20. Edit in place (from the menu)', 'Edit swaps the row for the same composer, filled in. The date label stays; the "···" button hides. Footer: Cancel and Save changes. Focus at the end of the text.',
+  function(){ return areaB2({ mod: editB({}) }); });
+stB2('B20b. Edit with restored changes', 'Opening Edit on a thought with unsaved changes on this device.',
+  function(){ return areaB2({ mod: editB({ restored: true, caret: false }) }); });
+stB2('B20c. Edit saving', 'Same pending rules as a new thought.',
+  function(){ return areaB2({ mod: editB({ pending: true, caret: false }) }); });
+stB2('B20d. Edit failed', 'The changes stay here and as a draft on this device. Save changes keeps focus.',
+  function(){ return areaB2({ mod: editB({ caret: false, err: 'Could not save your changes. They are still here and on this device. Try again.' }) }); });
+
+stB2('B21. Delete: confirm inline in the row', 'Delete in the menu opens the confirm inside that row, under its text. The "···" button hides. Focus goes to Cancel.',
+  function(){ return areaB2({ mod: { 0: function(t){ return rowB2(t, 'All', { confirm: true }); } } }); });
+stB2('B21b. Deleting (pending)', 'Both buttons disabled; Delete thought reads "Deleting".',
+  function(){ return areaB2({ mod: { 0: function(t){ return rowB2(t, 'All', { confirm: true, deleting: true }); } } }); });
+stB2('B21c. Delete failed', 'The confirm stays open with the message. Focus stays on Delete thought.',
+  function(){ return areaB2({ mod: { 0: function(t){ return rowB2(t, 'All', { confirm: true, delErr: true }); } } }); });
+stB2('B21d. Deleted', 'The row is gone and the counts drop (All 6, Artwork 1). Focus is on the row that took its place.',
+  function(){ return areaB2({ list: T.slice(1), mod: { 0: function(t){ return rowB2(t, 'All', { focus: true, note: '<span class="sr">Thought deleted.</span>' }); } } }); });
+
+/* ---------- fit frames ---------- */
+function fit(){
+  document.querySelectorAll('.stage').forEach(function(s){
+    var f = s.firstElementChild;
+    f.style.transform = 'none';
+    var fr = f.getBoundingClientRect();
+    var x0 = +s.dataset.cx || 0, w = +s.dataset.w - x0, y0 = 0, y1 = f.offsetHeight;
+    if (s.dataset.crop) {
+      var a = f.querySelector('.cs'), b = f.querySelector('.ce');
+      if (a && b) { y0 = a.getBoundingClientRect().top - fr.top - 24; y1 = b.getBoundingClientRect().bottom - fr.top + 32; }
+    }
+    var avail = Math.min(s.parentElement.clientWidth, document.documentElement.clientWidth - 34) - 2, fixed = parseFloat(s.dataset.fixed);
+    var k = fixed ? Math.min(fixed, (document.documentElement.clientWidth - 36) / w) : Math.min(1, avail / w);
+    s.style.width = (w * k) + 'px';
+    s.style.height = ((y1 - y0) * k) + 'px';
+    f.style.transform = 'scale(' + k + ') translate(' + (-x0) + 'px,' + (-y0) + 'px)';
+  });
+}
+fit(); window.addEventListener('resize', fit);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+</script>
+</body>
+</html>

@@ -38,6 +38,8 @@
 
   --duration-fast: var(--tk-motion-fast);
   --duration-base: var(--tk-motion-base);
+  /* Small meta text, such as the topics under a thought. */
+  --text-meta: 0.8125rem;
 }
 
 @layer base {
@@ -94,4 +96,20 @@
 @utility pressed-glow {
   border-color: var(--game-glow, var(--color-ink));
   box-shadow: inset 0 -2px 0 var(--game-glow, var(--color-ink));
+}
+
+/* A thought that was just saved is raised for a moment, then settles. With reduced motion the
+   animation ends at once, so there is no highlight. */
+@keyframes thought-settle {
+  from {
+    background-color: var(--color-raised);
+  }
+  to {
+    background-color: transparent;
+  }
+}
+@layer components {
+  .thought-new {
+    animation: thought-settle 2s ease-out forwards;
+  }
 }

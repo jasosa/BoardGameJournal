@@ -355,6 +355,48 @@ export type Database = {
         };
         Relationships: [];
       };
+      journal_entries: {
+        Row: {
+          body: string;
+          created_at: string;
+          game_id: string;
+          id: string;
+          topics: string[];
+          updated_at: string;
+          user_id: string;
+          written_on: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          body: string;
+          created_at?: string;
+          game_id: string;
+          id?: string;
+          topics?: string[];
+          updated_at?: string;
+          user_id?: string;
+          written_on?: string;
+        };
+        Update: {
+          body?: string;
+          created_at?: string;
+          game_id?: string;
+          id?: string;
+          topics?: string[];
+          updated_at?: string;
+          user_id?: string;
+          written_on?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "journal_entries_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       profiles: {
         Row: {
           created_at: string;
@@ -416,6 +458,15 @@ export type Database = {
         Args: { p_added_on?: string; p_status: string; p_title: string };
         Returns: string;
       };
+      add_thought: {
+        Args: {
+          p_body: string;
+          p_game_id: string;
+          p_topics?: string[];
+          p_written_on?: string;
+        };
+        Returns: string;
+      };
       archive_entry: { Args: { p_entry_id: string }; Returns: boolean };
       change_entry_status: {
         Args: { p_changed_on?: string; p_entry_id: string; p_status: string };
@@ -423,6 +474,7 @@ export type Database = {
       };
       delete_entry: { Args: { p_entry_id: string }; Returns: Json };
       restore_entry: { Args: { p_entry_id: string }; Returns: boolean };
+      topics_valid: { Args: { p_topics: string[] }; Returns: boolean };
     };
     Enums: {
       [_ in never]: never;

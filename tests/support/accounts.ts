@@ -30,9 +30,12 @@ export async function deleteAccount(id: string): Promise<void> {
   await adminClient().auth.admin.deleteUser(id);
 }
 
-/** Removes a user's collection entries and private games, keeping the account. */
+/** Removes a user's collection entries, ratings, thoughts and private games, keeping the account. */
 export async function resetLibrary(userId: string): Promise<void> {
   const admin = adminClient();
+  // Ratings and thoughts keep a game alive, so they go first.
+  await admin.from("assessments").delete().eq("user_id", userId);
+  await admin.from("journal_entries").delete().eq("user_id", userId);
   await admin.from("collection_entries").delete().eq("user_id", userId);
   await admin.from("games").delete().eq("created_by", userId);
 }
