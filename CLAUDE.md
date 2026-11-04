@@ -72,18 +72,20 @@ Rules:
 
 1. Start: read `docs/STATUS.md`. Confirm the next slice with the user if unclear.
 2. Plan before coding anything non-trivial (use plan mode). Name the files, the schema change, and the tests.
-3. Build **one vertical slice at a time** (schema → RLS → domain + validation → tests → UI → e2e). Use the `vertical-slice` skill.
-4. Run lint, typecheck and tests after each significant change. Fix failures before moving on.
-5. Check UI on desktop (1280px) and mobile (390px) with Playwright before calling UI work done.
-6. Before calling a feature done, run the `dod-verifier` agent. For migrations or auth changes, run `db-security-reviewer`. For UI, run `design-reviewer`.
-7. End: update `docs/STATUS.md` (use the `wrap-up` skill). Record decisions as ADRs (`adr` skill).
-8. Small commits with clear messages. Do not push or force-push unless asked.
+3. **UX concept first, for every feature that changes the UI.** Before building, run the `ux-concept` agent. It prepares two or three options (desktop and phone screens, all states, behaviour and keyboard notes, a recommendation, open questions, an implementation contract). Show the concept to the user (publish it as an artifact) and wait for approval. Do not write UI code before the user approves. If a feature has no UI impact, say so and skip this step.
+4. Build **one vertical slice at a time** (schema → RLS → domain + validation → tests → UI → e2e). Use the `vertical-slice` skill.
+5. **Implement what was approved, plus the user's comments, and nothing else.** Every element, state, copy string and behaviour in the implementation contract is built. If something in the concept turns out to be impractical, or you want to change it, stop and ask the user first. Never swap a control or drop a detail silently. Do not cut corners: all states, keyboard, mobile, tests.
+6. Run lint, typecheck and tests after each significant change. Fix failures before moving on.
+7. Check UI on desktop (1280px) and mobile (390px) with Playwright before calling UI work done. Compare the built screens with the approved concept, element by element, and list every difference in the report to the user.
+8. Before calling a feature done, run the `dod-verifier` agent. For migrations or auth changes, run `db-security-reviewer`. For UI, run `design-reviewer` (it also checks the build against the approved concept).
+9. End: update `docs/STATUS.md` (use the `wrap-up` skill). Record decisions as ADRs (`adr` skill).
+10. Small commits with clear messages. Do not push or force-push unless asked.
 
 Report honestly: say what was tested and what was not. Never claim something works without running it.
 
 ## Definition of done
 
-Data model + validation · server-side authorisation verified · loading / empty / error / success states · desktop and mobile layout · keyboard and accessible labels · automated tests for domain rules · no regressions · no secrets exposed · migration and recovery notes in STATUS.md when relevant.
+Data model + validation · server-side authorisation verified · loading / empty / error / success states · desktop and mobile layout · matches the approved UX concept (differences listed) · keyboard and accessible labels · automated tests for domain rules · no regressions · no secrets exposed · migration and recovery notes in STATUS.md when relevant.
 
 ## Scope guard
 

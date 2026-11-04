@@ -14,6 +14,7 @@ Process
 4. Tab through the screen with the keyboard. Check focus is visible and order is logical.
 
 Check
+- If the slice has an approved concept in `docs/design-concepts/<slice-name>/`, compare each screen with its implementation contract (`concept.md`). List every element, state, copy string or behaviour that is missing or different. A missing or changed control is a blocking finding.
 - Cover art is the hero, with a consistent ratio and a good fallback when missing.
 - One dark theme (Night Wall, ADR-0010) with a single light accent; colour comes from the covers. No bright primaries, no generic dashboard cards, no badge clutter.
 - Display font for titles, readable sans for UI. Clear hierarchy, generous whitespace, restrained metadata.

@@ -7,6 +7,10 @@ description: Step-by-step workflow to build one complete feature slice (schema, 
 
 A slice is one user-visible capability end to end, for example "add a game to my collection and see it in the library". Keep it small. Finish it fully before starting another.
 
+## UI concept gate (before step 0 is final)
+- If the slice changes the UI, run the `ux-concept` agent first. Show its concept to the user and wait for approval. No UI code before that.
+- Build exactly the approved concept plus the user's comments. Ask before changing anything. Compare the built screens with the concept at the end and list differences.
+
 ## 0. Frame it
 - Find the item in `docs/ROADMAP.md`. Copy its acceptance criteria into your plan.
 - Write the plan (plan mode): user story, files to touch, schema change, domain function signatures, tests, screens and states.
