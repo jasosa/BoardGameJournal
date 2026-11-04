@@ -49,7 +49,7 @@ export default async function LibraryPage({
     );
   }
 
-  if (result.data.length === 0) {
+  if (result.data.length === 0 && !params.archived) {
     return (
       <>
         <PageHeader title="Library" />
@@ -64,9 +64,13 @@ export default async function LibraryPage({
 
   const page = queryLibrary(result.data, params);
   const filtered = hasActiveFilters(params);
+  // Archived copies are counted apart: the Library shows one set at a time.
+  const inView = result.data.filter(
+    (item) => item.archived === params.archived,
+  ).length;
   const base = filtered
-    ? `${page.total} of ${result.data.length} games`
-    : `${result.data.length} ${result.data.length === 1 ? "game" : "games"}`;
+    ? `${page.total} of ${inView} ${params.archived ? "archived" : "games"}`
+    : `${inView} ${params.archived ? "archived" : inView === 1 ? "game" : "games"}`;
   const count =
     page.pageCount > 1 ? `${base} · showing ${page.from} to ${page.to}` : base;
 
@@ -86,10 +90,16 @@ export default async function LibraryPage({
       {page.total === 0 ? (
         <section role="status" className="bg-raised rounded-card px-6 py-8">
           <h2 className="text-xl">
-            {params.q ? `Nothing matches "${params.q}"` : "Nothing matches"}
+            {params.archived && inView === 0
+              ? "Nothing archived"
+              : params.q
+                ? `Nothing matches "${params.q}"`
+                : "Nothing matches"}
           </h2>
           <p className="text-ink-soft mt-2 max-w-prose">
-            Try fewer filters or a different search.
+            {params.archived && inView === 0
+              ? "Games you remove from your library wait here. You can restore them."
+              : "Try fewer filters or a different search."}
           </p>
           <div className="mt-6 flex flex-wrap gap-3">
             <Link

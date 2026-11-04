@@ -4,8 +4,14 @@ import type { Account } from "../support/accounts";
 
 export const AUTH_DIR = path.join(__dirname, ".auth");
 
-/** One signed-in account per project and kind. "game", "cover" and "library" belong to the game page, cover and Library specs. */
-export const ACCOUNT_KINDS = ["main", "game", "cover", "library"] as const;
+/** One signed-in account per project and kind. "game", "cover", "library" and "archive" belong to the game page, cover, Library and archive specs. */
+export const ACCOUNT_KINDS = [
+  "main",
+  "game",
+  "cover",
+  "library",
+  "archive",
+] as const;
 export type AccountKind = (typeof ACCOUNT_KINDS)[number];
 
 /** Key of an account. The main account keeps the plain project name. */

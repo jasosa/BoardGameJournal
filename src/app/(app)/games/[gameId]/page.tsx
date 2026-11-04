@@ -2,6 +2,8 @@ import Link from "next/link";
 import type { CSSProperties } from "react";
 import { notFound } from "next/navigation";
 import { CoverControls } from "@/components/game/CoverControls";
+import { ArchiveCopyItem, CopyRemoval } from "@/components/game/CopyRemoval";
+import { ManageMenu, menuItemClass } from "@/components/game/ManageMenu";
 import { CoverTile } from "@/components/game/CoverTile";
 import { StatusHistory } from "@/components/game/StatusHistory";
 import { StatusPicker } from "@/components/game/StatusPicker";
@@ -10,7 +12,8 @@ import { GameBackdrop } from "@/components/game/GameBackdrop";
 import { formatPlayers } from "@/features/catalogue/facts";
 import { requireUser } from "@/server/authorization/require-user";
 import { getGameDossier } from "@/server/services/games";
-import { changeStatus } from "./actions";
+import { STATUS_LABELS } from "@/features/collection/schemas";
+import { archiveCopy, changeStatus, deleteCopy, restoreCopy } from "./actions";
 import { removeCoverAction, uploadCoverAction } from "./cover-actions";
 
 export const metadata = { title: "Game | Meeple Journal" };
@@ -65,21 +68,44 @@ export default async function GamePage({
       }
     >
       <GameBackdrop tint={colours?.tint ?? null} />
-      <BackLink fallbackHref="/library">Library</BackLink>
+      <div className="mb-4 flex items-start justify-between gap-4">
+        <div className="-mb-4">
+          <BackLink fallbackHref="/library">Library</BackLink>
+        </div>
+        {game.editable || entries.some((entry) => !entry.archived) ? (
+          <ManageMenu>
+            {game.editable ? (
+              <>
+                <Link href={`/games/${game.id}/edit`} className={menuItemClass}>
+                  {facts.length > 0 || game.description
+                    ? "Edit facts"
+                    : "Add facts"}
+                </Link>
+                <CoverControls
+                  gameId={game.id}
+                  hasCover={game.cover !== null}
+                  uploadAction={uploadCoverAction}
+                  removeAction={removeCoverAction}
+                />
+              </>
+            ) : null}
+            {entries.map((entry, index) =>
+              entry.archived ? null : (
+                <ArchiveCopyItem
+                  key={entry.entryId}
+                  entryId={entry.entryId}
+                  copyLabel={entries.length > 1 ? ` (copy ${index + 1})` : ""}
+                  action={archiveCopy}
+                />
+              ),
+            )}
+          </ManageMenu>
+        ) : null}
+      </div>
 
       <div className="grid grid-cols-[9rem_1fr] gap-x-5 gap-y-8 md:grid-cols-[22.5rem_1fr] md:gap-x-16">
         <div className="md:sticky md:top-20 md:row-span-2 md:self-start">
           <CoverTile title={game.title} cover={game.cover} />
-          {game.editable ? (
-            <div className="mt-3">
-              <CoverControls
-                gameId={game.id}
-                hasCover={game.cover !== null}
-                uploadAction={uploadCoverAction}
-                removeAction={removeCoverAction}
-              />
-            </div>
-          ) : null}
         </div>
 
         <header className="min-w-0">
@@ -120,27 +146,30 @@ export default async function GamePage({
                         Copy {index + 1}
                       </p>
                     ) : null}
-                    <StatusPicker
+                    {entry.archived ? (
+                      <p className="text-ink-soft mb-1 text-sm">
+                        Was {STATUS_LABELS[entry.status].toLowerCase()}
+                      </p>
+                    ) : (
+                      <StatusPicker
+                        entryId={entry.entryId}
+                        current={entry.status}
+                        label={
+                          entries.length > 1
+                            ? `Status of copy ${index + 1}`
+                            : "Status"
+                        }
+                        action={changeStatus}
+                      />
+                    )}
+                    <CopyRemoval
                       entryId={entry.entryId}
-                      current={entry.status}
-                      label={
-                        entries.length > 1
-                          ? `Status of copy ${index + 1}`
-                          : "Status"
+                      archived={entry.archived}
+                      copyLabel={
+                        entries.length > 1 ? ` (copy ${index + 1})` : ""
                       }
-                      action={changeStatus}
-                      aside={
-                        index === 0 && game.editable ? (
-                          <Link
-                            href={`/games/${game.id}/edit`}
-                            className="text-ink-soft hover:text-ink inline-flex min-h-11 items-center text-sm underline underline-offset-4"
-                          >
-                            {facts.length > 0 || game.description
-                              ? "Edit facts"
-                              : "Add facts"}
-                          </Link>
-                        ) : null
-                      }
+                      restoreAction={restoreCopy}
+                      deleteAction={deleteCopy}
                     />
                   </div>
                 ))}

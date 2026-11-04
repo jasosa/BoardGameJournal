@@ -11,12 +11,12 @@ type Client = SupabaseClient<Database>;
 
 const BUCKET = "covers";
 
-async function removeObjects(supabase: Client, paths: string[]) {
+export async function removeObjects(supabase: Client, paths: string[]) {
   if (paths.length > 0) await supabase.storage.from(BUCKET).remove(paths);
 }
 
 /** Both files of a cover, given the stored path of the cover file. */
-function filesOf(storagePath: string): string[] {
+export function filesOf(storagePath: string): string[] {
   const dir = storagePath.replace(/\/[^/]+$/, "");
   return [`${dir}/cover.webp`, `${dir}/thumb.webp`];
 }

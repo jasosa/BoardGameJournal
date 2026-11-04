@@ -19,7 +19,7 @@ type Client = SupabaseClient<Database>;
 export type GameDossier = {
   game: GameDetails;
   /** The caller's own copies of this game, oldest first. */
-  entries: { entryId: string; status: CollectionStatus }[];
+  entries: { entryId: string; status: CollectionStatus; archived: boolean }[];
   /** Every status change of those copies, latest logged first. */
   history: StatusChange[];
 };
@@ -53,7 +53,7 @@ export async function getGameDossier(
 
   const { data: rows, error: entriesError } = await supabase
     .from("collection_entries")
-    .select("id, status")
+    .select("id, status, archived_at")
     .eq("game_id", gameId)
     .order("created_at", { ascending: true });
   if (entriesError) return err("load_failed", "We could not load this game.");
@@ -112,7 +112,15 @@ export async function getGameDossier(
           : null,
     },
     entries: rows.flatMap((row) =>
-      isStatus(row.status) ? [{ entryId: row.id, status: row.status }] : [],
+      isStatus(row.status)
+        ? [
+            {
+              entryId: row.id,
+              status: row.status,
+              archived: row.archived_at !== null,
+            },
+          ]
+        : [],
     ),
     history: changeRows.flatMap((row) =>
       isStatus(row.to_status) &&

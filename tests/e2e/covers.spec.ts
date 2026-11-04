@@ -7,7 +7,7 @@ import {
   resetLibrary,
 } from "../support/accounts";
 import { accountFor, accountKey, storageStatePath } from "./accounts";
-import { addGame } from "./helpers";
+import { addGame, openManage } from "./helpers";
 
 // This file has its own signed-in account per project (see game-page.spec.ts for why).
 test.describe.configure({ mode: "serial" });
@@ -65,7 +65,7 @@ test("a cover shows on the game page and on the Library card", async ({
   await expect
     .poll(() => loaded(page, 'img[alt="Cover of Wingspan"]'))
     .toBe(true);
-  await expect(page.getByText("Replace cover")).toBeVisible();
+  await expect(page.getByText("Replace cover")).toBeAttached();
   // The page takes its tint and glow from the cover.
   await page.reload();
   const tinted = page.locator("[style*='--game-tint']");
@@ -152,9 +152,10 @@ test("replacing shows the new cover at once, and removing brings the placeholder
     .poll(() => loaded(page, 'img[alt="Cover of Cascadia"]'))
     .toBe(true);
 
+  await openManage(page);
   await page.getByRole("button", { name: "Remove cover" }).click();
   await expect(cover).toHaveCount(0);
-  await expect(page.getByText("Add cover")).toBeVisible();
+  await expect(page.getByText("Add cover")).toBeAttached();
   await expect(page.getByRole("button", { name: "Remove cover" })).toHaveCount(
     0,
   );
@@ -195,7 +196,7 @@ test("files that are not usable images show a clear error and change nothing", a
   await expect(alert).toHaveText("That image is larger than 10 MB.");
 
   await expect(page.getByRole("img", { name: /Cover of/ })).toHaveCount(0);
-  await expect(page.getByText("Add cover")).toBeVisible();
+  await expect(page.getByText("Add cover")).toBeAttached();
   await expect(
     page.getByRole("heading", { level: 1, name: "Wingspan" }),
   ).toBeVisible();
@@ -283,13 +284,13 @@ test("covers of different shapes keep them on the wall", async ({ page }) => {
   await page
     .locator('input[type="file"]')
     .setInputFiles(file(await picture(200, 1600, 1000)));
-  await expect(page.getByText("Replace cover")).toBeVisible();
+  await expect(page.getByText("Replace cover")).toBeAttached();
 
   await openGame(page, "Tall box");
   await page
     .locator('input[type="file"]')
     .setInputFiles(file(await picture(120, 600, 1000)));
-  await expect(page.getByText("Replace cover")).toBeVisible();
+  await expect(page.getByText("Replace cover")).toBeAttached();
 
   await page.goto("/library");
   const ratio = async (title: string) => {

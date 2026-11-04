@@ -82,6 +82,8 @@ export type TitleMatch = {
   title: string;
   /** Status of the most recently added copy. */
   status: CollectionStatus;
+  /** True when every copy of this game is archived. */
+  archived: boolean;
 };
 
 export const changeEntryStatusInput = z.object({
@@ -92,11 +94,18 @@ export const changeEntryStatusInput = z.object({
 
 export type ChangeEntryStatusInput = z.infer<typeof changeEntryStatusInput>;
 
+/** Archive, restore or permanently delete one copy. */
+export const entryIdInput = z.object({ entryId: z.uuid() });
+
+export type EntryIdInput = z.infer<typeof entryIdInput>;
+
 export type LibraryItem = {
   entryId: string;
   gameId: string;
   title: string;
   status: CollectionStatus;
+  /** True when the copy was removed from the Library (kept, with its history). */
+  archived: boolean;
   cover: CoverRef | null;
   /** Stored size of the cover file, for the wall; null without a cover. */
   coverWidth: number | null;

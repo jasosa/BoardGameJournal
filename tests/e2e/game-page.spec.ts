@@ -8,7 +8,7 @@ import {
   resetLibrary,
 } from "../support/accounts";
 import { accountFor, accountKey, storageStatePath } from "./accounts";
-import { addGame } from "./helpers";
+import { addGame, openManage } from "./helpers";
 
 // This file has its own signed-in account per project, so it can change the library
 // while the other specs run in parallel. The project's default sign-in state belongs to
@@ -55,6 +55,7 @@ test("a game opens from the Library and shows its title, status and details", as
     page.getByRole("button", { name: "Owned", pressed: true, exact: true }),
   ).toBeVisible();
   await expect(page.getByText("Manual entry")).toBeVisible();
+  await openManage(page);
   await expect(page.getByRole("link", { name: "Add facts" })).toBeVisible();
 
   const overflow = await page.evaluate(
@@ -92,6 +93,7 @@ test("changing the status shows on the page and in the Library", async ({
 
 test("facts can be added, shown, and changed again", async ({ page }) => {
   await openGame(page, "Wingspan");
+  await openManage(page);
   await page.getByRole("link", { name: "Add facts" }).click();
   await expect(
     page.getByRole("heading", { level: 1, name: "Edit facts" }),
@@ -109,6 +111,7 @@ test("facts can be added, shown, and changed again", async ({ page }) => {
   await expect(facts.getByText("2019")).toBeVisible();
   await expect(page.getByText("Engine building with birds.")).toBeVisible();
 
+  await openManage(page);
   await page.getByRole("link", { name: "Edit facts" }).click();
   await expect(page.getByLabel("Year")).toHaveValue("2019");
   await page.getByLabel("Year").fill("");
@@ -121,6 +124,7 @@ test("bad facts show an error on the field and keep what was typed", async ({
   page,
 }) => {
   await openGame(page, "Wingspan");
+  await openManage(page);
   await page.getByRole("link", { name: "Add facts" }).click();
   await page.getByLabel("Minimum players").fill("4");
   await page.getByLabel("Maximum players").fill("2");
@@ -146,6 +150,7 @@ test("bad facts show an error on the field and keep what was typed", async ({
 
 test("Cancel leaves the facts unchanged", async ({ page }) => {
   await openGame(page, "Wingspan");
+  await openManage(page);
   await page.getByRole("link", { name: "Add facts" }).click();
   await page.getByLabel("Year").fill("1999");
   await page.getByRole("link", { name: "Cancel" }).click();
@@ -222,9 +227,7 @@ test("games that are not mine, or do not exist, show the same not-found page", a
   }
 });
 
-test("every status change is kept in the History, with its date", async ({
-  page,
-}) => {
+test("every status change is kept in the History", async ({ page }) => {
   await openGame(page, "Wingspan");
   const history = page.getByRole("region", { name: "History" });
   // Collapsed by default.
@@ -235,18 +238,12 @@ test("every status change is kept in the History, with its date", async ({
   await page.getByRole("button", { name: "Wishlist" }).click();
   await expect(history.getByText("Owned → Wishlist")).toBeVisible();
 
-  // A change that happened in the past, with its own date.
-  await page.getByText("Different date").click();
-  await page.getByLabel("Date of change").fill("2019-06-01");
   await page.getByRole("button", { name: "Previously owned" }).click();
   await expect(history.getByText("Wishlist → Previously owned")).toBeVisible();
-  await expect(history.getByText("1 June 2019")).toBeVisible();
 
-  // Listed in the order recorded: the latest change is on top and matches the current status,
-  // even though its date (2019) is the oldest.
+  // Listed in the order recorded: the latest change is on top and matches the current status.
   const rows = history.getByRole("listitem");
   await expect(rows).toHaveCount(3);
-  await expect(rows.nth(0)).toContainText("1 June 2019");
   await expect(rows.nth(0)).toContainText("Wishlist → Previously owned");
   await expect(rows.nth(2)).toContainText("Added as Owned");
   await expect(
@@ -263,37 +260,6 @@ test("every status change is kept in the History, with its date", async ({
       document.documentElement.clientWidth,
   );
   expect(overflow).toBe(0);
-});
-
-test("a date in the future is refused and nothing changes", async ({
-  page,
-}) => {
-  await openGame(page, "Cascadia");
-  await page.getByText("Different date").click();
-  await page.getByLabel("Date of change").fill("2999-01-01");
-  await page.getByRole("button", { name: "Wishlist" }).click();
-  await expect(
-    page.getByText("Choose a date that is not in the future."),
-  ).toBeVisible();
-  await expect(
-    page.getByRole("button", { name: "Owned", pressed: true, exact: true }),
-  ).toBeVisible();
-  const history = page.getByRole("region", { name: "History" });
-  await history.locator("summary").click();
-  await expect(history.getByRole("listitem")).toHaveCount(1);
-});
-
-test("the date field can be opened and used from the keyboard", async ({
-  page,
-}) => {
-  await openGame(page, "Heat");
-  const summary = page.getByText("Different date");
-  await summary.focus();
-  await page.keyboard.press("Enter");
-  const field = page.getByLabel("Date of change");
-  await expect(field).toBeVisible();
-  await field.focus();
-  await expect(field).toBeFocused();
 });
 
 test("each copy has its own history", async ({ page }, testInfo) => {

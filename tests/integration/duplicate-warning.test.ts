@@ -44,7 +44,7 @@ describe("duplicate warning: findTitleMatches + add_game_copy", () => {
     expect(result.ok).toBe(true);
     if (!result.ok) return;
     expect(result.data).toEqual([
-      { gameId, title: "Carcassonne", status: "owned" },
+      { gameId, title: "Carcassonne", status: "owned", archived: false },
     ]);
   });
 

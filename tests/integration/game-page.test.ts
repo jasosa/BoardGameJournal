@@ -60,7 +60,9 @@ describe("game page services", () => {
         editable: true,
         year: null,
       });
-      expect(result.data.entries).toEqual([{ entryId, status: "owned" }]);
+      expect(result.data.entries).toEqual([
+        { entryId, status: "owned", archived: false },
+      ]);
     });
 
     it("lists several copies, oldest first", async () => {

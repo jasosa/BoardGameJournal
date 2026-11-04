@@ -1,9 +1,11 @@
 import type { SupabaseClient } from "@supabase/supabase-js";
+import { z } from "zod";
 import {
   COLLECTION_STATUSES,
   addGameCopyInput,
   addManualGameInput,
   changeEntryStatusInput,
+  entryIdInput,
   type CollectionStatus,
   type LibraryItem,
   type TitleMatch,
@@ -13,6 +15,7 @@ import { coverRef, usableCoverShape } from "@/features/catalogue/cover";
 import { isHexColour } from "@/features/catalogue/cover-colours";
 import type { Database } from "@/lib/database/types";
 import { err, ok, type Result } from "@/lib/result";
+import { filesOf, removeObjects } from "./covers";
 
 type Client = SupabaseClient<Database>;
 
@@ -115,7 +118,7 @@ export async function findTitleMatches(
   const data = await readAll((from, to) =>
     supabase
       .from("collection_entries")
-      .select("status, game_id, games(name)")
+      .select("status, game_id, archived_at, games(name)")
       // RLS already limits rows to the caller; the filter is a second guard.
       .eq("user_id", userId)
       .order("created_at", { ascending: false })
@@ -130,13 +133,19 @@ export async function findTitleMatches(
   for (const row of data) {
     if (!row.games || !isStatus(row.status)) continue;
     if (normalizeTitle(row.games.name) !== wanted) continue;
-    // Rows are newest first, so the first one seen is the newest copy.
-    if (!matches.has(row.game_id)) {
+    const archived = row.archived_at !== null;
+    const seen = matches.get(row.game_id);
+    // Rows are newest first, so the first one seen is the newest copy. A game counts as archived
+    // only when every copy is.
+    if (!seen) {
       matches.set(row.game_id, {
         gameId: row.game_id,
         title: row.games.name,
         status: row.status,
+        archived,
       });
+    } else if (!archived) {
+      seen.archived = false;
     }
   }
   return ok([...matches.values()]);
@@ -155,7 +164,7 @@ export async function listLibrary(
     supabase
       .from("collection_entries")
       .select(
-        "id, status, game_id, games(name, year, min_players, max_players, play_time_min, game_images(id, storage_path, kind, width, height, accent_color))",
+        "id, status, game_id, archived_at, games(name, year, min_players, max_players, play_time_min, game_images(id, storage_path, kind, width, height, accent_color))",
       )
       // RLS already limits rows to the caller; the filter is a second guard.
       .eq("user_id", userId)
@@ -181,6 +190,7 @@ export async function listLibrary(
       gameId: row.game_id,
       title: row.games.name,
       status: row.status,
+      archived: row.archived_at !== null,
       cover: coverRow?.storage_path
         ? coverRef(coverRow.id, coverRow.storage_path)
         : null,
@@ -229,4 +239,77 @@ export async function changeEntryStatus(
     return err("not_found", "We could not find that game.");
   }
   return ok({ entryId: parsed.data.entryId, status: data });
+}
+
+const deleteOutcome = z.object({
+  result: z.enum(["not_found", "not_archived", "deleted", "deleted_with_game"]),
+  paths: z.array(z.string()),
+});
+
+/** Takes a copy out of the Library. It keeps its history and can be restored. */
+export async function archiveEntry(
+  supabase: Client,
+  input: unknown,
+): Promise<Result<{ entryId: string }>> {
+  const parsed = entryIdInput.safeParse(input);
+  if (!parsed.success) return err("validation", "We could not find that game.");
+
+  const { data, error } = await supabase.rpc("archive_entry", {
+    p_entry_id: parsed.data.entryId,
+  });
+  if (error) return err("save_failed", "We could not remove it. Try again.");
+  if (!data) return err("not_found", "We could not find that game.");
+  return ok({ entryId: parsed.data.entryId });
+}
+
+/** Puts an archived copy back in the Library. */
+export async function restoreEntry(
+  supabase: Client,
+  input: unknown,
+): Promise<Result<{ entryId: string }>> {
+  const parsed = entryIdInput.safeParse(input);
+  if (!parsed.success) return err("validation", "We could not find that game.");
+
+  const { data, error } = await supabase.rpc("restore_entry", {
+    p_entry_id: parsed.data.entryId,
+  });
+  if (error) return err("save_failed", "We could not restore it. Try again.");
+  if (!data) return err("not_found", "We could not find that game.");
+  return ok({ entryId: parsed.data.entryId });
+}
+
+/**
+ * Permanently deletes one archived copy and its status history. When it was the last copy of a
+ * private manual game, the game goes too and its cover files are removed. The database function
+ * checks the owner, that the copy is archived and that nothing is attached.
+ */
+export async function deleteEntry(
+  supabase: Client,
+  input: unknown,
+): Promise<Result<{ gameDeleted: boolean }>> {
+  const parsed = entryIdInput.safeParse(input);
+  if (!parsed.success) return err("validation", "We could not find that game.");
+
+  const { data, error } = await supabase.rpc("delete_entry", {
+    p_entry_id: parsed.data.entryId,
+  });
+  if (error) return err("save_failed", "We could not delete it. Try again.");
+
+  // The database function reports what happened and which cover files the game had.
+  const outcome = deleteOutcome.safeParse(data);
+  if (!outcome.success) {
+    return err("save_failed", "We could not delete it. Try again.");
+  }
+  if (outcome.data.result === "not_found") {
+    return err("not_found", "We could not find that game.");
+  }
+  if (outcome.data.result === "not_archived") {
+    return err("not_archived", "Remove it from your library first.");
+  }
+
+  const gameDeleted = outcome.data.result === "deleted_with_game";
+  if (gameDeleted) {
+    await removeObjects(supabase, outcome.data.paths.flatMap(filesOf));
+  }
+  return ok({ gameDeleted });
 }

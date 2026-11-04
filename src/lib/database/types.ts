@@ -37,6 +37,7 @@ export type Database = {
       collection_entries: {
         Row: {
           acquired_on: string | null;
+          archived_at: string | null;
           created_at: string;
           currency: string | null;
           edition_id: string | null;
@@ -53,6 +54,7 @@ export type Database = {
         ComputedFields: never;
         Insert: {
           acquired_on?: string | null;
+          archived_at?: string | null;
           created_at?: string;
           currency?: string | null;
           edition_id?: string | null;
@@ -68,6 +70,7 @@ export type Database = {
         };
         Update: {
           acquired_on?: string | null;
+          archived_at?: string | null;
           created_at?: string;
           currency?: string | null;
           edition_id?: string | null;
@@ -354,10 +357,13 @@ export type Database = {
         Args: { p_added_on?: string; p_status: string; p_title: string };
         Returns: string;
       };
+      archive_entry: { Args: { p_entry_id: string }; Returns: boolean };
       change_entry_status: {
         Args: { p_changed_on?: string; p_entry_id: string; p_status: string };
         Returns: string;
       };
+      delete_entry: { Args: { p_entry_id: string }; Returns: Json };
+      restore_entry: { Args: { p_entry_id: string }; Returns: boolean };
     };
     Enums: {
       [_ in never]: never;

@@ -1,27 +1,25 @@
 # Project Status
 
-Last updated: 2026-11-03 (branch concept-b: trial of the Night Wall direction, see ADR-0010)
+Last updated: 2026-11-04 (Phase 0 closed; L4b built)
 
 ## Now
 
-- Phase 0 slices are done (exit review pending). Phase 1 (Library MVP) has started: L5 game page (partly built), L5b cover upload and L3 status history.
-- Phase 0 slices are built and CI is green. Phase 1 so far: each game has a page where you can edit its facts, change its status (with a dated, append-only history) and add, replace or remove a cover. Waiting for the Phase 0 exit review and a push of the L5b and L3 commits.
+- Phase 0 is closed (2026-11-04). Phase 1 (Library MVP) is under way: Library views (L4), remove from library (L4b), game page (L5), cover upload (L5b), status history (L3) and the duplicate warning are built. The "Night Wall" design (ADR-0010) is on `main`.
 
 ## Next
 
-1. Push the duplicate-warning and L4 commits and check CI is green. Set branch protection on `main` (require the three CI jobs). Manual, done by the user.
-2. Phase 0 exit review with the user (data model, design direction, first slice), now with the game page to try.
-3. The `oil-ui` design pass on the Library and game page (L4 is built; see Later). Then the next Phase 1 slice. Suggested order: L4b remove from library (archive, design in ROADMAP; needs your decision on archive only or also permanent delete), then L6 rating, L7 notes, L8 export (which must include status history). L2 (catalogue provider search, ROADMAP) comes when the user wants it: it needs a provider terms check first (`catalogue-provider` skill) and can reuse `normalizeTitle`, `findTitleMatches` and `add_game_copy`.
+1. L6 rating, L7 notes, L8 export (which must include status history and archived copies).
+2. When plays, assessments or journal tables arrive, extend `delete_entry` and reference entries and games with `on delete restrict` (ADR-0011).
+3. L2 (catalogue provider search) when the user wants it: it needs a provider terms check first (`catalogue-provider` skill) and can reuse `normalizeTitle`, `findTitleMatches` and `add_game_copy`.
+4. Set branch protection on `main` (require the three CI jobs). Manual, done by the user. Not confirmed.
 
 ## Later (planned, not started)
 
-- Use the `oil-ui` skill for a design pass once real screens exist: after the game detail page and the Library views (L5, L4) have real covers and data, and again before the Journal (Phase 2). Keep it inside the current visual direction (CLAUDE.md, `design-system` skill) unless the user decides to reopen it. Not before: with only placeholder tiles there is nothing real to polish.
+- Use the `oil-ui` skill for a design pass before the Journal (Phase 2), once real box art is in. Keep it inside the Night Wall direction (CLAUDE.md, `design-system` skill) unless the user decides to reopen it.
 
 ## Open questions
 
 - Dark only for now (ADR-0010). Decide later whether to design a light counterpart.
-- Removing a game from the collection is not built. Owners cannot delete entries through the API on purpose (a delete would wipe the status history by cascade). The feature needs a decision: archive the entry and keep its history, or delete it with a warning. Decide before building it. Selling or removing must never delete plays, assessments or journal entries.
-
 - Adding a game whose title you already have only warns (open it, or add another copy). There is no "add as a different game anyway": change the title instead. Decide if two different games with an identical title is a real case.
 
 - The Library lists one card per copy, so a game with two copies appears twice. Decide if copies should be grouped into one card (with the statuses listed) once rating and plays exist.
@@ -36,6 +34,9 @@ Last updated: 2026-11-03 (branch concept-b: trial of the Night Wall direction, s
 - [ADR-0006](adr/0006-private-access-allowlist.md) Private access with sign-up allowlist (Accepted)
 - [ADR-0007](adr/0007-hosting.md) Hosting: Vercel + Supabase cloud, free tiers (Accepted)
 - [ADR-0008](adr/0008-sign-in-and-account-creation.md) Email and password sign-in, accounts created by script (Accepted)
+- [ADR-0009](adr/0009-status-history-append-only.md) Status history is append-only (Accepted)
+- [ADR-0010](adr/0010-visual-direction-night-wall.md) Visual direction: Night Wall (Accepted)
+- [ADR-0011](adr/0011-remove-from-library-archive-and-delete.md) Remove from library: archive, then guarded permanent delete (Accepted)
 
 ## Tech debt
 
@@ -70,6 +71,7 @@ Last updated: 2026-11-03 (branch concept-b: trial of the Night Wall direction, s
 
 ## Migration notes
 
+- `20261104143330_archive_and_delete_entry.sql` (L4b): `collection_entries.archived_at` (with an index and a column update grant), `archive_entry` and `restore_entry` (security invoker), and `delete_entry` (security definer, returns jsonb `{result, paths}`). Rollback: drop the three functions and the column (the grant goes with it); see the file header. Dropping the column puts every archived copy back in the Library. Permanent deletes are not recoverable except from a backup. There is no guard trigger on delete, because it would block the cascade when an account is deleted (ADR-0011).
 - `20261103173235_add_game_copy.sql` (duplicate warning): new function `add_game_copy(game, status, date)` (security invoker) that adds a collection entry on an existing game, with the same date rules and first history row as `add_manual_game`. Rollback: `drop function public.add_game_copy(uuid, text, date);`. No data depends on it.
 - `20261102183000_status_history.sql` (L3): new append-only table `collection_status_changes`, a trigger that writes the first row of each new entry, the function `change_entry_status(entry, status, date)`, closed direct updates of `collection_entries.status`, and a backfill (one row per existing entry, dated from its creation). Rollback: see the file header (drop the function, trigger and table; `grant update` on `collection_entries` again). No data depends on it that cannot be recreated.
 - `20261102184000_status_history_hardening.sql` (L3 security review): `add_manual_game` gets an optional date (the old two-argument function is dropped), the first row uses that date, a guard trigger refuses status changes outside `change_entry_status`, owners can no longer delete entries through the API, and `set_updated_at()` is not executable by everyone. Rollback: see the file header.
@@ -82,6 +84,7 @@ Last updated: 2026-11-03 (branch concept-b: trial of the Night Wall direction, s
 
 ## Done
 
+- 2026-11-04 L4b Remove from library (ADR-0011): "Remove from library" archives one copy (history kept); the Library has an Archived view (`?archived=1`); an archived copy can be restored or deleted permanently after a confirm (the copy, its history and, for the last copy of a private manual game, the game and its cover files). Archived titles still warn on a duplicate add, marked archived. Ran and green locally (and by `dod-verifier`): lint, typecheck, format:check, build, `npm test` (114), `npm run test:integration` (143, two users, real storage), `npm run test:e2e` (123 passed, 1 skipped, desktop and mobile). `db-security-reviewer`: no blocking findings; taken: cover paths returned by `delete_entry`, game row lock, extra tests, recovery notes. `design-reviewer` (read code only, no browser): taken: focus moves to Cancel when the confirm opens and back after, to the note after archive and to the remove button after restore; Escape cancels; Delete styled apart from Cancel; per-copy accessible names. Left: failed cover file removals are not logged, no "Back to Library" action in the empty archived view, Archived is not visually grouped apart from the statuses. Not verified: CI (not pushed), a real phone, a screen reader, the keyboard flow and 390px in a browser, why the e2e log shows one `[WebServer] destination stream errored` message (no test failed).
 - 2026-10-30 F0.1 Claude harness created (CLAUDE.md, .claude/settings.json, hooks, 3 agents, 6 skills, .mcp.json). Hooks tested locally with sample inputs.
 - 2026-10-30 F0.2 Docs created from handover.
 - 2026-10-30 F0.3 Catalogue provider research. ADR-0003 Accepted. Both BGG pages verified from user pastes (our fetch tool got 403). Decision: start without BGG, `ManualProvider` only. If BGG is added later: cache metadata, hotlink images only, keep data unmodified. Not tested or confirmed beyond that.
@@ -103,3 +106,4 @@ Last updated: 2026-11-03 (branch concept-b: trial of the Night Wall direction, s
 - 2026-11-03 Concept B "Night Wall" trial on branch `concept-b` (ADR-0010, Proposed; `main` is unchanged). One dark theme (the theme toggle, `theme.ts` and the light tokens are removed here; the older Done lines that mention light/dark theming, the toggle and Fraunces describe `main`). Schibsted Grotesk + Inter, thin fixed top bar, wider content, Library as a tight cover wall with titles under covers, game page with a large cover, a backdrop tinted from the cover and a glow on the pressed status, a control-edge token for input borders, a dark root `not-found.tsx` and `error.tsx`. Covers now store two colours (migration `20261103212753_cover_colours.sql`: `dominant_color` tint and `accent_color` glow, `#rrggbb` check constraints; rollback: drop both columns; run `npm run covers:colours` to fill covers uploaded before it; the script reads up to 1000 covers per run). Ran and green locally (and by `dod-verifier`): lint, typecheck, format:check, build, `npm test` (103), `npm run test:integration` (124), `npm run test:e2e` (111 passed, 1 skipped by design). The backfill script was run against local data (17 covers). `db-security-reviewer`: no blocking findings (taken: update limited to the row and file read, the backdrop checks its own colour, extra tests). `design-reviewer`: one blocking (white global 404, fixed with a root `not-found.tsx` and `error.tsx`); taken: filled selected chips, 44px skip link. Left: the tint over real box art is unseen (only generated covers), the cover is less of a hero on mobile, table link colour unconfirmed, `error.tsx` is not driven by a test, the wall is an even 3:4 grid not masonry, `BASE_HEX` and `TEXT_HEX` in `cover-colours.ts` duplicate `tokens.css`. Not verified: a real phone, a screen reader, CI (branch not pushed).
 - 2026-11-03 Concept B rework to match the concept (branch `concept-b`): covers keep their own proportions (new uploads: longer side 1200 and 480, shape limited to 0.6 to 1.6, real size stored; older covers stay 3:4), masonry wall, the top bar holds the search and status filters (no page title), a small meta row (count, sort, view, More filters with players and play time), captions with title left and year right and a status square in the cover's colour, initial on a raised tile for games without a cover, the game page hero with the title aligned to the bottom of the cover and the cover and edit tools below the status. `Quick Capture` is now `Add game` (+ ADD). Fixes found on the way: the production build failed because the bar components read the address without a Suspense boundary; the stored cover shape is clamped before the wall uses it. Ran and green locally: lint, typecheck, format:check, build, unit, integration (125), e2e (117 passed, 1 skipped by design). `db-security-reviewer`: no blocking findings (taken: clamp the stored shape, extra extreme-input tests). `design-reviewer` (compared with the concept): one blocking (mobile More filters panel clipped, fixed); taken: no-cover tile with caption, full-width wall, merged count line, 44px All link, hero alignment; left: the search placeholder has no count, the page uses `Showing` text inside the count, the status text colour is greyer than the concept, hover lift not checked in a browser. Not verified: a real phone, a screen reader, real box art, CI (branch not pushed).
 - 2026-11-04 Concept B merged into `main` and accepted (ADR-0010 Accepted). Docs now describe the dark "Night Wall" direction: CLAUDE.md, PRODUCT_SPEC, the `design-system` skill and the `design-reviewer` agent. Design tokens renamed: `paper` to `canvas`, `cream` to `raised`, `bronze` to `accent`, `bronze-deep` to `accent-strong`, `on-bronze` to `on-accent` (Tailwind classes follow: `bg-canvas`, `bg-raised`, `bg-accent`, and so on). Older Done lines above that mention bronze, cream, Fraunces or the light/dark theme describe the earlier direction. Ran and green locally after the rename: see the checks in this commit. Not verified: CI (not pushed), a real phone, real box art.
+- 2026-11-04 Phase 0 closed. Exit criteria (data model, design direction, first slice validated): data model in use through Phase 1 slices with two-user RLS tests; design direction accepted as ADR-0010; first slice (sign in, add game, Library) shipped and extended. The user confirmed everything is pushed. Not checked by me this session: CI result on GitHub (no `gh` here), branch protection.

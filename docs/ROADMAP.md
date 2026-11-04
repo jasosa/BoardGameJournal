@@ -28,6 +28,8 @@ Tick items when verified (see Definition of done in `CLAUDE.md`). Each item is m
 
 Exit: data model, design direction and first slice validated.
 
+Phase 0 closed 2026-11-04.
+
 ## Phase 1: Library MVP (1-2 weeks)
 
 - [ ] L1 Auth: magic link, private workspace, sign-up restricted (allowlist).
@@ -40,7 +42,8 @@ Exit: data model, design direction and first slice validated.
 - [x] L4 Library views: gallery, shelf, table. Search, filters (status, players, time, mechanics), sort.
   - AC: works with seeded 250 games; filter state in URL.
   - Built 2026-11-03: gallery, shelf and table; title search; filters for status, players and play time; sort by recently added or title; 48 per page; state in the URL. Not built yet: the mechanics filter (no mechanics data until a provider or editing exists), sorting by rating or last played (L6, Phase 2). Add them when the data exists.
-- [ ] L4b Remove from library (archive, keep history). Design in the L4 plan, Part B: `archived_at` on `collection_entries`, archive and restore functions, an Archived filter, ADR-0010. Needs the user's decision (archive only, or also permanent delete when nothing is attached).
+- [x] L4b Remove from library: archive (keeps history), restore, Archived filter, and permanent delete of an archived copy when nothing is attached. ADR-0011.
+  - Done 2026-11-04: verified locally. CI run on GitHub pending the push.
 - [ ] L5 Game detail dossier (cover, metadata, status, acquisition, rating, notes).
   - Started 2026-11-02: the game page, editing facts (year, players, play time, description) and changing the current status are built and verified. Cover art is now L5b (done). Still open for L5: acquisition details, rating (L6) and notes (L7).
 - [x] L5b Cover upload: add, replace and remove a cover image on the game page (your own photo).

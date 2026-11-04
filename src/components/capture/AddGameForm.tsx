@@ -98,7 +98,8 @@ export function AddGameForm({
             <div key={match.gameId} className="flex flex-col gap-3">
               <p className="text-sm">
                 You already have <strong>{match.title}</strong> (
-                {STATUS_LABELS[match.status]}).
+                {STATUS_LABELS[match.status]}
+                {match.archived ? ", archived" : ""}).
               </p>
               <div className="flex flex-wrap gap-2">
                 <Link

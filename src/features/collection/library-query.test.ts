@@ -19,6 +19,7 @@ function item(
     gameId: `g-${title}`,
     title,
     status: "owned",
+    archived: false,
     cover: null,
     coverWidth: null,
     coverHeight: null,
@@ -63,6 +64,7 @@ describe("parseLibraryParams", () => {
       sort: "title",
       view: "table",
       page: 3,
+      archived: false,
     });
   });
 
@@ -213,6 +215,36 @@ describe("queryLibrary: status, players, time", () => {
       "A",
       "E",
     ]);
+  });
+});
+
+describe("archived copies", () => {
+  const all = [
+    item("Wingspan"),
+    item("Old Game", { archived: true }),
+    item("Catan"),
+  ];
+
+  it("hides archived copies by default", () => {
+    expect(run(all, {})).toEqual(["Wingspan", "Catan"]);
+  });
+
+  it("shows only archived copies when asked", () => {
+    expect(run(all, { archived: true })).toEqual(["Old Game"]);
+  });
+
+  it("reads and writes ?archived=1 and leaves it out by default", () => {
+    expect(parseLibraryParams({ archived: "1" }).archived).toBe(true);
+    expect(parseLibraryParams({ archived: "0" }).archived).toBe(false);
+    expect(parseLibraryParams({ archived: "yes" }).archived).toBe(false);
+    expect(buildLibraryHref(params({ archived: true }))).toBe(
+      "/library?archived=1",
+    );
+    expect(buildLibraryHref(params())).toBe("/library");
+  });
+
+  it("counts the archived view as a filter", () => {
+    expect(hasActiveFilters(params({ archived: true }))).toBe(true);
   });
 });
 

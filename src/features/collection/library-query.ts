@@ -25,9 +25,12 @@ export type LibraryParams = {
   sort: LibrarySort;
   view: LibraryView;
   page: number;
+  /** Show only archived copies. Archived copies are hidden otherwise. */
+  archived: boolean;
 };
 
 export const DEFAULT_PARAMS: LibraryParams = {
+  archived: false,
   q: "",
   statuses: [],
   players: null,
@@ -97,6 +100,7 @@ export function parseLibraryParams(raw: RawSearchParams): LibraryParams {
     sort: oneOf(LIBRARY_SORTS, first(raw.sort)) ?? DEFAULT_PARAMS.sort,
     view: oneOf(LIBRARY_VIEWS, first(raw.view)) ?? DEFAULT_PARAMS.view,
     page,
+    archived: first(raw.archived) === "1",
   };
 }
 
@@ -114,6 +118,7 @@ export function buildLibraryHref(
   if (next.sort !== DEFAULT_PARAMS.sort) search.set("sort", next.sort);
   if (next.view !== DEFAULT_PARAMS.view) search.set("view", next.view);
   if (next.page > 1) search.set("page", String(next.page));
+  if (next.archived) search.set("archived", "1");
   const query = search.toString();
   return query ? `/library?${query}` : "/library";
 }
@@ -121,6 +126,7 @@ export function buildLibraryHref(
 export function hasActiveFilters(params: LibraryParams): boolean {
   return (
     params.q !== "" ||
+    params.archived ||
     params.statuses.length > 0 ||
     params.players !== null ||
     params.time !== null
@@ -144,6 +150,7 @@ const collator = new Intl.Collator("en", {
 });
 
 function matches(item: LibraryItem, params: LibraryParams): boolean {
+  if (item.archived !== params.archived) return false;
   if (params.q) {
     const wanted = normalizeTitle(params.q);
     if (wanted && !normalizeTitle(item.title).includes(wanted)) return false;

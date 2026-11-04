@@ -44,8 +44,16 @@ export function BarStatusFilters({ className = "" }: { className?: string }) {
       <ul className="flex flex-wrap">
         <li>
           <Link
-            href={buildLibraryHref(params, { statuses: [], page: 1 })}
-            aria-current={params.statuses.length === 0 ? "true" : undefined}
+            href={buildLibraryHref(params, {
+              statuses: [],
+              archived: false,
+              page: 1,
+            })}
+            aria-current={
+              params.statuses.length === 0 && !params.archived
+                ? "true"
+                : undefined
+            }
             className={link}
           >
             All
@@ -56,6 +64,7 @@ export function BarStatusFilters({ className = "" }: { className?: string }) {
             <Link
               href={buildLibraryHref(params, {
                 statuses: toggled(status),
+                archived: false,
                 page: 1,
               })}
               aria-current={
@@ -68,6 +77,19 @@ export function BarStatusFilters({ className = "" }: { className?: string }) {
             </Link>
           </li>
         ))}
+        <li>
+          <Link
+            href={buildLibraryHref(params, {
+              statuses: [],
+              archived: !params.archived,
+              page: 1,
+            })}
+            aria-current={params.archived ? "true" : undefined}
+            className={link}
+          >
+            Archived
+          </Link>
+        </li>
       </ul>
     </nav>
   );
