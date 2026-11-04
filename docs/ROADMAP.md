@@ -49,9 +49,10 @@ Phase 0 closed 2026-11-04.
 - [x] L5b Cover upload: add, replace and remove a cover image on the game page (your own photo).
   - AC: the cover shows on the game page and the Library card; only the owner can see it; photo metadata (GPS) is stripped; wrong or oversized files show a clear error; replacing never leaves a game without a cover; two-user isolation tests for the storage bucket pass.
   - Done 2026-11-02: verified locally. CI run on GitHub pending the push.
-- [ ] L6 Overall rating + optional dimension scores as dated assessments; current = latest.
+- [x] L6 Overall rating as dated assessments; current = latest. (Dimension scores were dropped on 2026-11-04, see ADR-0012.)
   - AC: new assessment never overwrites old; history visible.
-- [ ] L7 Free-form notes on a game (markdown-lite).
+  - Done 2026-11-04: verified locally (ADR-0012). CI run on GitHub pending the push. Library sort by rating is not built yet.
+- [ ] L7 Thoughts: free-form notes on a game (markdown-lite), each tagged with one or more topics (parts of the game). Concept: topic notebook, with filter tabs by topic.
 - [ ] L8 Export foundation: full JSON export of my data.
   - AC: export → import into empty account round-trips (test).
 

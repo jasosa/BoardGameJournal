@@ -34,6 +34,42 @@ export type Database = {
   };
   public: {
     Tables: {
+      assessments: {
+        Row: {
+          assessed_on: string;
+          created_at: string;
+          game_id: string;
+          id: string;
+          overall: number;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Insert: {
+          assessed_on?: string;
+          created_at?: string;
+          game_id: string;
+          id?: string;
+          overall: number;
+          user_id?: string;
+        };
+        Update: {
+          assessed_on?: string;
+          created_at?: string;
+          game_id?: string;
+          id?: string;
+          overall?: number;
+          user_id?: string;
+        };
+        Relationships: [
+          {
+            foreignKeyName: "assessments_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
       collection_entries: {
         Row: {
           acquired_on: string | null;
@@ -346,9 +382,32 @@ export type Database = {
       };
     };
     Views: {
-      [_ in never]: never;
+      current_ratings: {
+        Row: {
+          assessed_on: string;
+          assessment_id: string;
+          created_at: string;
+          game_id: string;
+          overall: number;
+          user_id: string;
+        };
+        ComputedFields: never;
+        Relationships: [
+          {
+            foreignKeyName: "assessments_game_id_fkey";
+            columns: ["game_id"];
+            isOneToOne: false;
+            referencedRelation: "games";
+            referencedColumns: ["id"];
+          },
+        ];
+      };
     };
     Functions: {
+      add_assessment: {
+        Args: { p_assessed_on?: string; p_game_id: string; p_overall: number };
+        Returns: string;
+      };
       add_game_copy: {
         Args: { p_added_on?: string; p_game_id: string; p_status: string };
         Returns: string;

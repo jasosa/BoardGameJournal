@@ -37,7 +37,7 @@ function latestChangeDate(): string {
 }
 
 /** A date the person gives for something that happened. Blank means today. */
-const optionalDate = z.preprocess(
+export const optionalDate = z.preprocess(
   (value) =>
     typeof value === "string" && value.trim() === "" ? undefined : value,
   z

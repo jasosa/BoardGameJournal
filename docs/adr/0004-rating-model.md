@@ -1,6 +1,6 @@
 # ADR-0004: Rating model
 
-- Status: Accepted
+- Status: Accepted (dimension scores dropped 2026-11-04, see ADR-0012)
 - Date: 2026-10-30
 
 ## Context

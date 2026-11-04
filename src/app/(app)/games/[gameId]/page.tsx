@@ -11,9 +11,21 @@ import { BackLink } from "@/components/ui/BackLink";
 import { GameBackdrop } from "@/components/game/GameBackdrop";
 import { formatPlayers } from "@/features/catalogue/facts";
 import { requireUser } from "@/server/authorization/require-user";
+import { listAssessments } from "@/server/services/assessments";
 import { getGameDossier } from "@/server/services/games";
+import { RatingPopover } from "@/components/game/RatingPopover";
+import {
+  currentAssessment,
+  sortLatestFirst,
+} from "@/features/assessments/history";
 import { STATUS_LABELS } from "@/features/collection/schemas";
-import { archiveCopy, changeStatus, deleteCopy, restoreCopy } from "./actions";
+import {
+  archiveCopy,
+  changeStatus,
+  deleteCopy,
+  rateGame,
+  restoreCopy,
+} from "./actions";
 import { removeCoverAction, uploadCoverAction } from "./cover-actions";
 
 export const metadata = { title: "Game | Meeple Journal" };
@@ -49,6 +61,12 @@ export default async function GamePage({
   }
 
   const { game, entries, history } = result.data;
+  const ratings = await listAssessments(supabase, user.id, gameId);
+  const assessments = ratings.ok ? ratings.data : [];
+  const currentRating = currentAssessment(assessments);
+  const earlierRatings = sortLatestFirst(
+    assessments.filter((item) => item.id !== currentRating?.id),
+  );
   const facts = [
     ["Players", formatPlayers(game.minPlayers, game.maxPlayers)],
     ["Time", game.playTimeMin === null ? null : `${game.playTimeMin} min`],
@@ -97,7 +115,7 @@ export default async function GamePage({
         ) : null}
       </div>
 
-      <div className="grid grid-cols-[9rem_1fr] gap-x-5 gap-y-8 md:grid-cols-[22.5rem_1fr] md:gap-x-16">
+      <div className="relative grid grid-cols-[9rem_1fr] gap-x-5 gap-y-8 md:grid-cols-[22.5rem_1fr] md:gap-x-16">
         <div className="md:sticky md:top-20 md:row-span-2 md:self-start">
           {game.editable && game.cover === null ? (
             <CoverControls
@@ -130,20 +148,29 @@ export default async function GamePage({
           <h1 className="text-3xl break-words hyphens-auto md:text-8xl">
             {game.title}
           </h1>
-          {facts.length > 0 ? (
-            <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-3">
-              {facts.map(([label, value]) => (
-                <div key={label}>
-                  <dt className="text-ink-soft text-xs font-semibold tracking-widest uppercase">
-                    {label}
-                  </dt>
-                  <dd className="font-display text-xl font-semibold">
-                    {value}
-                  </dd>
-                </div>
-              ))}
-            </dl>
-          ) : null}
+          <dl className="mt-5 flex flex-wrap gap-x-8 gap-y-3">
+            {facts.map(([label, value]) => (
+              <div key={label}>
+                <dt className="text-ink-soft text-xs font-semibold tracking-widest uppercase">
+                  {label}
+                </dt>
+                <dd className="font-display text-xl font-semibold">{value}</dd>
+              </div>
+            ))}
+            <div>
+              <dt className="text-ink-soft text-xs font-semibold tracking-widest uppercase">
+                Your rating
+              </dt>
+              <dd>
+                <RatingPopover
+                  gameId={game.id}
+                  current={currentRating}
+                  earlier={earlierRatings}
+                  action={rateGame}
+                />
+              </dd>
+            </div>
+          </dl>
         </header>
 
         <div className="col-span-2 flex flex-col gap-10 md:col-span-1 md:col-start-2">
