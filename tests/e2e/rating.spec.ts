@@ -39,7 +39,7 @@ test("rate a game from the facts row", async ({ page }) => {
   const field = page.getByLabel("Rating, 0 to 10");
   await expect(field).toBeFocused();
   await field.fill("8,5");
-  await page.getByRole("button", { name: "Save rating" }).click();
+  await page.getByRole("button", { name: "Save" }).click();
 
   await expect(trigger).toHaveText("8.5 / 10");
   // Saving closes the popover and says so.
@@ -64,7 +64,7 @@ test("a new rating becomes current and the old one is listed as earlier", async 
   await openGame(page, "Azul");
   await ratingButton(page, "Rate this game").click();
   await page.getByLabel("Rating, 0 to 10").fill("6");
-  await page.getByRole("button", { name: "Save rating" }).click();
+  await page.getByRole("button", { name: "Save" }).click();
   const trigger = page.locator("dl button[aria-expanded]");
   await expect(trigger).toHaveText("6 / 10");
 
@@ -72,7 +72,7 @@ test("a new rating becomes current and the old one is listed as earlier", async 
   // Nothing earlier yet.
   await expect(page.getByText("Earlier")).toBeHidden();
   await page.getByLabel("Rating, 0 to 10").fill("9");
-  await page.getByRole("button", { name: "Save rating" }).click();
+  await page.getByRole("button", { name: "Save" }).click();
   await expect(trigger).toHaveText("9 / 10");
 
   await trigger.click();
@@ -89,7 +89,7 @@ test("a bad rating shows an error on the field, keeps what was typed and keeps f
   await ratingButton(page, "Rate this game").click();
   const field = page.getByLabel("Rating, 0 to 10");
   await field.fill("11");
-  await page.getByRole("button", { name: "Save rating" }).click();
+  await page.getByRole("button", { name: "Save" }).click();
 
   await expect(field).toHaveAttribute("aria-invalid", "true");
   await expect(field).toHaveAccessibleDescription(
@@ -117,4 +117,38 @@ test("the popover closes with Escape and returns focus to the number", async ({
   await page.keyboard.press("Escape");
   await expect(page.getByLabel("Rating, 0 to 10")).toBeHidden();
   await expect(trigger).toBeFocused();
+});
+
+test("the plus and minus buttons step by a half and stop at 0 and 10", async ({
+  page,
+}) => {
+  await openGame(page, "Brass");
+  await ratingButton(page, "Rate this game").click();
+  const field = page.getByLabel("Rating, 0 to 10");
+  // With no rating yet it starts in the middle.
+  await expect(field).toHaveValue("5");
+
+  await page.getByRole("button", { name: "Raise the rating" }).click();
+  await expect(field).toHaveValue("5.5");
+  await page.getByRole("button", { name: "Lower the rating" }).click();
+  await page.getByRole("button", { name: "Lower the rating" }).click();
+  await expect(field).toHaveValue("4.5");
+
+  await field.fill("10");
+  await page.getByRole("button", { name: "Raise the rating" }).click();
+  await expect(field).toHaveValue("10");
+  await field.fill("0");
+  await page.getByRole("button", { name: "Lower the rating" }).click();
+  await expect(field).toHaveValue("0");
+
+  // A typed value still steps from where it is, and saves.
+  await field.fill("8.7");
+  await page.getByRole("button", { name: "Raise the rating" }).click();
+  await expect(field).toHaveValue("9");
+  await page.getByRole("button", { name: "Save" }).click();
+  await expect(page.locator("dl button[aria-expanded]")).toHaveText("9 / 10");
+
+  // Opening again starts from the current rating.
+  await page.locator("dl button[aria-expanded]").click();
+  await expect(field).toHaveValue("9");
 });
