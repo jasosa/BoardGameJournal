@@ -53,9 +53,10 @@ Phase 0 closed 2026-11-04.
   - AC: new assessment never overwrites old; history visible.
   - Done 2026-11-04: verified locally (ADR-0012). CI run on GitHub pending the push. Library sort by rating is not built yet.
 - [x] L7 Thoughts: free-form notes on a game (light Markdown), each tagged with one or more topics (parts of the game). Concept: topic notebook, Option B (approved), in `docs/design-concepts/thoughts/`. ADR-0013.
-  - Done 2026-11-04: verified locally. CI run on GitHub pending the push. Not in the export yet (L8).
-- [ ] L8 Export foundation: full JSON export of my data.
+  - Done 2026-11-04: verified locally. CI run on GitHub pending the push. Included in the export (L8).
+- [x] L8 Export foundation: full JSON export of my data, and import into an empty account. Concept: Option A, inline "Your data" section in Settings (approved), in `docs/design-concepts/export/`. ADR-0014.
   - AC: export → import into empty account round-trips (test).
+  - Done 2026-11-10: verified locally (round-trip test in `tests/integration/data-export.test.ts`). CI run on GitHub pending the push. Covers are not in the file; CSV waits for J7.
 
 Exit: the whole collection can be represented and maintained.
 

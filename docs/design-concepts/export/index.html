@@ -1,0 +1,407 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>L8 Export and import: concept | Meeple Journal</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Schibsted+Grotesk:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  /* Concept sheet for slice L8 "Export foundation". Static drawings, not wired to the app.
+     Night Wall tokens copied from src/lib/design-system/tokens.css. */
+  :root {
+    --canvas: #121316;
+    --raised: #1b1c20;
+    --line: #2e2f35;
+    --edge: #6f6a62;
+    --ink: #ece8df;
+    --ink-soft: #b0aa9d;
+    --ink-faint: #8e887c;
+    --accent: #ece8df;
+    --on-accent: #121316;
+    --negative: #cf7968;
+    --positive: #8aa67f;
+    --stage: #0b0c0e;
+    --shadow-lift: 0 18px 40px rgb(0 0 0 / 0.6);
+    --shadow-soft: 0 10px 28px rgb(0 0 0 / 0.55);
+    --font-display: "Schibsted Grotesk", "Helvetica Neue", Arial, sans-serif;
+    --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+    color-scheme: dark;
+  }
+  * { box-sizing: border-box; }
+  html { overflow-x: hidden; }
+  body { margin: 0; background: var(--stage); color: var(--ink); font-family: var(--font-body); padding: 32px 16px 80px; }
+  .wrap { max-width: 1240px; margin: 0 auto; display: flex; flex-direction: column; gap: 56px; min-width: 0; }
+  .intro h1 { font: 700 clamp(28px, 4vw, 40px)/1.1 var(--font-display); letter-spacing: -0.03em; margin: 0 0 12px; }
+  .intro p { margin: 0 0 10px; max-width: 70ch; color: var(--ink-soft); font-size: 16px; line-height: 1.55; }
+  .toc { display: flex; flex-wrap: wrap; gap: 4px 20px; font-size: 14px; margin-top: 12px; }
+  .toc a { color: var(--ink-soft); text-underline-offset: 4px; min-height: 32px; display: inline-flex; align-items: center; }
+  .part-h { font: 700 30px/1.15 var(--font-display); letter-spacing: -0.02em; margin: 0; border-top: 1px solid var(--line); padding-top: 32px; }
+  .board { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+  .board h2 { font: 600 24px/1.2 var(--font-display); letter-spacing: -0.02em; margin: 0; }
+  .board h3.st { font: 600 19px/1.25 var(--font-display); margin: 0; }
+  .tag { font-size: 12px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 6px; font-weight: 600; }
+  .tag.rec { color: var(--ink); }
+  .why { margin: 0; max-width: 78ch; color: var(--ink-soft); font-size: 15px; line-height: 1.55; }
+  .why b { color: var(--ink); font-weight: 600; }
+  .shots { display: flex; gap: 24px; align-items: flex-start; flex-wrap: wrap; min-width: 0; }
+  .shot { min-width: 0; }
+  .shot.d { flex: 1 1 560px; }
+  .shot.m { flex: 0 1 auto; }
+  .cap { font-size: 12px; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ink-faint); margin: 0 0 8px; }
+  .stage { overflow: hidden; border: 1px solid var(--line); border-radius: 4px; position: relative; background: var(--canvas); }
+  .frame { position: absolute; left: 0; top: 0; transform-origin: 0 0; }
+
+  /* ---------- app shell ---------- */
+  .app { background: var(--canvas); color: var(--ink); position: relative; font-size: 16px; line-height: 1.5; min-height: 800px; }
+  .app.m { min-height: 844px; display: flex; flex-direction: column; }
+  .bar { height: 60px; display: flex; align-items: center; gap: 20px; padding: 0 24px; border-bottom: 1px solid var(--line); background: rgba(18,19,22,.85); }
+  .bar b { font: 700 14px var(--font-display); letter-spacing: 0.14em; }
+  .bar nav { display: flex; gap: 16px; color: var(--ink-soft); font-size: 14px; }
+  .bar nav .on { color: var(--ink); }
+  .bar .search { width: 288px; height: 44px; border: 1px solid var(--edge); border-radius: 2px; padding: 0 12px; display: flex; align-items: center; color: var(--ink-soft); font-size: 14px; }
+  .bar .add { margin-left: auto; border: 1px solid var(--ink); border-radius: 2px; height: 44px; padding: 0 16px; display: flex; align-items: center; font: 700 12px var(--font-body); letter-spacing: .1em; }
+  .mhead { padding: 8px 16px 0; min-height: 52px; display: flex; align-items: center; font: 700 14px var(--font-display); letter-spacing: .14em; }
+  .main { padding: 20px 24px 64px; }
+  .m .main { padding: 24px 16px 40px; flex: 1; }
+  .bnav { display: grid; grid-template-columns: repeat(5, 1fr); align-items: center; border-top: 1px solid var(--line); background: rgba(18,19,22,.92); height: 57px; font-size: 14px; color: var(--ink-soft); text-align: center; }
+  .bnav span { height: 56px; display: flex; align-items: center; justify-content: center; border-top: 2px solid transparent; margin-top: -1px; }
+  .bnav .on { color: var(--ink); border-top-color: var(--ink); font-weight: 500; }
+  .bnav .capb { width: 56px; height: 56px; border-radius: 50%; background: var(--accent); color: var(--on-accent); margin: -24px auto 0; font-size: 28px; font-weight: 400; box-shadow: var(--shadow-lift); border: 0; }
+  h1.pt { font: 700 48px/1.15 var(--font-display); letter-spacing: -0.03em; margin: 0 0 32px; }
+  .m h1.pt { font-size: 36px; }
+  .secs { display: flex; flex-direction: column; gap: 40px; }
+  h2.sec { font: 600 22px/1.2 var(--font-display); letter-spacing: -0.02em; margin: 0 0 12px; }
+  .toprow { display: flex; align-items: center; color: var(--ink-soft); font-size: 14px; min-height: 44px; margin: -8px 0 8px; }
+
+  /* ---------- shared bits ---------- */
+  .q { color: var(--ink-soft); font-size: 14px; text-decoration: underline; text-underline-offset: 4px; min-height: 44px; display: inline-flex; align-items: center; }
+  .btn { background: var(--accent); color: var(--on-accent); min-height: 44px; padding: 0 16px; border-radius: 2px; display: inline-flex; align-items: center; justify-content: center; font-weight: 500; font-size: 14px; white-space: nowrap; }
+  .btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--edge); }
+  .btn.off { opacity: .6; }
+  .focus { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .sr { font-size: 12px; color: var(--ink-faint); border: 1px dashed var(--line); border-radius: 2px; padding: 2px 8px; display: inline-block; margin-top: 8px; }
+  .sr::before { content: "Screen reader: "; letter-spacing: .04em; }
+  .skel { background: var(--raised); border-radius: 2px; }
+
+  /* ---------- Your data, option A ---------- */
+  .data { max-width: 42rem; min-width: 0; }
+  .blk + .blk { margin-top: 36px; }
+  h3.sub { font: 600 18px/1.25 var(--font-display); letter-spacing: -0.01em; margin: 0 0 6px; }
+  .lead { margin: 0 0 8px; color: var(--ink-soft); max-width: 60ch; }
+  .counts { margin: 0; font-size: 14px; color: var(--ink); display: flex; flex-wrap: wrap; gap: 2px 0; font-variant-numeric: tabular-nums; }
+  .counts span { white-space: nowrap; }
+  .counts span + span::before { content: "·"; color: var(--ink-faint); margin: 0 10px; }
+  .disc { min-height: 44px; display: inline-flex; align-items: center; gap: 8px; color: var(--ink-soft); font-size: 14px; }
+  .disc .chev { display: inline-block; width: 10px; color: var(--ink-faint); transition: transform .15s; }
+  .disc.open .chev { transform: rotate(90deg); }
+  .discb { font-size: 14px; color: var(--ink-soft); padding: 0 0 8px 18px; max-width: 56ch; }
+  .discb p { margin: 4px 0 2px; color: var(--ink); font-weight: 500; }
+  .discb ul { margin: 0 0 8px; padding-left: 18px; line-height: 1.55; }
+  .acts { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin-top: 8px; }
+  .stat { font-size: 14px; color: var(--ink-soft); margin: 10px 0 0; overflow-wrap: anywhere; }
+  .stat b { color: var(--ink); font-weight: 500; }
+  .hint { font-size: 14px; color: var(--ink-soft); margin: 6px 0 0; }
+  .note { margin: 4px 0 0; color: var(--ink); max-width: 60ch; }
+  .alert { color: var(--negative); font-size: 14px; margin: 10px 0 0; overflow-wrap: anywhere; }
+  .probs { margin: 8px 0 0; padding-left: 18px; font-size: 14px; color: var(--ink); line-height: 1.55; overflow-wrap: anywhere; }
+  .probs li { margin-bottom: 4px; }
+  .probs + .hint { margin-top: 8px; }
+  .panel { background: var(--raised); border-radius: 4px; padding: 16px; margin-top: 12px; }
+  .m .panel { padding: 12px; margin-left: -8px; margin-right: -8px; }
+  .panel h4 { font: 600 17px/1.25 var(--font-display); margin: 0 0 2px; letter-spacing: -0.01em; }
+  .panel h4.focus { outline-offset: 4px; }
+  .fname { font-size: 14px; color: var(--ink-soft); margin: 0 0 14px; overflow-wrap: anywhere; }
+  .fname b { color: var(--ink); font-weight: 500; }
+  .tally { display: grid; grid-template-columns: max-content 1fr; gap: 6px 24px; margin: 0; font-size: 14px; font-variant-numeric: tabular-nums; }
+  .tally dt { color: var(--ink-soft); }
+  .tally dd { margin: 0; color: var(--ink); }
+  .panel .cnote { font-size: 14px; color: var(--ink-soft); margin: 14px 0 0; max-width: 60ch; }
+  .panel .working { font-size: 14px; color: var(--ink); margin: 14px 0 0; }
+  .panel .foot { display: flex; justify-content: flex-end; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+  .panel .foot.left { justify-content: flex-start; }
+  .panel .alert { margin-top: 14px; }
+
+  /* ---------- option B ---------- */
+  .rowlink { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 64px; max-width: 42rem; border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); padding: 10px 0; }
+  .rowlink b { display: block; font-weight: 500; }
+  .rowlink small { display: block; color: var(--ink-soft); font-size: 14px; }
+  .rowlink .arr { color: var(--ink-soft); font-size: 20px; }
+  .two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 0 64px; max-width: 1040px; }
+  .m .two { grid-template-columns: minmax(0, 1fr); gap: 40px; }
+  .incl { font-size: 14px; color: var(--ink-soft); margin: 12px 0 16px; }
+  .incl p { margin: 8px 0 2px; color: var(--ink); font-weight: 500; }
+  .incl ul { margin: 0; padding-left: 18px; line-height: 1.55; }
+  .steps { list-style: none; margin: 12px 0 0; padding: 0; }
+  .steps > li { padding: 14px 0; border-top: 1px solid var(--line); }
+  .steps > li:first-child { border-top: 0; padding-top: 4px; }
+  .stl { font-size: 12px; letter-spacing: .12em; text-transform: uppercase; font-weight: 600; color: var(--ink-faint); display: flex; justify-content: space-between; gap: 12px; }
+  .stl.cur { color: var(--ink); }
+  .stl.done { color: var(--ink-soft); }
+  .tiles { display: flex; gap: 8px; margin: 14px 0 6px; flex-wrap: wrap; }
+  .tile { width: 48px; height: 64px; border-radius: 2px; background: var(--raised); box-shadow: inset 0 0 0 1px var(--line); display: grid; place-items: center; font: 600 22px var(--font-display); color: var(--ink-soft); }
+  .tilecap { font-size: 14px; color: var(--ink-soft); margin: 0 0 12px; }
+
+  /* ---------- option C ---------- */
+  .scrim { position: absolute; inset: 0; background: rgba(0,0,0,.62); z-index: 10; }
+  .dialog { position: absolute; z-index: 11; background: var(--raised); border-radius: 4px; box-shadow: var(--shadow-lift); padding: 24px; display: flex; flex-direction: column; gap: 4px; }
+  .dialog .dh { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .dialog .dh h3 { margin: 0; font: 600 22px/1.2 var(--font-display); letter-spacing: -0.02em; }
+  .xbtn { width: 44px; height: 44px; display: grid; place-items: center; color: var(--ink-soft); font-size: 22px; margin-right: -10px; }
+  .dialog .tally { margin-top: 4px; }
+  .dialog .foot { display: flex; justify-content: flex-end; gap: 8px; margin-top: 20px; flex-wrap: wrap; }
+  .sheet { left: 0; right: 0; top: 16px; bottom: 0; border-radius: 4px 4px 0 0; padding: 12px 16px 24px; }
+
+  .stnote { margin: 0; color: var(--ink-soft); font-size: 14px; line-height: 1.5; max-width: 80ch; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="intro">
+    <p class="tag">Slice L8 · Export foundation · concept for approval</p>
+    <h1>Export and import in Settings</h1>
+    <p>You can download everything you have recorded as one JSON file, and put that file back into an empty account. That covers your games and their facts, every copy (archived ones too), status history, ratings and thoughts. Cover images are not in the file; the file notes which games had one. Import works only into an empty account and saves everything or nothing.</p>
+    <p>There are three ways to place this in Settings. They differ in where it lives (inline, its own page, or a dialog) and how much room the import check gets. <b style="color:var(--ink)">I recommend Option A</b> (inline section). Every state of Option A is drawn in the last part. Sample data: a library of 214 games. The Settings page has no cover art on purpose: covers are not part of the file, and imported games arrive with their initial tile.</p>
+    <nav class="toc" aria-label="Contents">
+      <a href="#opt-a">Option A (recommended)</a><a href="#opt-b">Option B</a><a href="#opt-c">Option C</a><a href="#states">States of A</a>
+    </nav>
+  </header>
+  <div id="root" class="wrap" style="gap:64px"></div>
+</div>
+
+<script>
+/* ---------- sample data ---------- */
+var C = { games: '214', copies: '231', archived: '9', changes: '412', ratings: '37', thoughts: '52', covers: '18', size: '1.1 MB', file: 'meeple-journal-2026-11-10.json', date: '10 November 2026' };
+var BIG = { games: '1,204', copies: '1,262', archived: '41', changes: '2,377', ratings: '655', thoughts: '3,018', covers: '96', size: '8.7 MB', file: 'meeple-journal-2026-11-10.json', date: '10 November 2026' };
+var LONGFILE = 'meeple-journal-2026-11-10 (3) - backup for the new laptop, keep this one.json';
+
+/* ---------- page shells ---------- */
+function shell(o){
+  var m = o.m, h = '<div class="app' + (m ? ' m' : '') + '">';
+  if (m) h += '<div class="mhead">MEEPLE JOURNAL</div>';
+  else h += '<div class="bar"><b>MEEPLE JOURNAL</b><nav><span>Home</span><span>Library</span><span>Journal</span><span class="on">Settings</span></nav><div class="search">Search your games</div><span class="add">+ ADD</span></div>';
+  h += '<main class="main">' + o.main + '</main>';
+  if (m) h += '<div class="bnav"><span>Home</span><span>Library</span><span class="capb">+</span><span>Journal</span><span class="on">Settings</span></div>';
+  return h + (o.overlay || '') + '</div>';
+}
+function settingsPage(dataSection){
+  return '<h1 class="pt">Settings</h1><div class="secs"><section><h2 class="sec">Account</h2><span class="btn ghost">Sign out</span></section>' + dataSection + '</div>';
+}
+
+/* ---------- option A pieces ---------- */
+function countsLine(c){
+  return '<p class="counts"><span>' + c.games + ' games</span><span>' + c.copies + ' copies (' + c.archived + ' archived)</span><span>' + c.changes + ' status changes</span><span>' + c.ratings + ' ratings</span><span>' + c.thoughts + ' thoughts</span></p>';
+}
+function disc(open, focus){
+  var h = '<div><span class="disc' + (open ? ' open' : '') + (focus ? ' focus' : '') + '"><span class="chev" aria-hidden="true">›</span>What is in the file</span></div>';
+  if (open) h += '<div class="discb"><p>Included</p><ul><li>The games you added, with their facts: year, players, play time, description</li><li>Every copy, archived ones too, with its status history</li><li>Every rating, with its date</li><li>Every thought, with its topics and date</li></ul><p>Not included</p><ul><li>Cover images. The file notes which games had one.</li><li>Thought drafts you never saved. They stay on this device.</li></ul></div>';
+  return h;
+}
+function exportBlk(o){
+  o = o || {}; var c = o.c || C, s = o.exp || 'idle';
+  var h = '<div class="blk"><h3 class="sub">Export</h3>';
+  if (s === 'empty') return h + '<p class="lead">Nothing to export yet. Once you add a game, a rating or a thought, you can download it here.</p></div>';
+  h += '<p class="lead">Download a copy of everything you have recorded, as one JSON file.</p>';
+  h += countsLine(c) + disc(o.discOpen, o.discFocus);
+  var pend = s === 'pending';
+  h += '<div class="acts"><span class="btn' + (pend ? ' off' : '') + (o.btnFocus || pend || s === 'fail' || s === 'done' ? ' focus' : '') + '">' + (pend ? 'Preparing your file' : 'Download export') + '</span></div>';
+  if (pend) h += '<span class="sr">Preparing your export (button is aria-disabled, keeps focus)</span>';
+  if (s === 'done') h += '<p class="stat">Download started: <b>' + c.file + '</b>, ' + c.size + '.</p><span class="sr">polite: Download started: ' + c.file + ', ' + c.size + '.</span>';
+  if (s === 'fail') h += '<p class="alert">Could not prepare your export. Nothing was downloaded. Try again.</p><span class="sr">alert</span>';
+  return h + '</div>';
+}
+var IMPORT_LEAD = '<p class="lead">Put an export back into this account. Import works only into an empty account, so it never mixes with or overwrites what you have.</p>';
+function chooser(label, focus, off){
+  return '<div class="acts" style="margin-top:4px"><span class="btn ghost' + (focus ? ' focus' : '') + (off ? ' off' : '') + '">' + label + '</span></div><p class="hint">A .json file made by Export, up to 10 MB.</p>';
+}
+function tally(c){
+  return '<dl class="tally"><dt>Games</dt><dd>' + c.games + '</dd><dt>Copies</dt><dd>' + c.copies + ', ' + c.archived + ' of them archived</dd><dt>Status changes</dt><dd>' + c.changes + '</dd><dt>Ratings</dt><dd>' + c.ratings + '</dd><dt>Thoughts</dt><dd>' + c.thoughts + '</dd></dl>';
+}
+function preview(c, o){
+  o = o || {};
+  var pend = o.pending, h = '<div class="panel" role="region">';
+  h += '<h4 tabindex="-1" class="' + (o.headFocus ? 'focus' : '') + '">Ready to import</h4>';
+  h += '<p class="fname"><b>' + (o.file || c.file) + '</b><br>' + c.size + ' · exported ' + c.date + '</p>';
+  h += tally(c);
+  h += '<p class="cnote">Covers are not in the file. ' + c.covers + ' of these games had a cover; they arrive with their initial, and you can add the cover again on the game page.</p>';
+  if (pend) h += '<p class="working">Importing ' + c.games + ' games with their history, ratings and thoughts. This can take a minute. Keep this page open.</p>';
+  if (o.err) h += '<p class="alert">' + o.err + '</p>';
+  if (o.refused) h += '<div class="foot"><span class="btn ghost focus">Cancel</span></div>';
+  else h += '<div class="foot"><span class="btn ghost' + (pend ? ' off' : '') + '">Cancel</span><span class="btn' + (pend ? ' off focus' : '') + (o.impFocus ? ' focus' : '') + '">' + (pend ? 'Importing' : 'Import') + '</span></div>';
+  if (o.sr) h += '<span class="sr">' + o.sr + '</span>';
+  return h + '</div>';
+}
+function importBlk(o){
+  o = o || {}; var c = o.c || C, s = o.imp || 'blocked';
+  var h = '<div class="blk"><h3 class="sub">Import</h3>';
+  if (s === 'done') {
+    h += '<div class="panel" role="status"><h4 tabindex="-1" class="focus">Import complete</h4><p class="note" style="font-size:14px;margin-top:6px">This account now has ' + c.games + ' games, ' + c.copies + ' copies, ' + c.changes + ' status changes, ' + c.ratings + ' ratings and ' + c.thoughts + ' thoughts.</p><p class="cnote">' + c.covers + ' of these games had a cover. Add their covers again on each game page.</p><div class="foot left"><span class="btn ghost">Open your Library</span></div></div>';
+    return h + '</div>';
+  }
+  h += IMPORT_LEAD;
+  if (s === 'blocked') return h + '<p class="note">This account already has games, ratings or thoughts, so import is not available here. To put a file back, use a new, empty account.</p></div>';
+  if (s === 'idle') return h + chooser('Choose a file', o.chooseFocus) + '</div>';
+  if (s === 'checking') return h + chooser('Choose a file', false, true) + '<p class="stat">Checking <b>' + (o.file || c.file) + '</b></p><span class="sr">polite: Checking your file</span></div>';
+  if (s === 'preview') return h + chooser('Choose another file') + preview(c, { headFocus: true, file: o.file, sr: 'focus on "Ready to import"' }) + '</div>';
+  if (s === 'pending') return h + chooser('Choose another file', false, true) + preview(c, { pending: true, sr: 'polite: Importing. Import button aria-disabled, keeps focus.' }) + '</div>';
+  if (s === 'fail') return h + chooser('Choose another file') + preview(c, { impFocus: true, err: 'The import did not finish, and nothing was saved. Your file is fine. Try again.', sr: 'alert; focus stays on Import' }) + '</div>';
+  if (s === 'serverbad') return h + chooser('Choose another file') + preview(c, { impFocus: true, err: 'The file did not pass the check on the server, so nothing was saved. Choose the file again, or export it again.', sr: 'alert; focus stays on Import' }) + '</div>';
+  if (s === 'refused') return h + chooser('Choose another file', false, true) + preview(c, { refused: true, err: 'Something was added to this account after you chose the file, so nothing was imported. Import works only into an empty account.', sr: 'alert; focus on Cancel' }) + '</div>';
+  /* file errors */
+  var f = o.file || 'wingspan-notes.json', msg = '';
+  if (s === 'bad') msg = '<p class="alert">“' + f + '” is not a Meeple Journal export. Choose the .json file that Export downloaded.</p>';
+  if (s === 'large') msg = '<p class="alert">“' + f + '” is 14.2 MB, and the limit is 10 MB. Choose the .json file that Export downloaded.</p>';
+  if (s === 'newer') msg = '<p class="alert">“' + f + '” was made by a newer version of Meeple Journal (format 2). This version reads format 1 only.</p>';
+  if (s === 'emptyfile') msg = '<p class="alert">“' + f + '” has no games in it, so there is nothing to import.</p>';
+  if (s === 'problems') msg = '<p class="alert">“' + f + '” has 7 problems, so nothing can be imported:</p><ul class="probs">' + (o.probs || PROBS).map(function(p){ return '<li>' + p + '</li>'; }).join('') + '<li style="list-style:none;margin-left:-18px;color:var(--ink-soft)">and 2 more.</li></ul><p class="hint">If the file was edited by hand, fix these and choose it again.</p>';
+  return h + '<div class="acts" style="margin-top:4px"><span class="btn ghost focus">Choose another file</span></div><p class="hint">A .json file made by Export, up to 10 MB.</p>' + msg + '<span class="sr">alert; focus stays on "Choose another file"</span></div>';
+}
+var PROBS = [
+  'Game “Brass: Birmingham”: rating 11 is outside 0 to 10.',
+  'Game “Ark Nova”, thought from 2 March 2026: the text is empty.',
+  'Game 41: the title is missing.',
+  'Game “Azul”, copy 2: status “lent” is not one of owned, wishlist, interested, previously owned.',
+  'Game “Spirit Island”, thought from 9 June 2026: topic “difficulty” is not one of the nine topics.'
+];
+var PROBS_LONG = [
+  'Game “Through the Ages: A New Story of Civilization”: rating 11 is outside 0 to 10.',
+  'Game “Twilight Imperium: Fourth Edition – Prophecy of Kings collector’s box”, copy 1: its history does not end in its status (owned).',
+  'Game “Ark Nova”, thought from 2 March 2026: the text is longer than 10,000 characters.',
+  'Game 41: the title is missing.',
+  'Game “Azul”, rating from 3 May 2190: the date is outside 1900 to today.'
+];
+function dataA(o){
+  o = o || {};
+  return '<section class="data cs ce"><h2 class="sec">Your data</h2>' + exportBlk(o) + importBlk(o) + '</section>';
+}
+function skeletonA(){
+  var bar = function(w, hgt, mb){ return '<div class="skel" style="height:' + (hgt || 14) + 'px;width:' + w + ';margin-bottom:' + (mb || 10) + 'px"></div>'; };
+  return '<section class="data cs ce" aria-busy="true"><h2 class="sec">Your data</h2><div class="blk"><h3 class="sub">Export</h3>' + bar('80%') + bar('60%', 14, 18) + bar('152px', 44, 0) + '</div><div class="blk"><h3 class="sub">Import</h3>' + bar('85%') + bar('55%', 14, 0) + '</div><span class="sr">polite: Loading a summary of your data</span></section>';
+}
+function errorA(){
+  return '<section class="data cs ce"><h2 class="sec">Your data</h2><div class="panel" role="alert" style="margin:0;padding:20px 24px"><p style="margin:0">Could not read your data just now, so export and import are not available.</p><span class="q" style="color:var(--ink)">Try again</span></div></section>';
+}
+
+/* ---------- option B pieces ---------- */
+function settingsB(){
+  return '<section class="cs ce"><h2 class="sec">Your data</h2><div class="rowlink"><span><b>Export and import</b><small>214 games · 37 ratings · 52 thoughts</small></span><span class="arr" aria-hidden="true">›</span></div></section>';
+}
+function dataPageB(o){
+  var h = '<div class="toprow">← Settings</div><h1 class="pt">Your data</h1><div class="two">';
+  if (o.blocked) h += '<section><h2 class="sec">Export</h2><p class="lead">Download a copy of everything you have recorded, as one JSON file.</p>' + tally(C) + '<div class="incl"><p>Included</p><ul><li>Games you added, with their facts</li><li>Every copy, archived too, with its status history</li><li>Every rating and every thought</li></ul><p>Not included</p><ul><li>Cover images (the file notes which games had one)</li><li>Unsaved thought drafts</li></ul></div><span class="btn">Download export</span></section>';
+  else h += '<section><h2 class="sec">Export</h2><p class="lead">Nothing to export yet. Once you add a game, a rating or a thought, you can download it here.</p></section>';
+  h += '<section><h2 class="sec">Import</h2><p class="lead">Put an export back into this account. Works only into an empty account.</p>';
+  if (o.blocked) {
+    h += '<ol class="steps"><li><div class="stl">1 · Choose a file</div></li><li><div class="stl">2 · Check what is in it</div></li><li><div class="stl">3 · Import</div></li></ol><p class="note" style="margin-top:8px">This account already has data, so import is not available here.</p>';
+  } else {
+    h += '<ol class="steps"><li><div class="stl done"><span>1 · Choose a file</span><span>Done</span></div><p class="fname" style="margin:6px 0 0"><b>' + C.file + '</b> · ' + C.size + '</p><span class="q">Choose another file</span></li>';
+    h += '<li><div class="stl cur">2 · Check what is in it</div>' + '<div style="margin-top:10px">' + tally(C) + '</div><div class="tiles"><span class="tile">W</span><span class="tile">A</span><span class="tile">B</span><span class="tile">S</span><span class="tile">T</span></div><p class="tilecap">First of ' + C.games + ' games. They arrive without covers (' + C.covers + ' had one).</p></li>';
+    h += '<li><div class="stl cur">3 · Import</div><div class="acts"><span class="btn">Import ' + C.games + ' games</span><span class="btn ghost">Cancel</span></div></li></ol>';
+  }
+  return h + '</section></div>';
+}
+
+/* ---------- option C pieces ---------- */
+function dataC(o){
+  var h = '<section class="data cs ce"><h2 class="sec">Your data</h2>' + exportBlk(o.empty ? { exp: 'empty' } : {});
+  h += '<div class="blk"><h3 class="sub">Import</h3>' + IMPORT_LEAD;
+  if (o.empty) h += '<div class="acts"><span class="btn ghost">Import from a file</span></div>';
+  else h += '<p class="note">This account already has games, ratings or thoughts, so import is not available here.</p>';
+  return h + '</div></section>';
+}
+function dialogC(m){
+  var inner = '<div class="dh"><h3>Import from a file</h3><span class="xbtn" aria-label="Close">×</span></div><p class="fname"><b>' + C.file + '</b><br>' + C.size + ' · exported ' + C.date + '</p>' + tally(C) + '<p class="cnote" style="font-size:14px;color:var(--ink-soft);margin:14px 0 0">Covers are not in the file. ' + C.covers + ' games had one; they arrive with their initial.</p><div class="foot"><span class="btn ghost">Choose another file</span><span class="btn">Import</span></div>';
+  if (m) return '<div class="scrim"></div><div class="dialog sheet">' + inner + '</div>';
+  return '<div class="scrim"></div><div class="dialog" style="left:50%;top:150px;width:560px;margin-left:-280px">' + inner + '</div>';
+}
+
+/* ---------- boards ---------- */
+var root = document.getElementById('root');
+function stage(html, w, opt){
+  opt = opt || {};
+  return '<div class="stage" data-w="' + w + '"' + (opt.crop ? ' data-crop="1"' : '') + (opt.cx ? ' data-cx="' + opt.cx + '"' : '') + (opt.fixed ? ' data-fixed="' + opt.fixed + '"' : '') + '><div class="frame" style="width:' + (opt.fw || w) + 'px">' + html + '</div></div>';
+}
+function pairPages(d, m){
+  return '<div class="shots"><div class="shot d"><p class="cap">Desktop, 1280 px</p>' + stage(shell({ m: false, main: d.main, overlay: d.overlay }), 1280, {}) + '</div><div class="shot m"><p class="cap">Phone, 390 px</p>' + stage(shell({ m: true, main: m.main, overlay: m.overlay }), 390, { fixed: 0.62 }) + '</div></div>';
+}
+function pairSection(dSec, mSec){
+  return '<div class="shots"><div class="shot d"><p class="cap">Desktop, 1280 px, the Your data section</p>' + stage(shell({ m: false, main: settingsPage(dSec) }), 760, { crop: true, fw: 1280 }) + '</div><div class="shot m"><p class="cap">Phone, 390 px</p>' + stage(shell({ m: true, main: settingsPage(mSec) }), 390, { crop: true, fixed: 0.8 }) + '</div></div>';
+}
+function board(o){
+  var s = document.createElement('section'); s.className = 'board'; if (o.id) s.id = o.id;
+  s.innerHTML = (o.tag ? '<div><p class="tag' + (o.rec ? ' rec' : '') + '">' + o.tag + '</p>' : '<div>') + (o.h2 ? '<h2>' + o.h2 + '</h2>' : '<h3 class="st">' + o.h3 + '</h3>') + '</div>' + (o.why ? '<p class="why">' + o.why + '</p>' : '') + (o.pairs || '');
+  root.appendChild(s);
+}
+function part(id, text){ var h = document.createElement('h2'); h.className = 'part-h'; h.id = id; h.textContent = text; root.appendChild(h); }
+
+part('options', 'Options');
+
+board({ id: 'opt-a', tag: 'Option A · recommended', rec: true, h2: 'Inline section in Settings',
+  why: 'A <b>Your data</b> section under Account, with two short blocks. <b>Export</b>: one line of counts, a <b>What is in the file</b> disclosure and one primary button, <b>Download export</b>. <b>Import</b>: in an account with data, one sentence says import is not available here; in an empty account, a quiet <b>Choose a file</b> button. The file is checked on the device, and a raised panel opens in place with what is in it and an <b>Import</b> button. Everything happens on one page, with no new route and no dialog. <b>Trade-off:</b> the import check has only the width of a text column, so a long problem list makes the page long. The import panel sits inline, not apart from the rest of Settings, so the only guard against a wrong import is the empty-account rule (which is strong).',
+  pairs: pairPages({ main: settingsPage(dataA({ exp: 'idle', imp: 'blocked' })) }, { main: settingsPage(dataA({ exp: 'idle', imp: 'blocked' })) })
+       + pairPages({ main: settingsPage(dataA({ exp: 'empty', imp: 'preview' })) }, { main: settingsPage(dataA({ exp: 'empty', imp: 'preview' })) }) });
+
+board({ id: 'opt-b', tag: 'Option B', h2: 'Its own page, with steps',
+  why: 'Settings gets one row, <b>Export and import</b>, with a count line (first pair). It opens <b>/settings/data</b> (second pair: an account with data; third: an empty account with a file checked): Export on the left and Import on the right (stacked on a phone). The Import column is a numbered list of three steps (choose a file, check what is in it, import). The check shows the counts and the first five titles as the initial tiles they will become. <b>Trade-off:</b> more room, and the steps explain the flow. But it adds a route and a tap. The step list reads like a wizard, which is heavier than the rest of the app. The Export column repeats on its own page what one line could say.',
+  pairs: pairPages({ main: settingsPage(settingsB()) }, { main: settingsPage(settingsB()) })
+       + pairPages({ main: dataPageB({ blocked: true }) }, { main: dataPageB({ blocked: true }) })
+       + pairPages({ main: dataPageB({}) }, { main: dataPageB({}) }) });
+
+board({ id: 'opt-c', tag: 'Option C', h2: 'Export inline, import in a dialog',
+  why: 'Export as in Option A. Import is one quiet button, <b>Import from a file</b> (only in an empty account). It opens the file picker, then a dialog on desktop or a full-height sheet on a phone shows the check, Import, the progress and the result. <b>Trade-off:</b> the import is set apart from the page, with a focus trap and a clear end. But it needs a dialog primitive (shadcn is not set up yet), a long problem list scrolls inside a box, and on a phone the sheet hides the page for a task done once or twice in the life of an account.',
+  pairs: pairPages({ main: settingsPage(dataC({})) }, { main: settingsPage(dataC({})) })
+       + pairPages({ main: settingsPage(dataC({ empty: true })), overlay: dialogC(false) }, { main: settingsPage(dataC({ empty: true })), overlay: dialogC(true) }) });
+
+/* ---------- states of option A ---------- */
+part('states', 'Option A: every state');
+function st(id, h3, note, o, mo){ board({ id: 'st-' + id, h3: h3, why: note, pairs: pairSection(typeof o === 'string' ? o : dataA(o), typeof (mo || o) === 'string' ? (mo || o) : dataA(mo || o)) }); }
+
+st('a1', 'A1. Default: the account has data', 'Export shows the counts, the closed disclosure and one primary button. Import says, in one sentence, why it is not available. There is no file control in an account with data.', { exp: 'idle', imp: 'blocked' });
+st('a2', 'A2. "What is in the file", open', 'A native details disclosure. The chevron turns. Closed again on the next visit.', { exp: 'idle', imp: 'blocked', discOpen: true, discFocus: true });
+st('a3', 'A3. Loading', 'Only the Your data section waits (its own Suspense boundary): it needs counts from five tables. Grey bars, no motion. Sign out works at once.', skeletonA(), skeletonA());
+st('a4', 'A4. Could not load', 'No export and no import while the counts are missing, so nothing looks safe that is not checked. "Try again" reloads the page.', errorA(), errorA());
+st('a5', 'A5. Export: preparing the file', 'The button reads "Preparing your file", is aria-disabled and keeps focus. A large library can take a few seconds.', { exp: 'pending', imp: 'blocked' });
+st('a6', 'A6. Export: download started', 'The browser takes over the download. The line under the button names the file and its size, and stays until you leave the page. A second click downloads again.', { exp: 'done', imp: 'blocked' });
+st('a7', 'A7. Export failed (offline or server error)', 'Nothing was downloaded. The button is ready again and keeps focus.', { exp: 'fail', imp: 'blocked' });
+st('a8', 'A8. Empty account', 'Nothing to export: one sentence, no counts, no button. Import shows "Choose a file" and the file limit.', { exp: 'empty', imp: 'idle' });
+st('a9', 'A9. Checking the file', 'The file is read and checked on the device. This takes a moment for a large file. "Choose a file" is aria-disabled meanwhile.', { exp: 'empty', imp: 'checking' });
+st('a10', 'A10. Ready to import', 'The panel opens in place with the file name, size and export date, the counts, and the cover note. Focus moves to the "Ready to import" heading. Cancel clears the file. Nothing is saved until Import.', { exp: 'empty', imp: 'preview' });
+st('a11', 'A11. Not an export', 'Any file that is not JSON, or JSON without the Meeple Journal format field. Focus stays on "Choose another file".', { exp: 'empty', imp: 'bad' });
+st('a12', 'A12. The file has problems', 'Up to five problems, each naming the game and what is wrong in plain words, then "and n more". Nothing can be imported until the file is fixed.', { exp: 'empty', imp: 'problems', file: 'meeple-journal-2026-11-10.json' });
+st('a13', 'A13. A newer format', 'The file has a version this app does not read yet.', { exp: 'empty', imp: 'newer', file: 'meeple-journal-2027-03-02.json' });
+st('a14', 'A14. File too large', 'Checked before reading, from the file size. 10 MB is several times a large library.', { exp: 'empty', imp: 'large', file: 'library-photos.json' });
+st('a15', 'A15. A file with no games', 'A valid export from an empty account. There is nothing to put back.', { exp: 'empty', imp: 'emptyfile', file: 'meeple-journal-2026-10-01.json' });
+st('a16', 'A16. Importing (pending)', 'Both panel buttons and "Choose another file" are aria-disabled, and focus stays on Import. Leaving the page asks the browser\'s "Leave site?" question. The server saves everything in one go, or nothing.', { exp: 'empty', imp: 'pending' });
+st('a17', 'A17. Import failed (offline, timeout or server error)', 'Nothing was saved, because the import is all or nothing. The panel stays and Import is ready again.', { exp: 'empty', imp: 'fail' });
+st('a17b', 'A17b. The server check refused the file', 'Rare: the same check runs again on the server and disagreed (for example the file changed on disk). Nothing was saved.', { exp: 'empty', imp: 'serverbad' });
+st('a18', 'A18. The account is no longer empty', 'Something was added in another tab or device between the check and Import. Nothing was imported. Only Cancel is left.', { exp: 'empty', imp: 'refused' });
+st('a19', 'A19. Import complete', 'The panel turns into the result, and focus moves to its heading. Export now shows the new counts. "Open your Library" goes to the Library. On the next visit, Import shows the A1 sentence.', { exp: 'idle', imp: 'done' });
+st('a20', 'A20. Many items: a large library (export)', 'Counts use thousands separators. The counts line wraps on a phone, with the separator dot at the start of the next line.', { exp: 'idle', imp: 'blocked', c: BIG });
+st('a20b', 'A20b. Many items: a large file, ready to import', 'An 8.7 MB file with 1,204 games. Same panel. The pending line (A16) reads "Importing 1,204 games ...".', { exp: 'empty', imp: 'preview', c: BIG });
+st('a21', 'A21. Long text: a long file name', 'File names break anywhere inside the panel, so nothing overflows at 390 px.', { exp: 'empty', imp: 'preview', file: LONGFILE });
+st('a21b', 'A21b. Long text: long titles in the problem list', 'Long game titles wrap inside each item.', { exp: 'empty', imp: 'problems', file: LONGFILE, probs: PROBS_LONG });
+
+/* ---------- fit frames ---------- */
+function fit(){
+  document.querySelectorAll('.stage').forEach(function(s){
+    var f = s.firstElementChild;
+    f.style.transform = 'none';
+    var fr = f.getBoundingClientRect();
+    var x0 = +s.dataset.cx || 0, w = +s.dataset.w - x0, y0 = 0, y1 = f.offsetHeight;
+    if (s.dataset.crop) {
+      var a = f.querySelector('.cs'), b = f.querySelector('.ce');
+      if (a && b) { y0 = a.getBoundingClientRect().top - fr.top - 24; y1 = b.getBoundingClientRect().bottom - fr.top + 14; }
+    }
+    var avail = Math.min(s.parentElement.clientWidth, document.documentElement.clientWidth - 34) - 2, fixed = parseFloat(s.dataset.fixed);
+    var k = fixed ? Math.min(fixed, (document.documentElement.clientWidth - 36) / w) : Math.min(1, avail / w);
+    s.style.width = (w * k) + 'px';
+    s.style.height = ((y1 - y0) * k) + 'px';
+    f.style.transform = 'scale(' + k + ') translate(' + (-x0) + 'px,' + (-y0) + 'px)';
+  });
+}
+fit(); window.addEventListener('resize', fit);
+if (document.fonts && document.fonts.ready) document.fonts.ready.then(fit);
+</script>
+</body>
+</html>

@@ -13,6 +13,7 @@ export const ACCOUNT_KINDS = [
   "archive",
   "rating",
   "thoughts",
+  "data",
 ] as const;
 export type AccountKind = (typeof ACCOUNT_KINDS)[number];
 

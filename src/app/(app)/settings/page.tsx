@@ -1,10 +1,17 @@
+import { Suspense } from "react";
 import { PageHeader } from "@/components/shell/PageHeader";
+import {
+  DataSection,
+  DataSectionSkeleton,
+} from "@/components/account/DataSection";
 import { SignOutForm } from "@/components/account/SignOutForm";
+import { requireUser } from "@/server/authorization/require-user";
 import { signOut } from "./actions";
 
 export const metadata = { title: "Settings | Meeple Journal" };
 
-export default function SettingsPage() {
+export default async function SettingsPage() {
+  const { supabase, user } = await requireUser();
   return (
     <>
       <PageHeader title="Settings" />
@@ -15,6 +22,9 @@ export default function SettingsPage() {
           </h2>
           <SignOutForm action={signOut} />
         </section>
+        <Suspense fallback={<DataSectionSkeleton />}>
+          <DataSection supabase={supabase} userId={user.id} />
+        </Suspense>
       </div>
     </>
   );

@@ -40,6 +40,8 @@
   --duration-base: var(--tk-motion-base);
   /* Small meta text, such as the topics under a thought. */
   --text-meta: 0.8125rem;
+  /* Title of a panel inside a section, such as "Ready to import". */
+  --text-panel: 1.0625rem;
 }
 
 @layer base {

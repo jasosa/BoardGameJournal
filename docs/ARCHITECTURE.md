@@ -72,7 +72,7 @@ Key rules (from handover §9): game ≠ edition ≠ copy · selling never delete
 - Visibility is explicit. Nothing personal is public in P0. Public features (P2) will use separate views that expose only chosen columns.
 - Storage: private buckets; paths `user_id/...`; policies check the first path segment.
 - Secrets: only in env vars; `.env.example` lists names. Claude hooks block writing env files and service role keys in client code.
-- Export: JSON (full) + CSV (collection, plays) per user. Import: same JSON format, plus a BGG collection CSV importer if terms allow.
+- Export: JSON (full, version 1, nested per game) built on the server for the signed-in user. CSV (collection, plays) comes with the journal export (J7). Import: the same JSON, only into an empty account, in one transaction through `import_account()` (ADR-0014). A BGG collection CSV importer only if terms allow.
 - Backups: Supabase daily backups + a tested restore procedure (Phase 4), documented in STATUS.md.
 - Account deletion removes all personal rows and storage objects.
 
