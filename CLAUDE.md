@@ -31,6 +31,8 @@ Node 24 (see `.nvmrc`). Keep this list current.
 - `npx supabase start` / `npx supabase db reset` - local database (needs Docker Desktop)
 - `npx supabase migration new <name>` - new migration
 - `npm run user:create -- <email>` - create an account (public sign-up is off). Needs the Supabase URL and `SUPABASE_SERVICE_ROLE_KEY` in the local env file
+- `npm run seed:library -- <email>` - fill an account's library with about 40 test games, with ratings, thoughts and history. Local database only; skips games already there
+- `npm run seed:covers -- <email>` - give every game without a cover a generated placeholder cover (test only, no real art). Local database only; skips games that have one
 - `npm run covers:colours` - fill the game-page colours of covers uploaded before the colours existed (same env needs)
 
 ## Code layout
