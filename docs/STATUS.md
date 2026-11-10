@@ -4,7 +4,7 @@ Last updated: 2026-11-04 (Phase 0 closed; L4b, L6 and L7 built, not yet pushed)
 
 ## Now
 
-- Phase 0 is closed (2026-11-04). Phase 1 (Library MVP) is under way: Library views (L4), remove from library (L4b), game page (L5), cover upload (L5b), status history (L3), the duplicate warning, rating (L6) and thoughts with topics (L7) are built. The "Night Wall" design (ADR-0010) is on `main`. Only L8 (export) is left in Phase 1. The L7 work is not committed yet.
+- Phase 0 is closed (2026-11-04). Phase 1 (Library MVP) is under way: Library views (L4), remove from library (L4b), game page (L5), cover upload (L5b), status history (L3), the duplicate warning, rating (L6) and thoughts with topics (L7) are built. The "Night Wall" design (ADR-0010) is on `main`. Only L8 (export) is left in Phase 1.
 - Process (CLAUDE.md): every feature that changes the UI starts with a UX concept from the `ux-concept` agent, approved by the user, and is built exactly as approved.
 
 ## Next
@@ -23,6 +23,7 @@ Last updated: 2026-11-04 (Phase 0 closed; L4b, L6 and L7 built, not yet pushed)
 - Dark only for now (ADR-0010). Decide later whether to design a light counterpart.
 - Adding a game whose title you already have only warns (open it, or add another copy). There is no "add as a different game anyway": change the title instead. Decide if two different games with an identical title is a real case.
 
+- Navigation (raised 2026-11-10): Home and Journal are placeholders ("Nothing here yet" and "Coming soon"). Only Library does real work. Option: hide the Journal tab until Phase 2 so there is no dead end. Decide about Home when the Journal timeline (J3) is designed: recent activity overlaps with the timeline, quick actions overlap with the Add button, and campaigns are P1. It could be dropped or merged into Journal. Needs a `ux-concept` run before any change.
 - The Library lists one card per copy, so a game with two copies appears twice. Decide if copies should be grouped into one card (with the statuses listed) once rating and plays exist.
 
 ## Decisions
