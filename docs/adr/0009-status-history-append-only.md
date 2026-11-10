@@ -33,6 +33,6 @@ Option 2.
 
 - The status shown on a game always matches the last history row, and no path can change one without the other.
 - A wrong entry cannot be removed or edited by the person. If that turns out to be needed, add a correction row type, not an edit, in a new ADR.
-- Every new way to change a status must call the function. Any import (L8) must write history through a service-role path on purpose.
+- Every new way to change a status must call the function. Any import (L8) must write history on purpose. ADR-0014 replaces the "service-role path" with a user-bound database function.
 - Deleting an entry deletes its history (cascade), which is why owners cannot delete entries yet. Removing a game from the collection is not built and needs its own decision about keeping history.
 - The export format (L8) must include history.

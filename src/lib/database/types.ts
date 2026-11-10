@@ -473,6 +473,7 @@ export type Database = {
         Returns: string;
       };
       delete_entry: { Args: { p_entry_id: string }; Returns: Json };
+      import_account: { Args: { p_data: Json }; Returns: Json };
       restore_entry: { Args: { p_entry_id: string }; Returns: boolean };
       topics_valid: { Args: { p_topics: string[] }; Returns: boolean };
     };
